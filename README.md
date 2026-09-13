@@ -1,175 +1,118 @@
 # Blockive — Premium Addon For Block
 
-A powerful, high-performance, and elegant collection of premium blocks for the WordPress Gutenberg block editor. Empowering developers and creators to design stunning websites with advanced layout controls, beautiful styling, and complete customizability—no page builders required.
+A powerful, high-performance, and elegant collection of premium Gutenberg blocks and dynamic **Template Builder** for WordPress. Design websites with advanced layout controls, styling, responsive controls, and dynamic content without external page builders.
 
 ---
 
-## 🚀 Key Features
+## Key Highlights
 
-- **Lightweight & Fast**: Built using native Gutenberg APIs (`@wordpress/scripts`), ensuring assets are enqueued only when blocks are actively used on a page.
-- **Fully Responsive**: Every block is designed mobile-first, rendering perfectly across desktops, tablets, and smartphones.
-- **Rich Customization**: Deep typography controls, custom borders, gradient background options, active state styling, and motion controls.
-- **Accessibility (A11y) First**: Focus management and keyboard accessibility are natively implemented for interactive elements (such as Tabs and Accordions).
-
----
-
-## 📦 Included Premium Blocks
-
-| Icon | Block Name | Description | Key Customization Features |
-|:---:|:---|:---|:---|
-| 📋 | **Blockive Accordion** | Beautiful, collapsible content sections ideal for FAQs or structured info. | Icon alignments, active state colors, expand/collapse speed. |
-| 🕒 | **Blockive Business Hours** | Display your business opening and closing times with custom styling and current-day highlighting. | Current-day highlight, row typography, border options. |
-| 🔘 | **Blockive Button** | A highly customizable button with icon and badge support. | Hover animations, custom badges, icon position, styling. |
-| 🗂️ | **Blockive Category List** | A styled taxonomy browser for organizing and surfacing site content. | Hierarchy display, grid/list layouts, per-item styling, post-count badges. |
-| ✉️ | **Blockive Contact Form 7** | Drop-in Contact Form 7 integration styled to match the rest of your layout. | Form selection by ID, live editor placeholder, custom container styling. |
-| ⏱️ | **Blockive Countdown Timer** | Urgency-inducing timers for sales, promotions, and events. | Labels, border styling, color mapping. |
-| 🔠 | **Blockive Drop Caps** | Editorial-style typographic enhancements for standard paragraphs. | First-letter custom padding, custom margins, colored initials. |
-| ❓ | **Blockive FAQ** | Schema-ready accordion style FAQ lists. | Structured data auto-generation, schema support toggle. |
-| 🔢 | **Blockive Fun Fact** | Show off your achievements with an animated statistics/counter block. | Prefix/suffix options, animation speed, layouts, typography. |
-| ✍️ | **Blockive Heading** | Eye-catching titles with gradients, stroke highlights, and text shadows. | Stroke width/color, blend modes, text-shadow offset/blur. |
-| 📦 | **Blockive Icon Box** | A stylish box displaying an icon, title, description, and custom link. | Icon styling, custom animations, border/background options. |
-| 🖼️ | **Blockive Image Accordion** | Interactive image panels that expand to reveal a title and description on hover. | Custom overlay opacity, animation speed, per-item height, text colors. |
-| 🖼️ | **Blockive Image Box** | An image box that displays an image, title, description, and link. | Image layout modes, hover effects, styling controls. |
-| ↔️ | **Blockive Image Comparison** | A draggable before/after slider for showcasing edits, redesigns, or comparisons. | Keyboard-accessible handle, horizontal/vertical orientation, custom labels. |
-| 🎬 | **Blockive Lottie** | Play lightweight, scalable Lottie animations anywhere on your site. | Loop, autoplay, playback speed, scroll or hover triggers. |
-| 📧 | **Blockive MailChimp** | Capture newsletter signups with a styled Mailchimp subscription form. | List selection, secure form handling, custom field styling. |
-| 📊 | **Blockive Pie Chart** | High-performance interactive data visualizations. | Custom legend placement, donut/pie toggle, Chart.js backend. |
-| 📰 | **Blockive Post Grid** | A dynamic, query-driven grid for showcasing your latest posts anywhere on your site. | Custom queries, pagination, responsive grid columns, post-type filtering. |
-| 💰 | **Blockive Pricing Table** | A fully customizable pricing table block with features list and button. | Ribbon/badge, features styling, toggle support. |
-| 📈 | **Blockive Progress Bar** | Dynamic animated bar and line indicators to show project/skill levels. | Animated steps, custom height, percentage toggle. |
-| 🔗 | **Blockive Social Icons** | Premium links to social profiles with custom shapes and hover animations. | Shape variants (round/circle/square), custom SVG color mapping, animations. |
-| 📑 | **Blockive Tabs** | Sleek content switchers to organize large amounts of tabular content. | Tab pills alignment, keyboard focus/arrow-key transitions. |
-| 👥 | **Blockive Team** | Introduce your team with photos, roles, bios, and social links in a clean grid. | Per-member social links, responsive columns, avatar and bio styling. |
-| 💬 | **Blockive Testimonial** | A polished testimonials slider with star ratings and customer avatars. | Pausable autoplay, star ratings, avatar styling, accessible navigation. |
-| 🎥 | **Blockive Video** | Embed and style video content with a custom cover image and lightbox playback. | Custom cover image, play button styling, lightbox option. |
-
-### 🏗️ Template Builder Blocks
-
-Includes over **50+ dynamic blocks** specifically designed for the **Blockive Template Builder**. Easily create custom templates for single posts, archives, events, and full WooCommerce product pages with elements like Dynamic Fields, Post Content, Add to Cart, Product Variations, and more.
+- **Lightweight & High Performance**: Built natively on `@wordpress/scripts` with conditional asset loading—minimal footprint on pages without blocks.
+- **Dynamic Template Builder**: Build custom WordPress single post and page templates using dynamic content blocks and conditional display rules.
+- **Deep Design Controls**: Advanced typography, responsive spacing (margins/padding), multi-stop gradients, box shadows, text shadows, border styling, and animations.
+- **Mobile-First Responsive Design**: Granular controls for desktop, tablet, and mobile breakpoints across all blocks.
+- **Accessibility First (A11y)**: Full keyboard navigation, ARIA attributes, and focus management across interactive blocks (Tabs, Accordions, Sliders).
+- **SEO & Schema.org**: Built-in structured data generation for FAQ and template blocks.
 
 ---
 
-## 🛠️ Development Setup
+## Included 25 Premium Blocks
 
-The plugin uses the official `@wordpress/scripts` toolchain for bundling, linting, and optimizing assets.
+| Block Name | Description | Key Customization Features |
+|:---|:---|:---|
+| **Blockive Accordion** | Collapsible content sections ideal for FAQs and documentation. | Expand/collapse speed, active colors, custom open/close icons, independent styling. |
+| **Blockive Business Hours** | Display opening and closing schedules with highlight controls. | Current-day auto-highlighting, typography, row borders, custom time badge format. |
+| **Blockive Button** | Customizable button with icon and badge support. | Hover animations, custom badges, icon placement, gradient and solid fills. |
+| **Blockive Category List** | Styled taxonomy browser for categories and custom taxonomies. | Hierarchy display, grid/list layouts, post-count badges, custom item spacing. |
+| **Blockive Contact Form 7** | Drop-in Contact Form 7 integration with native styling. | Form selection by ID, live preview in editor, custom field and submit button styling. |
+| **Blockive Countdown Timer** | Urgency-inducing timers for sales, launches, and events. | Circular & box styles, days/hours/mins/secs labels, expiry actions, styling. |
+| **Blockive Drop Caps** | Editorial-style typographic enhancements for standard paragraphs. | First-letter custom padding, custom margins, colored initials, shapes. |
+| **Blockive FAQ** | Schema-ready accordion style FAQ lists. | Structured data auto-generation, schema support toggle, icon styles. |
+| **Blockive Fun Fact** | Animated milestone statistics and counter block. | Prefix/suffix options, animation speed, layouts, icons, typography. |
+| **Blockive Heading** | Titles with gradients, stroke highlights, and shadows. | Text stroke width/color, linear/radial gradients, multi-layer text shadows. |
+| **Blockive Icon Box** | Feature card displaying an icon, title, description, and link. | Icon position (top/left/right), hover transitions, border/background options. |
+| **Blockive Image Accordion** | Interactive image panels that expand on hover/click. | Custom overlay opacity, animation speed, per-item height, text typography. |
+| **Blockive Image Box** | Image card with badges, title, description, and action button. | Image layout modes, hover zoom effects, styling controls. |
+| **Blockive Image Comparison** | Draggable before/after slider for visual comparisons. | Keyboard-accessible handle, horizontal/vertical orientation, custom labels. |
+| **Blockive Lottie** | Embed lightweight, scalable Lottie vector animations. | Loop, autoplay, speed control, scroll, click, or hover triggers. |
+| **Blockive MailChimp** | Capture newsletter signups with a styled Mailchimp subscription form. | API integration, list selection, custom input field and submit button styling. |
+| **Blockive Pie Chart** | Interactive data visualizations with pie and donut charts. | Custom legend placement, donut/pie toggle, tooltip formatting (Chart.js). |
+| **Blockive Post Grid** | Query-driven grid for showcasing posts, articles, or custom post types. | Custom queries, pagination, category/tag filters, responsive column controls. |
+| **Blockive Pricing Table** | Fully customizable pricing table with features list and CTA. | Ribbon/badge, features checklist, period toggles, button styling. |
+| **Blockive Progress Bar** | Animated linear progress indicators for skills and goals. | Animated steps, custom bar height, percentage display toggle, stripes. |
+| **Blockive Social Icons** | Links to social profiles with custom shapes and animations. | Shape variants (round/circle/square), custom SVG colors, hover animations. |
+| **Blockive Tabs** | Content switchers to organize tabular content. | Segmented pill styling, responsive tab layout, keyboard arrow-key navigation. |
+| **Blockive Team** | Showcase team members with photos, roles, bios, and social links. | Per-member social links, responsive columns, avatar shape and bio styling. |
+| **Blockive Testimonial** | Testimonials slider with star ratings and avatars. | Swiper slider, pausable autoplay, star ratings, avatar styling, navigation arrows. |
+| **Blockive Video** | Responsive video embed with custom cover image and lightbox. | Custom cover image, play button design, lightbox modal playback. |
+
+---
+
+## Dynamic Template Builder Blocks
+
+The plugin includes **16 dynamic template blocks** specifically designed for single post and page template design:
+
+| Template Block | Description |
+|:---|:---|
+| **Post Title** | Dynamic post or page heading with H1–H6 tag selection and typography controls. |
+| **Post Content** | Renders post body content with container and layout spacing. |
+| **Featured Image** | Dynamic thumbnail image with aspect ratio, border radius, and overlay styling. |
+| **Featured Video** | Embeds featured post video formats dynamically. |
+| **Author & Author Avatar** | Dynamic author name, biographical info, and circular/square avatar. |
+| **Publish Date & Modified Date** | Publication and last updated date formats with custom prefix icons. |
+| **Categories & Tags** | Dynamic taxonomy badge lists with custom delimiters and links. |
+| **Comments Count** | Dynamic comment count indicator with singular/plural custom labels. |
+| **Reading Time** | Calculates and displays reading time estimates based on word count. |
+| **Breadcrumbs** | SEO-friendly hierarchical navigation trail. |
+| **Previous / Next Navigation** | Post-to-post navigation links with thumbnail previews. |
+| **Related Posts** | Dynamic related articles query based on category or tag matches. |
+| **Post Meta** | Unified meta container to arrange author, date, and comments in a single line. |
+
+---
+
+## Development Setup
+
+The project uses the official `@wordpress/scripts` toolchain for bundling, linting, and formatting.
 
 ### Prerequisites
 
 - **WordPress**: 6.8 or newer
 - **PHP**: 7.4 or newer
-- **Node.js**: 16.x or newer
-- **npm**: 8.x or newer
+- **Node.js**: 18.x or newer
+- **npm**: 9.x or newer
 
-### Installation & Compilation
+### Installation & Build Commands
 
-1. Clone or copy the plugin to your `wp-content/plugins/` directory:
+1. Clone the repository into your WordPress plugins directory:
    ```bash
    cd wp-content/plugins/blockive-premium-addon-for-block
    ```
 
-2. Install build dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Start the hot-reloading development server:
+3. Start hot-reloading development server:
    ```bash
    npm run start
    ```
 
-4. Build production-ready, optimized assets (runs minifiers, compiles CSS/SASS, generates manifests):
+4. Build production assets:
    ```bash
    npm run build
    ```
 
----
-
-## 📂 Project Directory Structure
-
-```text
-blockive-premium-addon-for-block/
-├── .distignore
-├── .editorconfig
-├── .gitignore
-├── .wp-org/
-├── assets/                       # Shared global assets
-│   ├── css/                      # Editor/frontend shared stylesheets
-│   ├── js/                       # Editor container-settings + frontend animation scripts
-│   └── webfonts/                 # Font files
-├── build/                        # Compiled production-ready assets (auto-generated)
-│   ├── blocks-manifest.php
-│   ├── accordion/
-│   ├── business-hours/
-│   ├── button/
-│   ├── category-list/
-│   ├── contact-form-7/
-│   ├── countdown-timer/
-│   ├── drop-caps/
-│   ├── faq/
-│   ├── funfact/
-│   ├── heading/
-│   ├── icon-box/
-│   ├── image-accordion/
-│   ├── image-box/
-│   ├── image-comparison/
-│   ├── lottie/
-│   ├── mailchimp/
-│   ├── pie-chart/
-│   ├── post-grid/
-│   ├── pricing-table/
-│   ├── progress-bar/
-│   ├── social-icons/
-│   ├── tabs/
-│   ├── team/
-│   ├── template-blocks/          # 45 dynamic sub-blocks for the Template Builder
-│   ├── template-builder/         # Template Builder editor bundle
-│   ├── testimonial/
-│   └── video/
-├── includes/                     # PHP classes: Template Builder CPT, dynamic-field
-│                                  # providers, WooCommerce/events adapters
-├── node_modules/                # Development dependency packages (not committed)
-├── package-lock.json
-├── package.json                 # Dependencies, scripts, and metadata
-├── README.md                    # Project documentation
-├── blockive-premium-addon-for-block.php # Main plugin entry point
-├── readme.txt                   # WordPress.org plugin directory description
-└── src/                         # Raw Gutenberg block source files
-    ├── accordion/
-    ├── business-hours/
-    ├── button/
-    ├── category-list/
-    ├── components/               # Shared inspector controls (typography, border,
-    │                              # spacing, background, shadow, animation, advanced tab)
-    ├── contact-form-7/
-    ├── countdown-timer/
-    ├── drop-caps/
-    ├── faq/
-    ├── funfact/
-    ├── heading/
-    ├── icon-box/
-    ├── image-accordion/
-    ├── image-box/
-    ├── image-comparison/
-    ├── lottie/
-    ├── mailchimp/
-    ├── pie-chart/
-    ├── post-grid/
-    ├── pricing-table/
-    ├── progress-bar/
-    ├── social-icons/
-    ├── tabs/
-    ├── team/
-    ├── template-blocks/          # 45 dynamic sub-blocks (post, events, woocommerce)
-    ├── template-builder/         # Template Builder editor UI
-    ├── testimonial/
-    └── video/
-```
+5. Lint & format code:
+   ```bash
+   npm run lint:js
+   npm run lint:css
+   npm run format
+   ```
 
 ---
 
-## 🔒 License & Credits
+## License & Credits
 
-Distributed under the **GPL-2.0-or-later** License. 
-For details, see [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html) or `readme.txt`.
+Distributed under the **GPL-2.0-or-later** License. See `readme.txt` or [GNU General Public License](https://www.gnu.org/licenses/gpl-2.0.html) for details.
 
-Developed with ❤️ by **Lionecoders**.
+Developed by **Mveous**.
