@@ -70,10 +70,6 @@ const DisplayConditionsPanel = () => {
 				<TextControl
 					type="number"
 					label={ __( 'Priority', 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						'When more than one template matches the same post, the lowest number wins.',
-						'blockive-premium-addon-for-block'
-					) }
 					value={ priority }
 					onChange={ ( value ) => {
 						const parsed = parseInt( value, 10 );
@@ -85,10 +81,6 @@ const DisplayConditionsPanel = () => {
 			<PanelRow>
 				<ToggleControl
 					label={ __( 'Full width (no sidebar)', 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						'Ask the active theme to drop its sidebar on posts/pages this template applies to. Supported on Astra, GeneratePress, OceanWP, Neve, Kadence, and Blocksy so far; has no effect on other themes.',
-						'blockive-premium-addon-for-block'
-					) }
 					checked={ !! meta?._bpafb_full_width }
 					onChange={ ( value ) => setMeta( { ...meta, _bpafb_full_width: value } ) }
 				/>
@@ -97,10 +89,6 @@ const DisplayConditionsPanel = () => {
 			<PanelRow>
 				<ToggleControl
 					label={ __( "Hide theme's post title", 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						"Keep off unless the template itself already shows its own title - otherwise the theme's title (and byline: author, date, categories) would render twice.",
-						'blockive-premium-addon-for-block'
-					) }
 					checked={ meta?._bpafb_hide_title !== false }
 					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_title: value } ) }
 				/>
@@ -109,10 +97,6 @@ const DisplayConditionsPanel = () => {
 			<PanelRow>
 				<ToggleControl
 					label={ __( "Hide theme's featured image", 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						'Keep off unless the template itself already shows the featured image - otherwise it would render twice.',
-						'blockive-premium-addon-for-block'
-					) }
 					checked={ meta?._bpafb_hide_featured_image !== false }
 					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_featured_image: value } ) }
 				/>
@@ -121,10 +105,6 @@ const DisplayConditionsPanel = () => {
 			<PanelRow>
 				<ToggleControl
 					label={ __( 'Hide comments', 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						"Hide the theme's comment list and form on posts/pages this template applies to.",
-						'blockive-premium-addon-for-block'
-					) }
 					checked={ !! meta?._bpafb_hide_comments }
 					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_comments: value } ) }
 				/>
@@ -133,10 +113,6 @@ const DisplayConditionsPanel = () => {
 			<PanelRow>
 				<ToggleControl
 					label={ __( 'Hide post navigation (previous/next)', 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						"Ask the active theme not to render its own previous/next post links on posts/pages this template applies to. Supported on Astra so far; has no effect on other themes.",
-						'blockive-premium-addon-for-block'
-					) }
 					checked={ !! meta?._bpafb_hide_post_nav }
 					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_post_nav: value } ) }
 				/>
