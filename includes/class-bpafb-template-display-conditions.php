@@ -155,7 +155,7 @@ class Bpafb_Template_Display_Conditions
 			return 0;
 		}
 
-		$meta_query = ('post' === $post_type)
+		$type_clause = ('post' === $post_type)
 			? [
 				'relation' => 'OR',
 				[
@@ -178,12 +178,41 @@ class Bpafb_Template_Display_Conditions
 				],
 			];
 
+		// A Pro build's Template Kind meta (_bpafb_template_kind) marks
+		// templates meant for a header/footer/archive/etc. location rather
+		// than this singular-content override. Those are matched by Pro's
+		// own resolver against a different set of conditions entirely, so
+		// they must never also compete here for "which template overrides
+		// this post's content" - the exclusion below applies regardless of
+		// whether Pro is even installed, since it only reads meta by key.
+		// Absent/empty (no Pro, or a template saved before this meta
+		// existed) counts as "single" so nothing already-working changes.
+		$kind_clause = [
+			'relation' => 'OR',
+			[
+				'key'   => '_bpafb_template_kind',
+				'value' => 'single',
+			],
+			[
+				'key'     => '_bpafb_template_kind',
+				'compare' => 'NOT EXISTS',
+			],
+			[
+				'key'   => '_bpafb_template_kind',
+				'value' => '',
+			],
+		];
+
 		$templates = get_posts([
 			'post_type'      => Bpafb_Template_Post_Type::POST_TYPE,
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
 			'no_found_rows'  => true,
-			'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'AND',
+				$type_clause,
+				$kind_clause,
+			],
 		]);
 
 		if (empty($templates)) {

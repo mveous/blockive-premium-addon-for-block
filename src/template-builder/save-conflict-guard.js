@@ -39,6 +39,17 @@ const SaveConflictGuard = () => {
 	const currentPostId = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostId(), [] );
 	const targetPostType = meta?._bpafb_template_type || 'post';
 	const scope = meta?._bpafb_display_condition_scope || 'all';
+	// _bpafb_template_kind is a Pro-only meta key (see Bpafb_Pro_Template_Kinds
+	// in the Pro plugin) marking a template for a header/footer/archive/etc.
+	// location instead of this "single post/page content override" concept -
+	// absent here entirely (free version, or a template never touched by the
+	// Pro Kind control) always means "single". This guard's whole premise -
+	// "all Posts" vs. "all Posts" - only makes sense between two single-kind
+	// templates; a Header-kind template left at the default Template Type/
+	// scope values (never having a reason to change fields that don't apply
+	// to it) must never be treated as conflicting with an actual single-kind
+	// template, on either side of the comparison below.
+	const kind = meta?._bpafb_template_kind || 'single';
 
 	const targetPostTypeLabel = useSelect(
 		( select ) => select( 'core' ).getPostType( targetPostType )?.labels?.name || targetPostType,
@@ -47,7 +58,7 @@ const SaveConflictGuard = () => {
 
 	const conflictingTemplate = useSelect(
 		( select ) => {
-			if ( scope !== 'all' ) {
+			if ( scope !== 'all' || kind !== 'single' ) {
 				return null;
 			}
 			const records = select( 'core' ).getEntityRecords( 'postType', TEMPLATE_POST_TYPE, {
@@ -63,11 +74,12 @@ const SaveConflictGuard = () => {
 				records.find(
 					( record ) =>
 						( record.meta?._bpafb_template_type || 'post' ) === targetPostType &&
-						( record.meta?._bpafb_display_condition_scope || 'all' ) === 'all'
+						( record.meta?._bpafb_display_condition_scope || 'all' ) === 'all' &&
+						( record.meta?._bpafb_template_kind || 'single' ) === 'single'
 				) || null
 			);
 		},
-		[ scope, targetPostType, currentPostId ]
+		[ scope, kind, targetPostType, currentPostId ]
 	);
 
 	useEffect( () => {
