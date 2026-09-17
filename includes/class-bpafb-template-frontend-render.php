@@ -11,6 +11,23 @@
  * `post_thumbnail_html` filters (and, on block themes, by not rendering the
  * corresponding blocks at all) so nothing renders twice.
  *
+ * Two exceptions exist for post types whose own plugin renders a
+ * significant amount of markup OUTSIDE `the_content` on its singular page -
+ * a "single" template targeting them needs to be a genuine full takeover,
+ * not just a content-area override, or the plugin's own title/price/
+ * schedule/etc. would still show alongside it:
+ *  - WooCommerce products: setup_woocommerce_template() removes WooCommerce's
+ *    own single-product summary hooks (title, price, add-to-cart, tabs, ...)
+ *    and renders the template in their place - still inside the theme's own
+ *    product wrapper markup, so no template swap needed there.
+ *  - Events Calendar events: maybe_swap_events_template() swaps
+ *    `template_include` itself instead, because unlike WooCommerce's
+ *    handful of stable, well-known action hooks, exactly which template
+ *    parts render an event's title/schedule/venue/organizer differs between
+ *    Events Calendar's "classic" and "Views v2" rendering modes and has
+ *    changed across major versions - `template_include` is the one point
+ *    every WordPress template resolves through regardless.
+ *
  * @package Blockive
  */
 
@@ -48,6 +65,15 @@ class Bpafb_Template_Frontend_Render
 	 * @var bool
 	 */
 	private static $is_rendering = false;
+
+	/**
+	 * Template ID resolved by maybe_swap_events_template(), for the wrapper
+	 * template file (includes/templates/single-full-takeover-wrapper.php)
+	 * it points template_include at to read back.
+	 *
+	 * @var int
+	 */
+	private static $full_takeover_template_id = 0;
 
 	/**
 	 * Theme blocks that make up the post's title/byline "header" - what a
@@ -214,6 +240,12 @@ class Bpafb_Template_Frontend_Render
 		// Registering unconditionally is safe regardless - `woocommerce_before_single_product`
 		// is a WooCommerce-only action that simply never fires when WooCommerce isn't active.
 		add_action('woocommerce_before_single_product', [$this, 'setup_woocommerce_template']);
+		// Priority PHP_INT_MAX so this always has the final say over whatever
+		// Events Calendar (or any theme) already pointed template_include at -
+		// is_singular('tribe_events') can only ever be true if Events
+		// Calendar registered that post type in the first place, so no
+		// class_exists() guard is needed here.
+		add_filter('template_include', [$this, 'maybe_swap_events_template'], PHP_INT_MAX);
 		add_action('wp_head', [$this, 'print_full_width_container_css']);
 		add_action('wp_head', [$this, 'print_hide_title_meta_css']);
 		$this->register_sidebar_layout_adapter();
@@ -922,6 +954,76 @@ class Bpafb_Template_Frontend_Render
 				echo '<div class="bpafb-template-render">' . $rendered . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}, 1);
+	}
+
+	/**
+	 * Swaps in a thin wrapper template for a single Events Calendar event
+	 * when a matching Blockive Template exists, so the template fully
+	 * replaces Events Calendar's own single-event markup (title, schedule/
+	 * cost line, venue, organizer, prev/next navigation, ...) rather than
+	 * only the `the_content()` portion of it - the same "full takeover"
+	 * WooCommerce products already get via setup_woocommerce_template(),
+	 * via a template_include swap instead since Events Calendar doesn't
+	 * expose the same small set of stable action hooks WooCommerce does
+	 * (see the class docblock for why).
+	 *
+	 * Deliberately does not preserve the theme's title/featured-image/
+	 * comments toggles for this case (same simplification
+	 * setup_woocommerce_template() already makes for products) - a full
+	 * takeover replaces the whole page body, so there's nothing left for
+	 * those settings to apply to.
+	 *
+	 * @param string $template Absolute path to the template PHP core resolved.
+	 * @return string
+	 */
+	public function maybe_swap_events_template($template)
+	{
+		if (is_admin() || !is_singular('tribe_events')) {
+			return $template;
+		}
+
+		$template_id = self::get_matched_template_id();
+		if (!$template_id) {
+			return $template;
+		}
+
+		$wrapper = BPAFB_PATH . 'includes/templates/single-full-takeover-wrapper.php';
+		if (!file_exists($wrapper)) {
+			return $template;
+		}
+
+		self::$full_takeover_template_id = $template_id;
+
+		return $wrapper;
+	}
+
+	/**
+	 * Renders the template matched by maybe_swap_events_template() for the
+	 * wrapper template file it points template_include at, with the same
+	 * recursion guard filter_the_content()/setup_woocommerce_template() use
+	 * around their own do_blocks() calls.
+	 *
+	 * @return string Rendered HTML, or '' if nothing is matched (should be
+	 *                unreachable - the wrapper is only ever swapped in once
+	 *                maybe_swap_events_template() already confirmed a match).
+	 */
+	public static function render_full_takeover_template()
+	{
+		$template_id = self::$full_takeover_template_id;
+		if (!$template_id) {
+			return '';
+		}
+
+		$template_post = get_post($template_id);
+		if (!$template_post || empty($template_post->post_content)) {
+			return '';
+		}
+
+		self::$is_rendering = true;
+		$rendered = do_blocks($template_post->post_content);
+		self::$is_rendering = false;
+
+		return '<div class="bpafb-template-render">' . $rendered . '</div>';
 	}
 
 	/**
