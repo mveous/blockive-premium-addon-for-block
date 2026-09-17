@@ -68,7 +68,7 @@ class Bpafb_Template_Builder
 	}
 
 	/**
-	 * Every public, viewable post type's singular label (e.g. 'product' =>
+	 * Every viewable post type's singular label (e.g. 'product' =>
 	 * 'Product'), for building "All Products" / "Specific Product"-style
 	 * Display Conditions wording - WordPress core's own `/wp/v2/types` REST
 	 * response doesn't include `labels.singular_name`, only the plural
@@ -77,12 +77,16 @@ class Bpafb_Template_Builder
 	 * type regardless of Free/Pro lock state - the label text itself isn't
 	 * privileged information, only the ability to pick a locked one is.
 	 *
+	 * Not pre-filtered by `'public' => true` - see the matching comment on
+	 * bpafb_pro_all_viewable_post_types() in the Pro plugin's main file for
+	 * why that would wrongly exclude a viewable-but-not-`public` post type.
+	 *
 	 * @return array<string,string>
 	 */
 	private static function get_post_type_singular_names()
 	{
 		$names = [];
-		foreach (array_filter(get_post_types(['public' => true]), 'is_post_type_viewable') as $slug) {
+		foreach (array_filter(get_post_types(), 'is_post_type_viewable') as $slug) {
 			$post_type_object = get_post_type_object($slug);
 			$names[$slug]     = $post_type_object ? $post_type_object->labels->singular_name : $slug;
 		}
