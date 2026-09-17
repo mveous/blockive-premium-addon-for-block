@@ -14,18 +14,21 @@ const TEMPLATE_POST_TYPE = window.bpafbTemplateBuilder?.postType || 'blockive_te
 // viewable post type, which unlocks the options below automatically.
 const FREE_POST_TYPES = window.bpafbTemplateBuilder?.freePostTypes || [ 'post', 'page' ];
 
-const isFreePostType = ( slug ) => FREE_POST_TYPES.includes( slug );
+export const isFreePostType = ( slug ) => FREE_POST_TYPES.includes( slug );
 
-const TemplateSettingsPanel = () => {
-	const [ meta, setMeta ] = useEntityProp( 'postType', TEMPLATE_POST_TYPE, 'meta' );
-
-	const templateType = meta?._bpafb_template_type || 'post';
-
-	// Built from the site's actual viewable post types (not a hardcoded
-	// Post/Page/"Custom Post Type" placeholder) so every real post type -
-	// WooCommerce products, event CPTs, anything a theme or plugin
-	// registers - shows up by name, available or "(Pro)" depending on
-	// whether it's in FREE_POST_TYPES.
+/**
+ * Builds the "which post type can this template target" options list from
+ * the site's actual viewable post types (not a hardcoded Post/Page/"Custom
+ * Post Type" placeholder) - every real post type (WooCommerce products,
+ * event CPTs, anything a theme or plugin registers) shows up by name,
+ * available or "(Pro)" depending on whether it's in FREE_POST_TYPES.
+ * Exported so Pro's unified Template Type panel can reuse the exact same
+ * list/unlock logic instead of duplicating it (see
+ * blockive-premium-addon-for-block-pro/src/template-builder-pro/template-kind-panel.js).
+ *
+ * @return {Array<{label: string, value: string, disabled?: boolean}>}
+ */
+export function usePostTypeOptions() {
 	const postTypes = useSelect(
 		( select ) =>
 			select( 'core' )
@@ -34,7 +37,7 @@ const TemplateSettingsPanel = () => {
 		[]
 	);
 
-	const postTypeOptions = postTypes.length
+	return postTypes.length
 		? postTypes.map( ( postType ) => {
 				const free = isFreePostType( postType.slug );
 				return {
@@ -53,6 +56,13 @@ const TemplateSettingsPanel = () => {
 				{ label: __( 'Post', 'blockive-premium-addon-for-block' ), value: 'post' },
 				{ label: __( 'Page', 'blockive-premium-addon-for-block' ), value: 'page' },
 		  ];
+}
+
+const TemplateSettingsPanel = () => {
+	const [ meta, setMeta ] = useEntityProp( 'postType', TEMPLATE_POST_TYPE, 'meta' );
+
+	const templateType = meta?._bpafb_template_type || 'post';
+	const postTypeOptions = usePostTypeOptions();
 
 	return (
 		<PluginDocumentSettingPanel
