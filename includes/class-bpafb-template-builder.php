@@ -1,6 +1,6 @@
 <?php
 /**
- * Conditionally loads Template Builder editor assets.
+ * Loads the Template Builder editor files, but only when they are needed.
  *
  * @package Blockive
  */
@@ -10,19 +10,20 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueues the Template Builder JS/CSS bundle only when editing a `blockive_template`.
+ * Loads the Template Builder's JS and CSS files, only when editing a
+ * `blockive_template` post.
  */
 class Bpafb_Template_Builder
 {
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Bpafb_Template_Builder|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Bpafb_Template_Builder
 	 */
@@ -43,14 +44,14 @@ class Bpafb_Template_Builder
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -58,7 +59,7 @@ class Bpafb_Template_Builder
 	}
 
 	/**
-	 * Enqueues the Template Builder bundle, gated to the template editor only.
+	 * Loads the Template Builder files, only on the template editor screen.
 	 */
 	public function enqueue_assets()
 	{
@@ -103,18 +104,12 @@ class Bpafb_Template_Builder
 	}
 
 	/**
-	 * Every viewable post type's singular label (e.g. 'product' =>
-	 * 'Product'), for building "All Products" / "Specific Product"-style
-	 * Display Conditions wording - WordPress core's own `/wp/v2/types` REST
-	 * response doesn't include `labels.singular_name`, only the plural
-	 * `name`, so this has to be localized separately rather than read from
-	 * the block editor's own `core` data store. Includes every viewable
-	 * type regardless of Free/Pro lock state - the label text itself isn't
-	 * privileged information, only the ability to pick a locked one is.
-	 *
-	 * Not pre-filtered by `'public' => true` - see the matching comment on
-	 * bpafb_pro_all_viewable_post_types() in the Pro plugin's main file for
-	 * why that would wrongly exclude a viewable-but-not-`public` post type.
+	 * Gives the singular name for every viewable post type (like 'product'
+	 * => 'Product'), used for wording like "All Products" or "Specific
+	 * Product" in the Display Conditions settings. We need this because
+	 * the `/wp/v2/types` REST response only has the plural name, not the
+	 * singular one. This includes every viewable post type, even locked
+	 * ones - only picking a locked one is blocked, not seeing its name.
 	 *
 	 * @return array<string,string>
 	 */

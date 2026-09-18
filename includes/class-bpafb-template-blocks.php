@@ -1,7 +1,7 @@
 <?php
 /**
- * Registers the "Blockive Template" block category and gates every Template
- * Block's editor availability to the `blockive_template` editor screen.
+ * Adds the "Blockive Template" block category, and only lets Template
+ * Blocks show up in the editor when editing a `blockive_template` post.
  *
  * @package Blockive
  */
@@ -11,21 +11,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Central registry + gating for Template Blocks (block names prefixed with
- * `blockive-premium-addon-for-block/tb-`, plus any third-party block a
- * developer opts in via register_block_name()).
+ * Keeps track of every Template Block (block names starting with
+ * `blockive-premium-addon-for-block/tb-`, plus any other block a developer
+ * adds through register_block_name()) and controls where they can be used.
  *
- * These blocks are registered server-side (block.json + render.php) on every
- * request, because their render callback must work wherever a template's
- * markup ends up output on the frontend. None of them declare an
- * `editorScript` in block.json though, so WordPress never auto-enqueues an
- * editor script for them. Instead a single consolidated bundle
- * (build/template-blocks/index.js) calls registerBlockType() for all of
- * them, and that bundle is only enqueued on the Template Builder screen
- * (see enqueue_editor_assets()). Since it's the client-side registerBlockType
- * call that makes a block insertable, this keeps them out of the inserter on
- * every other post type's editor while still rendering correctly on the
- * frontend.
+ * These blocks are registered on the server (block.json + render.php) on
+ * every page load, since their render code must work wherever a template
+ * ends up shown on the live site. None of them list an `editorScript`,
+ * though. Instead, one combined file (build/template-blocks/index.js)
+ * registers all of them for the editor, and that file is only loaded on
+ * the Template Builder screen (see enqueue_editor_assets()). This is what
+ * keeps them out of the block list in every other editor.
  */
 class Bpafb_Template_Blocks
 {
@@ -40,14 +36,14 @@ class Bpafb_Template_Blocks
 	private static $extra_block_names = [];
 
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Bpafb_Template_Blocks|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Bpafb_Template_Blocks
 	 */
@@ -73,14 +69,14 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -88,30 +84,20 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Enqueues the Template Blocks' combined stylesheet - on the frontend,
-	 * and also on the Template Builder screen despite it being an admin
-	 * screen.
+	 * Loads the Template Blocks' combined CSS file. This runs on the live
+	 * site, and also on the Template Builder screen, even though that is
+	 * an admin screen.
 	 *
-	 * That second part matters: the block editor renders block content
-	 * inside a separate iframe (`editor-canvas`) for style isolation, and
-	 * WordPress only mirrors styles into that iframe when they're enqueued
-	 * via `enqueue_block_assets` (this method's hook) - NOT via
-	 * `enqueue_block_editor_assets` (see enqueue_editor_assets() below,
-	 * which is correct for the JS bundle but was previously also loading
-	 * these same stylesheets there, where they only ever reached the outer
-	 * admin document and never the iframe actually rendering block preview
-	 * markup). So this method has to run on the Template Builder screen
-	 * too, not skip it via a blanket is_admin() check, or every block's
-	 * appearance in the editor silently falls back to unstyled HTML while
-	 * the frontend renders correctly.
+	 * The block editor shows block content inside a separate iframe, kept
+	 * apart for style reasons. WordPress only copies styles into that
+	 * iframe when they are loaded with `enqueue_block_assets` (the hook
+	 * this method uses), not with `enqueue_block_editor_assets`. So we
+	 * cannot simply skip this on every admin screen, or the blocks would
+	 * show up with no styling in the editor.
 	 *
-	 * Every Template Block shares one JS bundle (see enqueue_editor_assets())
-	 * so its styles are bundled together too, rather than one CSS file per
-	 * block. Loaded unconditionally on the frontend, matching how this
-	 * plugin already loads its other global stylesheets - there is no
-	 * "render this template on the frontend" pipeline yet to key a
-	 * has_block() style check off of, so that's a follow-up optimization
-	 * once that pipeline exists.
+	 * This always loads on the live site, the same way this plugin's other
+	 * shared stylesheets do. Loading it only on pages that use the block
+	 * (with has_block()) is a possible improvement for later.
 	 */
 	public function enqueue_frontend_style()
 	{
@@ -139,9 +125,10 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Registers a block name as a Template Block so it's gated the same way
-	 * as Blockive's own (category eligibility, before/after render hooks).
-	 * Intended to be called from a `blockive_register_template_block` callback.
+	 * Marks a block name as a Template Block, so it gets the same rules as
+	 * Blockive's own Template Blocks (which category it can use, and the
+	 * before/after render hooks). Meant to be called from a
+	 * `blockive_register_template_block` callback.
 	 *
 	 * @param string $block_name Fully qualified block name, e.g. "my-plugin/my-block".
 	 */
@@ -168,26 +155,26 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Fires the extensibility hook that lets developers register their own
-	 * Template Blocks (via register_block_type() + self::register_block_name())
-	 * and Dynamic Field providers.
+	 * Fires a hook that lets other developers register their own Template
+	 * Blocks (through register_block_type() and
+	 * self::register_block_name()) and Dynamic Field providers.
 	 */
 	public function fire_registration_hook()
 	{
 		/**
-		 * Fires once during init so developers can register additional Template
-		 * Blocks. Inside the callback, register_block_type() the block as usual
-		 * and call Bpafb_Template_Blocks::register_block_name( $name ) so it's
-		 * gated to the Template Builder editor and receives the render hooks
-		 * below.
+		 * Fires once during init, so developers can register more Template
+		 * Blocks. Inside the callback, call register_block_type() as usual,
+		 * then call Bpafb_Template_Blocks::register_block_name( $name ) so
+		 * the block is limited to the Template Builder editor and gets the
+		 * render hooks below.
 		 */
 		do_action('blockive_register_template_block');
 	}
 
 	/**
-	 * Adds the "Blockive Template" block category, but only while editing a
-	 * `blockive_template` post - keeps the category out of every other
-	 * editor's inserter.
+	 * Adds the "Blockive Template" block category, but only while editing
+	 * a `blockive_template` post. This keeps the category out of every
+	 * other editor's block list.
 	 *
 	 * @param array                        $categories    Existing block categories.
 	 * @param WP_Block_Editor_Context|null $editor_context Current block editor context.
@@ -211,8 +198,8 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Enqueues the consolidated Template Blocks editor bundle, gated to the
-	 * Template Builder screen only.
+	 * Loads the combined Template Blocks editor file, only on the Template
+	 * Builder screen.
 	 */
 	public function enqueue_editor_assets()
 	{
@@ -239,15 +226,15 @@ class Bpafb_Template_Blocks
 			true
 		);
 
-		// Block appearance CSS is handled by enqueue_frontend_style() (hooked
-		// to enqueue_block_assets), not here - see that method's docblock for
-		// why: only that hook gets its styles mirrored into the block
-		// editor's iframed canvas, where these blocks actually render.
+		// The block's look and CSS is handled by enqueue_frontend_style()
+		// (hooked to enqueue_block_assets), not here. See that method's
+		// notes above for why: only that hook copies its styles into the
+		// block editor's iframe, where these blocks actually render.
 	}
 
 	/**
-	 * Fires `blockive_before_template_block_render` immediately before a
-	 * Template Block's render callback runs.
+	 * Fires `blockive_before_template_block_render` right before a
+	 * Template Block's render code runs.
 	 *
 	 * @param string|null $pre_render   Short-circuit value (left untouched).
 	 * @param array       $parsed_block The block being rendered.
@@ -258,7 +245,7 @@ class Bpafb_Template_Blocks
 		$block_name = isset($parsed_block['blockName']) ? $parsed_block['blockName'] : '';
 		if (self::is_template_block($block_name)) {
 			/**
-			 * Fires immediately before a Template Block renders.
+			 * Fires right before a Template Block renders.
 			 *
 			 * @param string $block_name Block name.
 			 * @param array  $attrs      Block attributes.
@@ -275,8 +262,8 @@ class Bpafb_Template_Blocks
 	}
 
 	/**
-	 * Fires `blockive_after_template_block_render` immediately after a
-	 * Template Block has rendered.
+	 * Fires `blockive_after_template_block_render` right after a Template
+	 * Block has rendered.
 	 *
 	 * @param string $content      Rendered block HTML.
 	 * @param array  $parsed_block The block that was rendered.
@@ -287,7 +274,7 @@ class Bpafb_Template_Blocks
 		$block_name = isset($parsed_block['blockName']) ? $parsed_block['blockName'] : '';
 		if (self::is_template_block($block_name)) {
 			/**
-			 * Fires immediately after a Template Block has rendered.
+			 * Fires right after a Template Block has rendered.
 			 *
 			 * @param string $block_name Block name.
 			 * @param string $content    Rendered block HTML.

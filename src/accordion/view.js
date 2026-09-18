@@ -1,22 +1,14 @@
 /**
- * Blockive Accordion Frontend Initialization Script
- * 
- * Sets up dynamic interactive behaviors for the Accordion Gutenberg block,
- * including accessibility toggles, icon switching, and active-state management.
- * Utilizes not(.bpafb-accordion-initialized) selector to avoid double binding.
- * 
- * @function initBlockiveAccordion
- * @returns {void}
+ * Sets up Accordion blocks on the live site. Skips any wrapper that
+ * already has the "initialized" class, so we don't add the same click
+ * events twice on the same block.
  */
 const initBlockiveAccordion = () => {
-    // Select all uninitialized accordion wrappers on the page
     const accordions = document.querySelectorAll('.bpafb-accordion-wrapper:not(.bpafb-accordion-initialized)');
 
     accordions.forEach(accordion => {
-        // Mark as initialized to prevent redundant event listeners
         accordion.classList.add('bpafb-accordion-initialized');
-        
-        // Find all accordion list items within this specific wrapper
+
         const items = accordion.querySelectorAll('.bpafb-accordion-item');
 
         items.forEach(item => {
@@ -27,7 +19,7 @@ const initBlockiveAccordion = () => {
                 const toggleItem = () => {
                     const isActive = item.classList.contains('active');
 
-                    // 1. Close all other accordion items (Single Open Behavior)
+                    // Single-open behavior: close every other item first.
                     items.forEach(otherItem => {
                         otherItem.classList.remove('active');
                         const otherContent = otherItem.querySelector('.bpafb-accordion-content');
@@ -35,20 +27,17 @@ const initBlockiveAccordion = () => {
                         const otherHeader = otherItem.querySelector('.bpafb-accordion-header');
                         if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
 
-                        // Toggle indicator icons for inactive items
                         const openIcon = otherItem.querySelector('.bpafb-icon-open');
                         const closeIcon = otherItem.querySelector('.bpafb-icon-close');
                         if (openIcon) openIcon.style.display = 'inline';
                         if (closeIcon) closeIcon.style.display = 'none';
                     });
 
-                    // 2. Toggle the selected accordion item state
                     if (!isActive) {
                         item.classList.add('active');
                         content.style.display = 'block';
                         header.setAttribute('aria-expanded', 'true');
 
-                        // Toggle indicator icons for active item
                         const openIcon = item.querySelector('.bpafb-icon-open');
                         const closeIcon = item.querySelector('.bpafb-icon-close');
                         if (openIcon) openIcon.style.display = 'none';
@@ -56,10 +45,8 @@ const initBlockiveAccordion = () => {
                     }
                 };
 
-                // Attach click event to header for expand/collapse toggle
                 header.addEventListener('click', toggleItem);
 
-                // Attach keyboard support (Enter / Space) for the same toggle
                 header.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();
@@ -71,12 +58,9 @@ const initBlockiveAccordion = () => {
     });
 };
 
-// Global flag to track initialization and prevent double execution
 let hasInitialized = false;
 
-// Register initialization based on current document loading state
 if (document.readyState === 'loading') {
-    // If DOM is still loading, wait for DOMContentLoaded event
     document.addEventListener('DOMContentLoaded', () => {
         if (!hasInitialized) {
             initBlockiveAccordion();
@@ -84,7 +68,6 @@ if (document.readyState === 'loading') {
         }
     });
 } else {
-    // If DOM has already loaded, run the initialization directly
     if (!hasInitialized) {
         initBlockiveAccordion();
         hasInitialized = true;

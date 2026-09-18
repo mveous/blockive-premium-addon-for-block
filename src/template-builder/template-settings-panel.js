@@ -7,23 +7,20 @@ import { useEntityProp } from '@wordpress/core-data';
 
 const TEMPLATE_POST_TYPE = window.bpafbTemplateBuilder?.postType || 'blockive_template';
 
-// Mirrors Bpafb_Template_Post_Type::get_free_template_types() - the PHP
-// side stays the single source of truth (it's what the frontend renderer
-// actually enforces), this is only its localized copy. A Pro build flips
-// the underlying `bpafb_free_template_types` filter to return every
-// viewable post type, which unlocks the options below automatically.
+// This is just a copy, sent from PHP, of
+// Bpafb_Template_Post_Type::get_free_template_types(). The PHP side is
+// what actually controls this on the live site. A Pro build changes the
+// `bpafb_free_template_types` filter to return every viewable post type,
+// which unlocks the options below on its own.
 const FREE_POST_TYPES = window.bpafbTemplateBuilder?.freePostTypes || [ 'post', 'page' ];
 
 export const isFreePostType = ( slug ) => FREE_POST_TYPES.includes( slug );
 
 /**
- * Builds the "which post type can this template target" options list from
- * the site's actual viewable post types (not a hardcoded Post/Page/"Custom
- * Post Type" placeholder) - every real post type (WooCommerce products,
- * event CPTs, anything a theme or plugin registers) shows up by name,
- * available or "(Pro)" depending on whether it's in FREE_POST_TYPES.
- * Exported so Pro's unified Template Type panel can reuse the exact same
- * list/unlock logic instead of duplicating it (see
+ * Builds the list of post types a template can target, using the site's
+ * real viewable post types. Each one is either open to use, or marked
+ * "(Pro)", based on FREE_POST_TYPES. This is exported so Pro's own
+ * Template Type panel can use the same list and the same rules (see
  * blockive-premium-addon-for-block-pro/src/template-builder-pro/template-kind-panel.js).
  *
  * @return {Array<{label: string, value: string, disabled?: boolean}>}

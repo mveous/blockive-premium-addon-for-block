@@ -1,6 +1,6 @@
 <?php
 /**
- * Small shared helpers reused by every Template Block's render.php.
+ * Small helper functions shared by every Template Block's render.php file.
  *
  * @package Blockive
  */
@@ -10,18 +10,18 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Keeps the repetitive "resolve which post to render" / "format a date the
- * same way everywhere" / "print an icon" logic in one place instead of
- * copy-pasted across ~40 render.php files.
+ * Keeps common jobs, like "which post should this show", "format a date
+ * the same way everywhere", and "print an icon", in one place, instead of
+ * copying the same code into around 40 render.php files.
  */
 class Bpafb_Template_Block_Render
 {
 	/**
-	 * Resolves the post id a Template Block should render, preferring the
-	 * postId supplied via block context (e.g. inside a Query Loop or a
-	 * block-based singular template) and falling back to the current post
-	 * in The Loop - which is what's in scope once a `blockive_template`'s
-	 * content is output in place of a real singular post/product/event.
+	 * Finds the post ID a Template Block should show. Uses the postId
+	 * given through the block's context first (like inside a Query Loop),
+	 * and falls back to the current post in The Loop. That fallback is
+	 * what's in use once a `blockive_template`'s content is shown in place
+	 * of a real post, product, or event.
 	 *
 	 * @param WP_Block $block Block instance (available as $block in render.php).
 	 * @return int
@@ -38,17 +38,13 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Whether a post id is a "real", viewable piece of content (post, page,
-	 * product, event, ...) rather than internal WordPress bookkeeping such as
-	 * a `revision`/autosave or the `blockive_template` post itself (which is
-	 * deliberately not publicly viewable - see Bpafb_Template_Post_Type).
-	 *
-	 * A Template Block must never resolve to one of those: e.g. a revision of
-	 * a template being fetched by the block editor (for autosave preload)
-	 * carries the same content as the template it's a revision of, so letting
-	 * a Post Content block treat it as "the post" would render that content
-	 * again - which contains the very same block - causing infinite
-	 * recursion.
+	 * Whether a post id points to real, viewable content, and not to
+	 * something internal like a revision, an autosave, or a
+	 * `blockive_template` post. A Template Block must never use one of
+	 * those by mistake. For example, a template's own revision (fetched
+	 * for autosave) holds the same content as the template. Treating that
+	 * revision as "the post" would show the same Post Content block again,
+	 * over and over, without stopping.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return bool
@@ -63,7 +59,7 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Resolves the post type the same way get_post_id() resolves the post id.
+	 * Finds the post type, using the same order of checks as get_post_id().
 	 *
 	 * @param WP_Block $block Block instance.
 	 * @return string
@@ -78,7 +74,7 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Formats a date the same way across every date-related Template Block.
+	 * Formats a date the same way in every date-related Template Block.
 	 *
 	 * @param string $mysql_date Date in MySQL/WP format (e.g. get_the_date('c', $post) or a post field).
 	 * @param string $format     PHP date format string, empty for the site default.
@@ -102,8 +98,8 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Renders an icon `<i>` tag from a Font Awesome class string, matching
-	 * the convention used by the Icon Box / Social Icons blocks.
+	 * Prints an icon `<i>` tag from a Font Awesome class string, the same
+	 * way the Icon Box and Social Icons blocks do.
 	 *
 	 * @param string $icon_class Font Awesome class(es), e.g. "fa-regular fa-calendar".
 	 * @return string
@@ -117,19 +113,14 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Validates a color attribute value before it's interpolated directly
-	 * into a `<style>` tag's CSS text - a different output context from an
-	 * HTML attribute, where `esc_attr()` alone is the right tool. `esc_attr()`
-	 * stops the value from closing the `<style>` tag early, but does nothing
-	 * about CSS-syntax characters (`{`, `}`, `;`), so e.g. a value of
-	 * `red; } body { display:none` would still break out of the intended
-	 * rule and inject arbitrary CSS. This instead only accepts values that
-	 * look like an actual CSS color: a hex code, a named color, or an
-	 * `rgb()`/`rgba()`/`hsl()`/`hsla()`/`var()` function call - anything
-	 * else (including one containing `{`, `}`, or `;`) is rejected.
+	 * Checks a color value before it is placed inside a `<style>` tag.
+	 * `esc_attr()` on its own does not stop CSS characters like `{`, `}`,
+	 * or `;` from breaking out of the rule, so this only allows values
+	 * that look like a real CSS color: a hex code, a named color, or an
+	 * rgb()/rgba()/hsl()/hsla()/var() call.
 	 *
 	 * @param string $color Color value from a block attribute.
-	 * @return string The color unchanged, or '' if it doesn't look like a safe CSS color.
+	 * @return string The color unchanged, or '' if it does not look like a safe CSS color.
 	 */
 	public static function sanitize_css_color($color)
 	{
@@ -144,11 +135,11 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
-	 * Renders a post/product/event "title" Template Block. Titles resolve
-	 * the same way for all three - products and events are both normal
-	 * WordPress post types - so the Post Title, Product Title, and Event
-	 * Title blocks share this one implementation, differing only in their
-	 * wrapper CSS class.
+	 * Renders a post, product, or event "title" Template Block. Titles
+	 * work the same way for all three - products and events are both
+	 * normal WordPress post types - so the Post Title, Product Title, and
+	 * Event Title blocks all share this same code. Only the wrapper CSS
+	 * class is different between them.
 	 *
 	 * @param WP_Block $block         Block instance (available as $block in render.php).
 	 * @param array    $attributes    Block attributes.

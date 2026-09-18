@@ -17,23 +17,19 @@ class Bpafb_Template_Post_Type
 	const POST_TYPE = 'blockive_template';
 
 	/**
-	 * Post types a template may target in the free version. Every other
-	 * viewable post type (WooCommerce products, event CPTs, any custom post
-	 * type a site registers, ...) is a Pro feature: the Template Type
-	 * control lists those options with a "(Pro)" suffix but disables them,
-	 * and get_matching_template_id() won't apply a template to them on the
-	 * frontend.
+	 * Post types a template can target in the free version. Every other
+	 * viewable post type is a Pro feature: the Template Type control shows
+	 * them with a "(Pro)" label but keeps them disabled.
 	 *
 	 * @var string[]
 	 */
 	const FREE_TEMPLATE_TYPES = ['post', 'page'];
 
 	/**
-	 * Returns the post types a template may target in this build. A Pro
-	 * build unlocks the rest by returning every viewable post type from the
-	 * `bpafb_free_template_types` filter - this is the single source of
-	 * truth shared by the editor UI, the list table, and the frontend
-	 * renderer, so unlocking happens in exactly one place.
+	 * Returns the post types a template can target in this build. A Pro
+	 * build unlocks the rest through the `bpafb_free_template_types`
+	 * filter. This is the one place the editor UI, the list table, and the
+	 * live-site code all check.
 	 *
 	 * @return string[] Post type slugs.
 	 */
@@ -49,7 +45,7 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * Whether a template targeting the given post type is available without Pro.
+	 * Whether a template for the given post type works without Pro.
 	 *
 	 * @param string $post_type Post type slug.
 	 * @return bool
@@ -60,14 +56,14 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Bpafb_Template_Post_Type|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Bpafb_Template_Post_Type
 	 */
@@ -93,14 +89,14 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -108,19 +104,13 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * Blockive Templates are registered `public => false` - they're internal
-	 * building blocks, not content meant to be browsed directly - but
-	 * `show_in_rest => true` (required for the block editor to load and
-	 * save them) makes WordPress's default REST posts controller allow
-	 * anonymous, unauthenticated reads of any published item regardless of
-	 * that `public` flag: WP_REST_Posts_Controller::get_items_permissions_check()
-	 * only checks capabilities for `context=edit` requests, not the default
-	 * `context=view` a plain GET uses. This closes that gap by requiring
-	 * the same `edit_posts` capability the admin UI already requires for
-	 * any REST route touching this post type - the block editor's own
-	 * requests are always sent by a logged-in user with that capability
-	 * (it's what got them into the Template Builder in the first place), so
-	 * they're unaffected.
+	 * Blockive Templates are set to `public => false`, but `show_in_rest
+	 * => true` (needed for the block editor) means WordPress's normal REST
+	 * API would still let anyone, even logged-out visitors, read any
+	 * published one. That is because WordPress only checks permissions
+	 * for `context=edit` requests, not the plain `context=view` a normal
+	 * GET request uses. This function closes that gap by requiring the
+	 * `edit_posts` permission for any REST request about this post type.
 	 *
 	 * @param mixed           $result  Response to replace the request with, or null to proceed normally.
 	 * @param WP_REST_Server  $server  REST server instance.
@@ -151,7 +141,7 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * Ensures required template meta fields are populated with defaults on save.
+	 * Fills in the needed template meta fields with default values on save.
 	 *
 	 * @param int     $post_id Post ID.
 	 * @param WP_Post $post    Post object.
@@ -283,10 +273,10 @@ class Bpafb_Template_Post_Type
 	}
 
 	/**
-	 * Registers the "Template Type" meta - which real post type (post,
-	 * page, product, event CPT, ...) this template is meant to be used
-	 * with. Template Blocks use it to resolve which post to preview
-	 * live data from while editing.
+	 * Registers the "Template Type" meta field, which stores the real post
+	 * type (post, page, product, event, and so on) this template is meant
+	 * for. Template Blocks use this to know which post to show live
+	 * preview data from while editing.
 	 */
 	public function register_meta()
 	{

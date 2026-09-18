@@ -19,34 +19,30 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Singleton bootstrap/loader for the free plugin.
+ * Sets up and starts the free plugin. There is only ever one of these.
  *
- * Defines the plugin constants, requires every class, and instantiates the
- * core class - deferred to `plugins_loaded` so that BPAFB_PRO_ACTIVE -
- * defined unconditionally at the very top of the Pro plugin's main file - is
- * guaranteed to already be defined by now, regardless of which of the two
- * plugins WordPress happened to load first.
+ * Sets the plugin's constants, loads every class file, and starts the core
+ * class. This all happens on `plugins_loaded`, not right away, so that
+ * BPAFB_PRO_ACTIVE - always set at the very top of Pro's main file - is
+ * already set by the time we check for it, no matter which plugin loads first.
  *
- * When Pro is active, bootstrap() defines nothing at all: no constants, no
- * classes, no hooks. Pro ships its own copies of BPAFB_PATH/BPAFB_URL/
- * BPAFB_VERSION and every class below (kept in sync from this plugin), so
- * skipping all of it here - rather than merely skipping instantiation -
- * avoids "constant already defined" / "cannot redeclare class" conflicts
- * between the two plugins' copies, and avoids the two plugins' load order
- * deciding whose BPAFB_PATH etc. wins.
+ * When Pro is active, bootstrap() does nothing at all: no constants, no
+ * classes, no hooks. Pro has its own copy of everything below. Skipping
+ * all of it, not just the class instance, stops "already defined" and
+ * "cannot redeclare" errors between the two plugins' copies.
  */
 final class Blockive_Premium_Addon_For_Block_Loader
 {
 
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Blockive_Premium_Addon_For_Block_Loader|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Blockive_Premium_Addon_For_Block_Loader
 	 */
@@ -59,7 +55,7 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	}
 
 	/**
-	 * Constructor. Defers all bootstrapping to `plugins_loaded`.
+	 * Constructor. Waits until `plugins_loaded` to start the plugin.
 	 */
 	private function __construct()
 	{
@@ -67,14 +63,14 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -82,7 +78,7 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	}
 
 	/**
-	 * Bootstraps the plugin. See the class docblock for why this is deferred.
+	 * Starts the plugin. See the note above the class for why this waits.
 	 */
 	public function bootstrap()
 	{
@@ -109,7 +105,7 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	}
 
 	/**
-	 * Shows an admin notice explaining why the free plugin has stood down.
+	 * Shows an admin notice that explains why the free plugin turned itself off.
 	 */
 	public function render_pro_active_notice()
 	{
@@ -122,5 +118,5 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	}
 }
 
-// Bootstrap the plugin (see Blockive_Premium_Addon_For_Block_Loader::bootstrap() for why this is deferred).
+// Start the plugin (see Blockive_Premium_Addon_For_Block_Loader::bootstrap() for why this waits).
 Blockive_Premium_Addon_For_Block_Loader::get_instance();

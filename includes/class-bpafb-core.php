@@ -1,12 +1,11 @@
 <?php
 /**
- * Main Class for Blockive Premium Addon For Block: block registration,
- * shared container styling, and save-time security.
+ * Main class for Blockive Premium Addon For Block. Handles block
+ * registration, shared container styling, and save-time security.
  *
- * Extracted out of the plugin's main file so both the free plugin and
- * Blockive Pro can require and instantiate this identical class - Pro syncs
- * this file verbatim rather than parsing the free plugin's whole bootstrap
- * file.
+ * This is kept in its own file, apart from the plugin's main file, so
+ * Blockive Pro can use this exact same class too. Pro copies this file
+ * as-is.
  *
  * @package Blockive
  */
@@ -19,14 +18,14 @@ class Blockive_Premium_Addon_For_Block
 {
 
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Blockive_Premium_Addon_For_Block|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Blockive_Premium_Addon_For_Block
 	 */
@@ -52,14 +51,14 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -67,7 +66,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Setup WordPress hooks.
+	 * Sets up the WordPress hooks this plugin needs.
 	 */
 	public function bpafb_setup_hooks()
 	{
@@ -82,7 +81,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Registers the block categories.
+	 * Adds our own block category to the list.
 	 *
 	 * @param array $categories Array of categories for blocks.
 	 * @return array
@@ -101,7 +100,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Registers the blocks based on the manifest.
+	 * Registers the blocks listed in the build manifest.
 	 */
 	public function bpafb_register_blocks()
 	{
@@ -116,14 +115,12 @@ class Blockive_Premium_Addon_For_Block
 
 		$registry = WP_Block_Type_Registry::get_instance();
 
-		// The `wp-scripts build --blocks-manifest` generator keys every block by its
-		// immediate folder name only, which is what WP_Block_Metadata_Registry expects
-		// to find one level under the collection root. All Template Builder blocks live
-		// two levels down (build/template-blocks/<category>/<block>/), so the manifest
-		// path above resolves to a non-existent block.json for them; WP core then leaves
-		// `$metadata['file']` null and silently skips wiring up their `render` callback.
-		// Re-register those specific blocks from their real block.json location so
-		// render.php actually runs.
+		// The manifest only looks one folder deep under the build folder.
+		// Template Builder blocks live two folders deep
+		// (build/template-blocks/<category>/<block>/), so the manifest
+		// misses them and their `render` function never gets used. We
+		// register those blocks again here, from their real block.json
+		// file, so render.php actually runs for them.
 		foreach (glob(BPAFB_PATH . 'build/template-blocks/*/*/block.json') as $bpafb_tb_json) {
 			$bpafb_tb_data = json_decode(file_get_contents($bpafb_tb_json), true);
 			if (empty($bpafb_tb_data['name'])) {
@@ -132,16 +129,11 @@ class Blockive_Premium_Addon_For_Block
 			if ($registry->is_registered($bpafb_tb_data['name'])) {
 				unregister_block_type($bpafb_tb_data['name']);
 			}
-			// The same mis-resolved nested path also breaks any script/style
-			// the block declares (e.g. Related Posts' viewScript): the wrong
-			// first pass above already registered its handle - with an
-			// empty/incorrect URL, since asset resolution fails there too -
-			// and register_block_script_handle()/register_block_style_handle()
-			// silently skip re-registering a handle that already exists. Left
-			// alone, register_block_type() below fixes the block's render
-			// callback but the broken, empty-URL handle is still what ends up
-			// enqueued on the frontend. Deregister first so the correctly
-			// resolved registration below can actually take effect.
+			// The same problem also breaks any script or style the block
+			// needs: the first pass above already registered it, but with
+			// a wrong or empty URL, and WordPress will not register the
+			// same handle twice. So we remove it here first, to let the
+			// correct version below take its place.
 			$bpafb_tb_asset_fields = [
 				'editorScript' => 'script',
 				'script'       => 'script',
@@ -156,8 +148,9 @@ class Blockive_Premium_Addon_For_Block
 				}
 				$bpafb_tb_values = is_array($bpafb_tb_data[$bpafb_tb_field]) ? $bpafb_tb_data[$bpafb_tb_field] : [$bpafb_tb_data[$bpafb_tb_field]];
 				foreach ($bpafb_tb_values as $bpafb_tb_index => $bpafb_tb_value) {
-					// Anything not using the "file:" convention is already a
-					// handle name, not a path - nothing this plugin registered.
+					// If it does not start with "file:", it is already a
+					// handle name, not a file path, so this plugin never
+					// registered it and we should leave it alone.
 					if (!is_string($bpafb_tb_value) || strpos($bpafb_tb_value, 'file:') !== 0) {
 						continue;
 					}
@@ -173,7 +166,7 @@ class Blockive_Premium_Addon_For_Block
 			register_block_type(dirname($bpafb_tb_json));
 		}
 
-		// Unregister blocks that require third-party plugins if those plugins are not active.
+		// Remove blocks that need another plugin, if that plugin is not active.
 		// Contact Form 7
 		if (!function_exists('wpcf7') && !defined('WPCF7_PLUGIN')) {
 			if ($registry->is_registered('blockive-premium-addon-for-block/contact-form-7')) {
@@ -184,7 +177,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Enqueue global assets for blocks.
+	 * Loads shared scripts and styles used by all blocks.
 	 */
 	public function bpafb_enqueue_global_assets()
 	{
@@ -200,39 +193,20 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Gives every Blockive block a default top margin on the frontend,
-	 * matching the ~24px gap the block editor already shows between blocks
-	 * via Gutenberg's own "block gap" layout support.
+	 * Adds a 24px gap above each Blockive block on the live site, to match
+	 * the gap already shown in the editor. None of this plugin's blocks
+	 * use tags like `<p>` or `<h2>`, which get a gap from the browser on
+	 * their own. Without this fix, blocks would sit right next to each
+	 * other with no space, on themes that are not block themes.
 	 *
-	 * That editor spacing comes from a mechanism
-	 * (`.is-layout-flow > * + * { margin-block-start: ... }`) that never
-	 * reaches the frontend on a classic theme, and none of this plugin's
-	 * blocks are semantic elements (they're all plain `<div>`s), so - unlike
-	 * a paragraph or heading, which gets a real margin from the browser's
-	 * own default stylesheet - two Blockive blocks placed directly next to
-	 * each other rendered with zero space between them, even though the
-	 * editor always showed a normal-looking gap.
+	 * The gap is added above each block (not below the one before it), so
+	 * it still shows up even if a block sets its own top margin to 0 (like
+	 * Post Title or Featured Image do). `:where()` gives this rule the
+	 * lowest possible weight, so a block's own margin setting always wins
+	 * over it.
 	 *
-	 * Mirrors Gutenberg's own selector shape - `previous + current`, adding
-	 * margin-top to the second block rather than margin-bottom to the
-	 * first - deliberately, not `margin-bottom` on every block: adjacent
-	 * vertical margins collapse to whichever is larger, not their sum, so a
-	 * block that deliberately zeroes its own margin (Post Title, Featured
-	 * Image both use `margin: 0`) would otherwise cancel out a
-	 * margin-bottom contributed by the block above it, leaving the block
-	 * that actually wants the gap (e.g. Related Posts, which sets no margin
-	 * of its own) stuck flush against it. Putting the margin on the
-	 * following block's own margin-top instead means it collapses against
-	 * whatever the previous block contributes and still wins (24 > 0)
-	 * regardless of which side of the pair had the explicit override.
-	 * `:where()` carries zero specificity, so a block that sets its own
-	 * margin-top still overrides this either way, on both sides of the
-	 * pair.
-	 *
-	 * Hooked to `wp_enqueue_scripts`, which - unlike `enqueue_block_assets`
-	 * - never fires in wp-admin and is never mirrored into the block
-	 * editor's iframed canvas, so this can't double up with the editor's
-	 * own block-gap spacing.
+	 * This runs on `wp_enqueue_scripts`, not `enqueue_block_assets`, so it
+	 * never loads in the editor. The editor already shows this gap on its own.
 	 */
 	public function bpafb_enqueue_frontend_block_spacing()
 	{
@@ -247,7 +221,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Enqueue script for block editor container settings.
+	 * Loads the script for the block editor's "Advanced" tab settings.
 	 */
 	public function bpafb_enqueue_editor_assets()
 	{
@@ -269,10 +243,10 @@ class Blockive_Premium_Addon_For_Block
 			true
 		);
 
-		// Lets AdvancedTab (bundled separately per block) know whether the
-		// current user may use the Custom CSS field. This only controls the
-		// editor UI; the actual security boundary is enforced server-side at
-		// save time, see bpafb_strip_unauthorized_custom_css().
+		// Tells the Advanced tab, in the editor, whether the current user
+		// is allowed to use the Custom CSS field. This only changes what
+		// the editor shows. The real check happens on the server when the
+		// post is saved - see bpafb_strip_unauthorized_custom_css().
 		wp_localize_script(
 			'bpafb-editor-container-settings',
 			'bpafbEditorSettings',
@@ -283,7 +257,8 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Filter block rendering on frontend to apply container styles.
+	 * Adds container styles (like padding, background, border) to a
+	 * block's HTML when it is shown on the live site.
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block record.
@@ -291,14 +266,14 @@ class Blockive_Premium_Addon_For_Block
 	 */
 	public function bpafb_render_block_container($block_content, $block)
 	{
-		// Only target blocks from blockive-premium-addon-for-block namespace
+		// Only change blocks from this plugin.
 		if (empty($block['blockName']) || strpos($block['blockName'], 'blockive-premium-addon-for-block/') !== 0) {
 			return $block_content;
 		}
 
 		$attrs = isset($block['attrs']) ? $block['attrs'] : [];
 
-		// Check if any Advanced-tab attributes are set at all (see src/components/advanced-tab).
+		// Check if any Advanced tab settings are turned on at all (see src/components/advanced-tab).
 		$has_container_settings = false;
 		foreach ($attrs as $key => $value) {
 			if (strpos($key, 'bpafb') === 0 && $value !== null && $value !== '' && $value !== false) {
@@ -326,14 +301,14 @@ class Blockive_Premium_Addon_For_Block
 				$classes[] = 'bpafb-align-' . $align;
 			}
 		} else {
-			// Apply alignment even without custom width if explicitly set
+			// Still use the alignment setting even if no custom width is set.
 			if (isset($attrs['bpafbContainerAlign'])) {
 				$align = $attrs['bpafbContainerAlign'];
 				if ($align === 'left' || $align === 'center' || $align === 'right') {
 					$classes[] = 'bpafb-align-' . $align;
 				}
 			} else {
-				// Fallback to custom margins left/right
+				// If neither is set, fall back to left/right margins.
 				if (isset($attrs['bpafbContainerMarginLeft'])) {
 					$styles[] = 'margin-left: ' . intval($attrs['bpafbContainerMarginLeft']) . 'px;';
 				}
@@ -401,7 +376,7 @@ class Blockive_Premium_Addon_For_Block
 			$styles[] = 'border-radius: ' . intval($attrs['bpafbContainerBorderRadius']) . 'px;';
 		}
 
-		// Shadow (normal + hover, hover applied via CSS class since PHP can't do :hover)
+		// Shadow (normal and hover; hover is done with a CSS class, since PHP can't check for a mouse hover)
 		if (!empty($attrs['bpafbContainerBoxShadow'])) {
 			$color = !empty($attrs['bpafbContainerShadowColor']) ? $attrs['bpafbContainerShadowColor'] : 'rgba(0,0,0,0.1)';
 			$blur = isset($attrs['bpafbContainerShadowBlur']) ? intval($attrs['bpafbContainerShadowBlur']) : 10;
@@ -459,7 +434,8 @@ class Blockive_Premium_Addon_For_Block
 		}
 
 		if ($has_transform && empty($attrs['bpafbDisplay'])) {
-			// Transforms require a non-inline display type to work on the frontend
+			// Rotate/scale/move only work on the live site if display is
+			// not "inline", so we set it to "block" here.
 			$styles[] = 'display: block;';
 		}
 
@@ -495,7 +471,7 @@ class Blockive_Premium_Addon_For_Block
 			$styles[] = '--bpafb-anim-easing: ' . esc_attr($easing) . ';';
 		}
 
-		// Unique id used to scope custom CSS / responsive overrides to this block instance.
+		// Unique ID used to keep custom CSS and responsive settings tied to just this block.
 		$extra_style_tag = '';
 		if ($uid) {
 			$classes[] = 'bpafb-uid-' . $uid;
@@ -524,13 +500,12 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Injects FAQPage JSON-LD schema for the Blockive FAQ block at render time.
-	 *
-	 * The FAQ block is static (its visible markup is generated client-side in
-	 * save.js), but the schema is generated here instead, so it is never part
-	 * of the saved post_content and is therefore never subject to the
-	 * save-time wp_kses_post() filter, which strips <script> tags for any
-	 * user without the unfiltered_html capability.
+	 * Adds FAQPage schema markup (for search engines) to the Blockive FAQ
+	 * block, when the page is shown. The FAQ block's own HTML is built in
+	 * save.js and stored with the post. We build the schema here instead
+	 * of storing it, so it never gets stripped by the save-time
+	 * wp_kses_post() filter, which removes <script> tags for users who
+	 * don't have the unfiltered_html permission.
 	 *
 	 * @param string   $block_content The block content.
 	 * @param array    $block         The block record.
@@ -546,8 +521,9 @@ class Blockive_Premium_Addon_For_Block
 			return $block_content;
 		}
 
-		// Note: WP_Block only defines __get() (not __isset()), so isset($instance->attributes)
-		// would always evaluate false regardless of the real value. Access it directly instead.
+		// Note: WP_Block has a __get() method but no __isset() method, so
+		// isset($instance->attributes) would always say false, even when
+		// it has a value. We read it directly instead.
 		$attrs = $instance instanceof WP_Block ? $instance->attributes : (isset($block['attrs']) ? $block['attrs'] : []);
 		$items = isset($attrs['items']) && is_array($attrs['items']) ? $attrs['items'] : [];
 
@@ -583,7 +559,7 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Builds a <style> block for tablet/mobile responsive padding & margin overrides.
+	 * Builds a <style> block for tablet and mobile padding and margin settings.
 	 *
 	 * @param array  $attrs Block attributes.
 	 * @param string $uid   Unique id used to scope the selector.
@@ -618,23 +594,18 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Strips Blockive's per-block Custom CSS attribute (bpafbCustomCss) from
-	 * post content on save for users who lack the capability WordPress uses
-	 * to gate unfiltered/raw content in post bodies.
+	 * Removes Blockive's Custom CSS setting (bpafbCustomCss) from post
+	 * content when it is saved, if the user does not have the
+	 * unfiltered_html permission.
 	 *
-	 * This runs at save time, not render time: the capability that matters
-	 * is the *saving* author's, not the frontend visitor's. render_block
-	 * runs for every visitor on every page view, and anonymous visitors
-	 * never have unfiltered_html, so gating there would silently break
-	 * Custom CSS for every authorized author's content on the frontend.
-	 *
-	 * Block attributes stored in the `<!-- wp:... {...} -->` comment
-	 * delimiter are not passed through wp_kses_post() the way visible post
-	 * content is (WordPress core allows block comments through kses so
-	 * blocks keep working for users without unfiltered_html), so
-	 * bpafbCustomCss needs its own gate here -- otherwise a user with only
-	 * edit_posts could set it directly via the REST API content field,
-	 * bypassing the editor UI entirely.
+	 * This check runs when the post is saved, not when it is shown. What
+	 * matters is the permission of the person *saving* the post. Visitors
+	 * to the live site never have unfiltered_html, so checking at that
+	 * point would break Custom CSS for every author who is allowed to use
+	 * it. Also, the block settings stored in the `<!-- wp:... -->` comment
+	 * are not cleaned by wp_kses_post() the way normal post content is. So
+	 * without this check, a user with only the edit_posts permission could
+	 * set Custom CSS directly through the REST API, skipping the editor.
 	 *
 	 * @param string $content Raw post content about to be saved.
 	 * @return string
@@ -645,11 +616,10 @@ class Blockive_Premium_Addon_For_Block
 			return $content;
 		}
 
-		// Cheap guard so this only does block-parsing work on content that
-		// could actually contain the attribute (serialize_block omits
-		// attributes matching their block.json default, and the default is
-		// an empty string, so a non-empty value is the only way this
-		// substring appears).
+		// A quick check so we only do the slower block-parsing work when
+		// the content might actually have this setting. WordPress leaves
+		// out an attribute when it matches its default value (an empty
+		// string here), so this text only appears when there is a real value.
 		if (strpos($content, 'bpafbCustomCss') === false) {
 			return $content;
 		}
@@ -664,8 +634,8 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Recursively clears bpafbCustomCss from every Blockive block in a
-	 * parsed block tree, including nested innerBlocks.
+	 * Clears bpafbCustomCss from every Blockive block in a parsed block
+	 * tree, including blocks nested inside other blocks.
 	 *
 	 * @param array $blocks Parsed block tree (as returned by parse_blocks()).
 	 * @return array
@@ -687,8 +657,8 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Builds the scoped Custom CSS <style> block for a block instance.
-	 * Users write CSS using the literal word "selector" to target the block wrapper.
+	 * Builds the Custom CSS <style> block for one block. Users type the
+	 * word "selector" in their CSS to mean "this block's own wrapper".
 	 *
 	 * @param array  $attrs Block attributes.
 	 * @param string $uid   Unique id used to scope the selector.
@@ -708,19 +678,16 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
-	 * Helper function to inject style, class, id and data-* attributes into the first tag of HTML content.
+	 * Adds style, class, id, and data-* attributes onto the first tag of
+	 * a block's HTML.
 	 *
-	 * Escaping boundary: $classes_to_add, $id, and every value in $data_attrs
-	 * are expected RAW (not yet esc_attr()'d) - this function is what
-	 * escapes them, via esc_attr() at each point they're written into the
-	 * attribute string below. This is the opposite convention from
-	 * $new_styles_str, whose individual values the caller
-	 * (bpafb_render_block_container()) already esc_attr()'d before building
-	 * the combined style string, to avoid double-encoding entities like `&`
-	 * (see the note further down in this function). Callers passing a new
-	 * Advanced-tab attribute through here must know which bucket it falls
-	 * into - raw values only ever belong in $classes_to_add/$id/$data_attrs,
-	 * never appended into $new_styles_str.
+	 * A note on escaping: $classes_to_add, $id, and $data_attrs must be
+	 * passed in as raw, un-escaped text - this function runs esc_attr() on
+	 * them itself. $new_styles_str works the other way round: the caller
+	 * already ran esc_attr() on each value before joining them together,
+	 * to avoid escaping something like `&` twice. So if you add a new
+	 * Advanced-tab attribute here, make sure raw values only ever go into
+	 * $classes_to_add, $id, or $data_attrs, never into $new_styles_str.
 	 *
 	 * @param string $html             The original HTML content.
 	 * @param string $new_styles_str   The new inline styles to inject - pre-escaped by the caller.
@@ -731,10 +698,10 @@ class Blockive_Premium_Addon_For_Block
 	 */
 	private function bpafb_inject_styles($html, $new_styles_str, $classes_to_add = '', $id = '', $data_attrs = [])
 	{
-		// Some render.php templates emit a local <style> tag (e.g. hover-color
-		// rules) before their actual wrapper element. Skip past any such
-		// leading <style>...</style> blocks so the match below targets the
-		// block's real root element instead of the style tag.
+		// Some render.php files print their own <style> tag (like hover
+		// color rules) before the block's real wrapper. We skip past any
+		// of these <style> blocks first, so the match below finds the
+		// real wrapper element, not the style tag.
 		$search_html = $html;
 		$prefix_len = 0;
 		while (preg_match('/^\s*<style\b[^>]*>.*?<\/style>/is', $search_html, $style_match)) {
@@ -746,11 +713,12 @@ class Blockive_Premium_Addon_For_Block
 			$tag = $matches[1];
 			$attributes_str = $matches[2];
 
-			// Check if style attribute already exists.
-			// Note: $existing_styles is extracted from already-rendered HTML (already
-			// attribute-safe), and $new_styles_str's individual values were already
-			// esc_attr()'d when built in bpafb_render_block_container(); re-escaping
-			// the combined string here would double-encode entities like `&`.
+			// Check if a style attribute already exists.
+			// Note: $existing_styles comes from HTML that was already
+			// rendered, so it is already safe. $new_styles_str was also
+			// already run through esc_attr() when it was built, in
+			// bpafb_render_block_container(). Escaping either one again
+			// here would turn something like `&` into `&amp;amp;`.
 			if ($new_styles_str && preg_match('/style=["\']([^"\']*)["\']/i', $attributes_str, $style_matches)) {
 				$existing_styles = rtrim(trim($style_matches[1]), ';') . ';';
 				$updated_styles = $existing_styles . ' ' . $new_styles_str;
@@ -761,7 +729,7 @@ class Blockive_Premium_Addon_For_Block
 				$new_attributes_str = $attributes_str;
 			}
 
-			// Also add a custom container class
+			// Also add our own container class.
 			if ($classes_to_add && preg_match('/class=["\']([^"\']*)["\']/i', $new_attributes_str, $class_matches)) {
 				$updated_classes = trim($class_matches[1]) . ' ' . $classes_to_add;
 				$new_attributes_str = preg_replace('/class=["\']([^"\']*)["\']/i', 'class="' . esc_attr($updated_classes) . '"', $new_attributes_str);
@@ -769,7 +737,7 @@ class Blockive_Premium_Addon_For_Block
 				$new_attributes_str = $new_attributes_str . ' class="' . esc_attr($classes_to_add) . '"';
 			}
 
-			// Add an id only if the wrapper doesn't already have one.
+			// Only add an id if the wrapper does not already have one.
 			if ($id && !preg_match('/\sid=["\']/i', $new_attributes_str)) {
 				$new_attributes_str .= ' id="' . esc_attr($id) . '"';
 			}

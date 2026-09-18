@@ -1,21 +1,15 @@
 import { useSelect } from '@wordpress/data';
 
 /**
- * Live-preview data source for Template Blocks.
+ * Gives Template Blocks something real to preview with, in the editor.
  *
- * While editing a `blockive_template` there is no real post being displayed
- * (the CPT being edited is the template itself), so every Template Block
- * needs a stand-in post to preview against. This hook fetches the most
- * recently published entity record of the given post type so blocks can show
- * real dynamic data in the editor; callers should fall back to static
- * placeholder content (e.g. "Sample Post Title") when `record` is null.
+ * While editing a `blockive_template`, there is no real post being shown,
+ * so each Template Block needs a stand-in post to preview. This gets the
+ * newest published post of the given type. If `record` comes back null,
+ * the block should show plain placeholder text instead.
  *
- * @param {string} [forcedPostType] Post type to preview, e.g. 'product' for
- *                                  WooCommerce blocks or the detected events
- *                                  CPT for Event blocks. When omitted, the
- *                                  post type configured on the template being
- *                                  edited (Template Settings > Template Type)
- *                                  is used, defaulting to 'post'.
+ * @param {string} [forcedPostType] Post type to preview. Defaults to the
+ *                                  template's own set type, or 'post'.
  * @return {{ postType: string, record: Object|null, isResolving: boolean }}
  */
 export default function usePreviewContext( forcedPostType ) {
@@ -51,9 +45,9 @@ export default function usePreviewContext( forcedPostType ) {
 }
 
 /**
- * Pulls the featured image URL (at the given size, falling back to full) out
- * of a preview record's embedded `wp:featuredmedia`, mirroring the shape
- * `_embed` produces via the REST API.
+ * Gets the featured image URL, at the given size (or the full size if that
+ * one is not found), from a preview record's `wp:featuredmedia` data. This
+ * is the same shape the REST API returns with `_embed: true`.
  *
  * @param {Object|null} record Entity record fetched with `_embed: true`.
  * @param {string}      [size] Preferred image size key, e.g. 'medium'.
@@ -72,7 +66,7 @@ export function getEmbeddedFeaturedImageUrl( record, size = 'full' ) {
 }
 
 /**
- * Pulls the embedded author display name out of a preview record.
+ * Gets the author's display name from a preview record.
  *
  * @param {Object|null} record Entity record fetched with `_embed: true`.
  * @return {string|null}

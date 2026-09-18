@@ -1,20 +1,18 @@
 /**
- * Consolidated editor bundle for every Blockive Template Block.
+ * One combined file for the editor code of every Blockive Template Block.
  *
- * Deliberately the ONLY place that calls registerBlockType() for these
- * blocks. Each block's block.json has no `editorScript`, so WordPress never
- * auto-enqueues an editor script for it on Posts/Pages/Products/other
- * editors; this bundle is manually enqueued only on the `blockive_template`
- * editor screen (see Bpafb_Template_Blocks::enqueue_editor_assets), which is
- * what keeps these blocks out of every other editor's inserter while their
- * render.php still works wherever a template ends up rendered on the
- * frontend.
+ * This is the only place that calls registerBlockType() for these blocks.
+ * Their block.json files do not list an `editorScript`. Instead, this file
+ * is loaded by hand, only on the `blockive_template` editor screen (see
+ * Bpafb_Template_Blocks::enqueue_editor_assets). That is what keeps these
+ * blocks out of every other editor's block list, while render.php still
+ * works wherever a template is shown on the live site.
  */
 import './style.css';
 
 // Post / Core Template Blocks.
 import './post';
 
-// Pro-only Template Blocks (WooCommerce, Events, Dynamic Field): teaser
-// placeholders only, advertising the "(Pro)" feature in the inserter.
+// Pro-only Template Blocks (WooCommerce, Events, Dynamic Field). These are
+// just locked "(Pro)" placeholders here, shown in the block list.
 import './pro-teasers';

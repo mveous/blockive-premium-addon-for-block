@@ -1,6 +1,6 @@
 <?php
 /**
- * Stores and matches the "where should this template apply" rules for the
+ * Stores and checks the "where should this template apply" rules for the
  * `blockive_template` post type.
  *
  * @package Blockive
@@ -11,9 +11,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Registers the display-condition meta fields and resolves, for a given
- * real-world post, which published Blockive Template (if any) should
- * replace its frontend output.
+ * Registers the display-condition meta fields, and, for a given real post,
+ * works out which published Blockive Template (if any) should replace it
+ * on the live site.
  */
 class Bpafb_Template_Display_Conditions
 {
@@ -27,11 +27,10 @@ class Bpafb_Template_Display_Conditions
 	const META_HIDE_POST_NAV  = '_bpafb_hide_post_nav';
 
 	/**
-	 * Whether the "specific posts/pages" display condition scope is
-	 * available in this build. Free version templates can only apply to
-	 * "All" of their target post type; a Pro build flips this on via the
-	 * `bpafb_specific_display_condition_enabled` filter - the single source
-	 * of truth shared by the editor UI and the frontend matcher.
+	 * Whether the "specific posts/pages" display condition is turned on in
+	 * this build. Free templates can only apply to "All" of their target
+	 * post type. Pro turns this on through the
+	 * `bpafb_specific_display_condition_enabled` filter.
 	 *
 	 * @return bool
 	 */
@@ -41,14 +40,14 @@ class Bpafb_Template_Display_Conditions
 	}
 
 	/**
-	 * The single instance of this class.
+	 * The one and only instance of this class.
 	 *
 	 * @var Bpafb_Template_Display_Conditions|null
 	 */
 	private static $instance = null;
 
 	/**
-	 * Retrieves (creating if necessary) the single instance of this class.
+	 * Gives back the one instance of this class, making it first if needed.
 	 *
 	 * @return Bpafb_Template_Display_Conditions
 	 */
@@ -69,14 +68,14 @@ class Bpafb_Template_Display_Conditions
 	}
 
 	/**
-	 * Prevents cloning of the instance.
+	 * Stops this class from being copied.
 	 */
 	private function __clone()
 	{
 	}
 
 	/**
-	 * Prevents unserializing of the instance.
+	 * Stops this class from being restored from stored data.
 	 */
 	public function __wakeup()
 	{
@@ -84,10 +83,10 @@ class Bpafb_Template_Display_Conditions
 	}
 
 	/**
-	 * Registers the display-condition meta. Defaults to a scope of
-	 * "specific" with an empty id list, so a newly created template applies
-	 * nowhere until a site owner deliberately assigns it - never silently
-	 * overrides real pages.
+	 * Registers the display-condition meta fields. Starts with a scope of
+	 * "specific" and an empty list of IDs, so a new template applies
+	 * nowhere until a site owner picks where it should show. It should
+	 * never take over real pages on its own.
 	 */
 	public function register_meta()
 	{
@@ -134,9 +133,9 @@ class Bpafb_Template_Display_Conditions
 			'auth_callback' => $auth_callback,
 		]);
 
-		// Title/featured-image suppression defaults to true (hidden) so
-		// existing templates keep behaving exactly as before this setting
-		// existed - it's opt-out, not opt-in.
+		// Hiding the title and featured image defaults to true (on), so
+		// templates made before this setting existed keep working exactly
+		// as before. Site owners can turn it off, but it starts on.
 		register_post_meta($post_type, self::META_HIDE_TITLE, [
 			'type'          => 'boolean',
 			'single'        => true,
@@ -171,10 +170,11 @@ class Bpafb_Template_Display_Conditions
 	}
 
 	/**
-	 * Finds the best-matching published Blockive Template for a given real
-	 * post, if any. A "specific" assignment always outranks an "all" one for
-	 * the same post type; ties are broken by the lowest priority number
-	 * (same convention as WordPress hook priorities).
+	 * Finds the best matching published Blockive Template for a real post,
+	 * if any exist. A "specific" template always wins over an "all"
+	 * template for the same post type. If more than one still matches, the
+	 * one with the lowest priority number wins (same rule WordPress uses
+	 * for hook priority).
 	 *
 	 * @param string $post_type Real post's post type (e.g. 'post', 'product').
 	 * @param int    $post_id   Real post's ID.
@@ -182,10 +182,10 @@ class Bpafb_Template_Display_Conditions
 	 */
 	public static function get_matching_template_id($post_type, $post_id)
 	{
-		// Templates for anything beyond the free post types are a Pro
-		// feature. Existing templates keep their saved Template Type (the
-		// data is never rewritten) - they simply don't take over the
-		// frontend until Pro unlocks the type.
+		// Templates for any post type beyond the free ones are a Pro
+		// feature. An existing template keeps its saved Template Type -
+		// we never change that data - it just does not take over the live
+		// site until Pro unlocks that post type.
 		if (!Bpafb_Template_Post_Type::is_free_template_type($post_type)) {
 			return 0;
 		}
@@ -213,15 +213,11 @@ class Bpafb_Template_Display_Conditions
 				],
 			];
 
-		// A Pro build's Template Kind meta (_bpafb_template_kind) marks
-		// templates meant for a header/footer/archive/etc. location rather
-		// than this singular-content override. Those are matched by Pro's
-		// own resolver against a different set of conditions entirely, so
-		// they must never also compete here for "which template overrides
-		// this post's content" - the exclusion below applies regardless of
-		// whether Pro is even installed, since it only reads meta by key.
-		// Absent/empty (no Pro, or a template saved before this meta
-		// existed) counts as "single" so nothing already-working changes.
+		// Pro's Template Kind meta (_bpafb_template_kind) marks templates
+		// meant for a header, footer, archive, or similar spot, rather
+		// than this single-post override. Those must never be picked here.
+		// A blank or missing value counts as "single", so nothing that
+		// already works changes.
 		$kind_clause = [
 			'relation' => 'OR',
 			[
@@ -263,9 +259,9 @@ class Bpafb_Template_Display_Conditions
 			$priority = get_post_meta($template->ID, self::META_PRIORITY, true);
 			$priority = ($priority === '' || $priority === false) ? 10 : (int) $priority;
 
-			// A saved "specific" scope (e.g. from a prior Pro install) never
-			// takes effect in the free version - falls through to "all"
-			// matching instead of being skipped outright, same as any other
+			// A saved "specific" scope (for example, from a past Pro
+			// install) never works in the free version. It is treated as
+			// "all" here instead of being skipped, the same as any other
 			// template with scope "all".
 			if ($scope === 'specific' && !self::is_specific_scope_enabled()) {
 				$scope = 'all';
