@@ -214,9 +214,29 @@ class Bpafb_Template_Frontend_Render
 	];
 
 	/**
+	 * The single instance of this class.
+	 *
+	 * @var Bpafb_Template_Frontend_Render|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * Retrieves (creating if necessary) the single instance of this class.
+	 *
+	 * @return Bpafb_Template_Frontend_Render
+	 */
+	public static function get_instance()
+	{
+		if (null === self::$instance) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * Constructor.
 	 */
-	public function __construct()
+	private function __construct()
 	{
 		add_action('template_redirect', [$this, 'resolve_matched_template']);
 		// Priority PHP_INT_MAX: page builders (Elementor, Divi, ...) hook
@@ -250,6 +270,21 @@ class Bpafb_Template_Frontend_Render
 		add_action('wp_head', [$this, 'print_hide_title_meta_css']);
 		$this->register_sidebar_layout_adapter();
 		$this->register_post_nav_adapter();
+	}
+
+	/**
+	 * Prevents cloning of the instance.
+	 */
+	private function __clone()
+	{
+	}
+
+	/**
+	 * Prevents unserializing of the instance.
+	 */
+	public function __wakeup()
+	{
+		throw new \Exception('Cannot unserialize a singleton.');
 	}
 
 	/**

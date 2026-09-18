@@ -40,9 +40,29 @@ class Bpafb_Template_Blocks
 	private static $extra_block_names = [];
 
 	/**
+	 * The single instance of this class.
+	 *
+	 * @var Bpafb_Template_Blocks|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * Retrieves (creating if necessary) the single instance of this class.
+	 *
+	 * @return Bpafb_Template_Blocks
+	 */
+	public static function get_instance()
+	{
+		if (null === self::$instance) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * Constructor.
 	 */
-	public function __construct()
+	private function __construct()
 	{
 		add_filter('block_categories_all', [$this, 'register_category'], 10, 2);
 		add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_assets'], 20);
@@ -50,6 +70,21 @@ class Bpafb_Template_Blocks
 		add_action('init', [$this, 'fire_registration_hook'], 20);
 		add_filter('pre_render_block', [$this, 'before_render'], 10, 2);
 		add_filter('render_block', [$this, 'after_render'], 10, 2);
+	}
+
+	/**
+	 * Prevents cloning of the instance.
+	 */
+	private function __clone()
+	{
+	}
+
+	/**
+	 * Prevents unserializing of the instance.
+	 */
+	public function __wakeup()
+	{
+		throw new \Exception('Cannot unserialize a singleton.');
 	}
 
 	/**
