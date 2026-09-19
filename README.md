@@ -69,6 +69,18 @@ The plugin includes **16 dynamic template blocks** specifically designed for sin
 
 ---
 
+## Blockive Pro
+
+[Blockive Pro](https://mveous.com) is a standalone plugin (this free plugin isn't required alongside it) that adds on top of everything here:
+
+- **3 more blocks**: Mega Menu, Menu, and Loop Grid.
+- **Full Template Builder**: Header, Footer, Archive, Search Results, 404, and Popup templates, in addition to the Single post/page templates built with this free plugin.
+- **17 WooCommerce and 9 Events template blocks** for custom product and event pages.
+- **Dynamic Tags**: `{{tag}}` tokens in any text or URL field on any block.
+- **Admin bar "Edit Template" quick access** and premium support.
+
+---
+
 ## Development Setup
 
 The project uses the official `@wordpress/scripts` toolchain for bundling, linting, and formatting.
