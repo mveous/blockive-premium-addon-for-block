@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wpml-config>
+	<gutenberg-blocks>
+		<gutenberg-block type="blockive-premium-addon-for-block/heading" translate="1">
+			<key name="content" />
+			<key name="link" type="link" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/button" translate="1">
+			<key name="text" />
+			<key name="url" type="link" />
+			<key name="badgeText" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/drop-caps" translate="1">
+			<key name="content" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/accordion" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="title" />
+					<key name="content" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/faq" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="title" />
+					<key name="content" />
+				</key>
+			</key>
+			<key name="headingText" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tabs" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="title" />
+					<key name="content" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/image-accordion" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="title" />
+					<key name="content" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/icon-box" translate="1">
+			<key name="title" />
+			<key name="description" />
+			<key name="url" type="link" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/image-box" translate="1">
+			<key name="title" />
+			<key name="description" />
+			<key name="imageAlt" />
+			<key name="linkText" />
+			<key name="linkUrl" type="link" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/funfact" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="title" />
+					<key name="prefix" />
+					<key name="suffix" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/progress-bar" translate="1">
+			<key name="title" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/countdown-timer" translate="1">
+			<key name="labelDays" />
+			<key name="labelHours" />
+			<key name="labelMinutes" />
+			<key name="labelSeconds" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/pie-chart" translate="1">
+			<key name="chartData">
+				<key name="*">
+					<key name="label" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/pricing-table" translate="1">
+			<key name="tables">
+				<key name="*">
+					<key name="title" />
+					<key name="subtitle" />
+					<key name="featuredBadge" />
+					<key name="currency" />
+					<key name="price" />
+					<key name="period" />
+					<key name="buttonText" />
+					<key name="buttonUrl" type="link" />
+					<key name="features">
+						<key name="*">
+							<key name="text" />
+						</key>
+					</key>
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/social-icons" translate="1">
+			<key name="items">
+				<key name="*">
+					<key name="link" type="link" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/team" translate="1">
+			<key name="members">
+				<key name="*">
+					<key name="name" />
+					<key name="role" />
+					<key name="bio" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/testimonial" translate="1">
+			<key name="testimonials">
+				<key name="*">
+					<key name="name" />
+					<key name="designation" />
+					<key name="content" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/business-hours" translate="1">
+			<key name="title" />
+			<key name="hours">
+				<key name="*">
+					<key name="closedText" />
+				</key>
+			</key>
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/image-comparison" translate="1">
+			<key name="beforeLabel" />
+			<key name="afterLabel" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/contact-form-7" translate="1">
+			<key name="formId" type="post-ids" sub-type="wpcf7_contact_form" />
+			<key name="title" />
+			<key name="description" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/mailchimp" translate="1">
+			<key name="title" />
+			<key name="subtitle" />
+			<key name="placeholderText" />
+			<key name="buttonText" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/lottie" translate="1">
+			<key name="linkUrl" type="link" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/video" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/post-grid" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/category-list" translate="0"/>
+
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-author" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-author-avatar" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-breadcrumbs" translate="1">
+			<key name="separator" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-categories" translate="1">
+			<key name="separator" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-comments-count" translate="1">
+			<key name="format" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-featured-image" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-featured-video" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-modified-date" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-post-content" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-post-meta" translate="1">
+			<key name="separator" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-post-title" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-previous-next-navigation" translate="1">
+			<key name="prevLabel" />
+			<key name="nextLabel" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-publish-date" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-reading-time" translate="1">
+			<key name="prefix" />
+			<key name="suffix" />
+		</gutenberg-block>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-related-posts" translate="0"/>
+		<gutenberg-block type="blockive-premium-addon-for-block/tb-tags" translate="1">
+			<key name="separator" />
+		</gutenberg-block>
+	</gutenberg-blocks>
+	<custom-types>
+		<custom-type translate="1">blockive_template</custom-type>
+	</custom-types>
+</wpml-config>
