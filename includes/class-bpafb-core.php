@@ -672,7 +672,15 @@ class Blockive_Premium_Addon_For_Block
 
 		$css = wp_strip_all_tags($attrs['bpafbCustomCss']);
 		$css = str_replace('</style', '', $css);
-		$css = str_replace('selector', '.bpafb-uid-' . $uid, $css);
+		// Not str_replace(): a plain substring match would also mangle
+		// "selector" inside an unrelated CSS identifier in the user's own
+		// CSS, e.g. ".my-selector-box". \b alone isn't enough either, since
+		// "-" isn't a word character, so \b still matches on either side of
+		// it - the lookaround checks for a CSS identifier character
+		// (letter/digit/_/-) instead, on both sides.
+		$css = preg_replace_callback('/(?<![\w-])selector(?![\w-])/', function () use ($uid) {
+			return '.bpafb-uid-' . $uid;
+		}, $css);
 
 		return '<style>' . $css . '</style>';
 	}

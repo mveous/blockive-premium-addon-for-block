@@ -842,9 +842,11 @@ class Bpafb_Template_Frontend_Render
 
 		self::$is_rendering = true;
 
-		$rendered = do_blocks($template_post->post_content);
-
-		self::$is_rendering = false;
+		try {
+			$rendered = do_blocks($template_post->post_content);
+		} finally {
+			self::$is_rendering = false;
+		}
 
 		return '<div class="bpafb-template-render">' . $rendered . '</div>';
 	}
@@ -872,8 +874,11 @@ class Bpafb_Template_Frontend_Render
 			$template_post = get_post($template_id);
 			if ($template_post && !empty($template_post->post_content)) {
 				self::$is_rendering = true;
-				$rendered = do_blocks($template_post->post_content);
-				self::$is_rendering = false;
+				try {
+					$rendered = do_blocks($template_post->post_content);
+				} finally {
+					self::$is_rendering = false;
+				}
 				echo '<div class="bpafb-template-render">' . $rendered . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}, 1);
@@ -935,8 +940,12 @@ class Bpafb_Template_Frontend_Render
 		}
 
 		self::$is_rendering = true;
-		$rendered = do_blocks($template_post->post_content);
-		self::$is_rendering = false;
+
+		try {
+			$rendered = do_blocks($template_post->post_content);
+		} finally {
+			self::$is_rendering = false;
+		}
 
 		return '<div class="bpafb-template-render">' . $rendered . '</div>';
 	}

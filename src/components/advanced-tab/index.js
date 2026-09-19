@@ -106,6 +106,7 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 		bpafbContainerBgColor = '',
 		bpafbContainerBgGradient = '',
 		bpafbContainerBgImageUrl = '',
+		bpafbContainerBgImageId = 0,
 		bpafbContainerBgImageSize = 'cover',
 		bpafbContainerOverlayColor = '',
 		bpafbContainerBorderStyle = 'none',
@@ -322,6 +323,7 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 							bgColor: bpafbContainerBgColor,
 							bgGradient: bpafbContainerBgGradient,
 							bgImageUrl: bpafbContainerBgImageUrl,
+							bgImageId: bpafbContainerBgImageId,
 							bgImageSize: bpafbContainerBgImageSize,
 							overlayColor: bpafbContainerOverlayColor,
 						} }
