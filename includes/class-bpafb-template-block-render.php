@@ -135,6 +135,25 @@ class Bpafb_Template_Block_Render
 	}
 
 	/**
+	 * Checks a CSS gradient value before it is placed in an inline style
+	 * or <style> tag.
+	 *
+	 * @param string $gradient Gradient value from a block attribute.
+	 * @return string The gradient unchanged, or '' if not safe.
+	 */
+	public static function sanitize_css_gradient($gradient)
+	{
+		$gradient = trim((string) $gradient);
+		if ($gradient === '') {
+			return '';
+		}
+		if (preg_match('/^(?:repeating-)?(?:linear|radial|conic)-gradient\([^{};<>]*\)$/i', $gradient)) {
+			return $gradient;
+		}
+		return '';
+	}
+
+	/**
 	 * Renders a post, product, or event "title" Template Block. Titles
 	 * work the same way for all three - products and events are both
 	 * normal WordPress post types - so the Post Title, Product Title, and

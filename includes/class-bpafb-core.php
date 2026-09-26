@@ -292,7 +292,8 @@ class Blockive_Premium_Addon_For_Block
 
 		// Width and Alignment logic
 		if (isset($attrs['bpafbContainerWidth'])) {
-			$unit = isset($attrs['bpafbContainerWidthUnit']) ? $attrs['bpafbContainerWidthUnit'] : 'px';
+			$allowed_units = ['px', '%', 'rem', 'em', 'vw'];
+			$unit = isset($attrs['bpafbContainerWidthUnit']) && in_array($attrs['bpafbContainerWidthUnit'], $allowed_units, true) ? $attrs['bpafbContainerWidthUnit'] : 'px';
 			$styles[] = 'width: 100%;';
 			$styles[] = 'max-width: ' . floatval($attrs['bpafbContainerWidth']) . esc_attr($unit) . ';';
 
@@ -335,17 +336,27 @@ class Blockive_Premium_Addon_For_Block
 		// Background
 		$bg_type = isset($attrs['bpafbContainerBgType']) ? $attrs['bpafbContainerBgType'] : 'color';
 		if ($bg_type === 'gradient' && !empty($attrs['bpafbContainerBgGradient'])) {
-			$styles[] = 'background-image: ' . esc_attr($attrs['bpafbContainerBgGradient']) . ';';
+			$gradient = Bpafb_Template_Block_Render::sanitize_css_gradient($attrs['bpafbContainerBgGradient']);
+			if ($gradient) {
+				$styles[] = 'background-image: ' . esc_attr($gradient) . ';';
+			}
 		} elseif ($bg_type === 'image' && !empty($attrs['bpafbContainerBgImageUrl'])) {
 			$styles[] = 'background-image: url(' . esc_url($attrs['bpafbContainerBgImageUrl']) . ');';
-			$size = isset($attrs['bpafbContainerBgImageSize']) ? $attrs['bpafbContainerBgImageSize'] : 'cover';
+			$allowed_sizes = ['auto', 'cover', 'contain'];
+			$size = isset($attrs['bpafbContainerBgImageSize']) && in_array($attrs['bpafbContainerBgImageSize'], $allowed_sizes, true) ? $attrs['bpafbContainerBgImageSize'] : 'cover';
 			$styles[] = 'background-size: ' . esc_attr($size) . ';';
 			$styles[] = 'background-position: center center;';
 			if (!empty($attrs['bpafbContainerOverlayColor'])) {
-				$classes[] = 'bpafb-has-bg-overlay';
+				$overlay = Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerOverlayColor']);
+				if ($overlay) {
+					$classes[] = 'bpafb-has-bg-overlay';
+				}
 			}
 		} elseif (!empty($attrs['bpafbContainerBgColor'])) {
-			$styles[] = 'background-color: ' . esc_attr($attrs['bpafbContainerBgColor']) . ';';
+			$bg_color = Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerBgColor']);
+			if ($bg_color) {
+				$styles[] = 'background-color: ' . esc_attr($bg_color) . ';';
+			}
 		}
 
 		// Padding
@@ -363,10 +374,14 @@ class Blockive_Premium_Addon_For_Block
 		}
 
 		// Border
-		if (!empty($attrs['bpafbContainerBorderStyle']) && $attrs['bpafbContainerBorderStyle'] !== 'none') {
+		$allowed_border_styles = ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'];
+		if (!empty($attrs['bpafbContainerBorderStyle']) && in_array($attrs['bpafbContainerBorderStyle'], $allowed_border_styles, true)) {
 			$styles[] = 'border-style: ' . esc_attr($attrs['bpafbContainerBorderStyle']) . ';';
 			if (!empty($attrs['bpafbContainerBorderColor'])) {
-				$styles[] = 'border-color: ' . esc_attr($attrs['bpafbContainerBorderColor']) . ';';
+				$border_color = Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerBorderColor']);
+				if ($border_color) {
+					$styles[] = 'border-color: ' . esc_attr($border_color) . ';';
+				}
 			}
 			if (isset($attrs['bpafbContainerBorderWidth'])) {
 				$styles[] = 'border-width: ' . intval($attrs['bpafbContainerBorderWidth']) . 'px;';
@@ -378,13 +393,15 @@ class Blockive_Premium_Addon_For_Block
 
 		// Shadow (normal and hover; hover is done with a CSS class, since PHP can't check for a mouse hover)
 		if (!empty($attrs['bpafbContainerBoxShadow'])) {
-			$color = !empty($attrs['bpafbContainerShadowColor']) ? $attrs['bpafbContainerShadowColor'] : 'rgba(0,0,0,0.1)';
+			$color = !empty($attrs['bpafbContainerShadowColor']) ? Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerShadowColor']) : '';
+			$color = $color ? $color : 'rgba(0,0,0,0.1)';
 			$blur = isset($attrs['bpafbContainerShadowBlur']) ? intval($attrs['bpafbContainerShadowBlur']) : 10;
 			$spread = isset($attrs['bpafbContainerShadowSpread']) ? intval($attrs['bpafbContainerShadowSpread']) : 0;
 			$styles[] = 'box-shadow: 0 4px ' . $blur . 'px ' . $spread . 'px ' . esc_attr($color) . ';';
 		}
 		if (!empty($attrs['bpafbContainerHoverBoxShadow'])) {
-			$hcolor = !empty($attrs['bpafbContainerHoverShadowColor']) ? $attrs['bpafbContainerHoverShadowColor'] : 'rgba(0,0,0,0.15)';
+			$hcolor = !empty($attrs['bpafbContainerHoverShadowColor']) ? Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerHoverShadowColor']) : '';
+			$hcolor = $hcolor ? $hcolor : 'rgba(0,0,0,0.15)';
 			$hblur = isset($attrs['bpafbContainerHoverShadowBlur']) ? intval($attrs['bpafbContainerHoverShadowBlur']) : 15;
 			$hspread = isset($attrs['bpafbContainerHoverShadowSpread']) ? intval($attrs['bpafbContainerHoverShadowSpread']) : 0;
 			$styles[] = '--bpafb-hover-shadow: 0 4px ' . $hblur . 'px ' . $hspread . 'px ' . esc_attr($hcolor) . ';';
@@ -394,13 +411,16 @@ class Blockive_Premium_Addon_For_Block
 		// Layout
 		$uid = !empty($attrs['bpafbUid']) ? sanitize_html_class($attrs['bpafbUid']) : '';
 
-		if (!empty($attrs['bpafbDisplay'])) {
+		$allowed_displays = ['block', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid', 'none'];
+		if (!empty($attrs['bpafbDisplay']) && in_array($attrs['bpafbDisplay'], $allowed_displays, true)) {
 			$styles[] = 'display: ' . esc_attr($attrs['bpafbDisplay']) . ';';
 		}
-		if (!empty($attrs['bpafbOverflow'])) {
+		$allowed_overflows = ['visible', 'hidden', 'scroll', 'auto'];
+		if (!empty($attrs['bpafbOverflow']) && in_array($attrs['bpafbOverflow'], $allowed_overflows, true)) {
 			$styles[] = 'overflow: ' . esc_attr($attrs['bpafbOverflow']) . ';';
 		}
-		if (!empty($attrs['bpafbPosition'])) {
+		$allowed_positions = ['static', 'relative', 'absolute', 'fixed', 'sticky'];
+		if (!empty($attrs['bpafbPosition']) && in_array($attrs['bpafbPosition'], $allowed_positions, true)) {
 			$styles[] = 'position: ' . esc_attr($attrs['bpafbPosition']) . ';';
 		}
 		if (isset($attrs['bpafbContainerMinHeight'])) {
@@ -463,7 +483,7 @@ class Blockive_Premium_Addon_For_Block
 		if (!empty($attrs['bpafbAnimationType']) && $attrs['bpafbAnimationType'] !== 'none') {
 			$duration = isset($attrs['bpafbAnimationDuration']) ? intval($attrs['bpafbAnimationDuration']) : 800;
 			$delay = isset($attrs['bpafbAnimationDelay']) ? intval($attrs['bpafbAnimationDelay']) : 0;
-			$easing = !empty($attrs['bpafbAnimationEasing']) ? $attrs['bpafbAnimationEasing'] : 'ease';
+			$easing = !empty($attrs['bpafbAnimationEasing']) && in_array($attrs['bpafbAnimationEasing'], ['ease', 'linear', 'ease-in', 'ease-out', 'ease-in-out'], true) ? $attrs['bpafbAnimationEasing'] : 'ease';
 			$classes[] = 'bpafb-animate';
 			$data_attrs['data-bpafb-animation'] = sanitize_html_class($attrs['bpafbAnimationType']);
 			$styles[] = '--bpafb-anim-duration: ' . $duration . 'ms;';
@@ -480,12 +500,15 @@ class Blockive_Premium_Addon_For_Block
 		}
 
 		// HTML attributes
-		$html_id = !empty($attrs['bpafbHtmlId']) ? $attrs['bpafbHtmlId'] : '';
+		$html_id = !empty($attrs['bpafbHtmlId']) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', (string) $attrs['bpafbHtmlId']) : '';
 		if (!empty($attrs['bpafbHtmlClasses'])) {
-			$classes[] = $attrs['bpafbHtmlClasses'];
+			$classes[] = preg_replace('/[^a-zA-Z0-9_\-\s]/', '', (string) $attrs['bpafbHtmlClasses']);
 		}
 		if (!empty($attrs['bpafbContainerOverlayColor']) && $bg_type === 'image') {
-			$styles[] = '--bpafb-overlay-color: ' . esc_attr($attrs['bpafbContainerOverlayColor']) . ';';
+			$overlay_color = Bpafb_Template_Block_Render::sanitize_css_color($attrs['bpafbContainerOverlayColor']);
+			if ($overlay_color) {
+				$styles[] = '--bpafb-overlay-color: ' . esc_attr($overlay_color) . ';';
+			}
 		}
 
 		if (empty($styles) && count($classes) === 1 && empty($extra_style_tag) && empty($html_id)) {
