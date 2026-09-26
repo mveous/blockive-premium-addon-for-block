@@ -147,10 +147,16 @@ class Bpafb_Template_Block_Render
 		if ($gradient === '') {
 			return '';
 		}
-		if (preg_match('/^(?:repeating-)?(?:linear|radial|conic)-gradient\([^{};<>]*\)$/i', $gradient)) {
-			return $gradient;
+		// Only what gradients are written with (no quotes, colons, or
+		// backslash escapes), and no function that loads a file, such as
+		// "linear-gradient(red,blue), url(//example.com/track.gif)".
+		if (!preg_match('/^(?:repeating-)?(?:linear|radial|conic)-gradient\([a-z0-9\s#%.,()+\-\/]*\)$/i', $gradient)) {
+			return '';
 		}
-		return '';
+		if (preg_match('/(?:url|image-set|image|element|cross-fade|expression)\s*\(/i', $gradient)) {
+			return '';
+		}
+		return $gradient;
 	}
 
 	/**
