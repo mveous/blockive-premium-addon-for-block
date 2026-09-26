@@ -8,10 +8,11 @@ import { Placeholder } from '@wordpress/components';
  * `render.php` and no server-side registration, so nothing is output on
  * the frontend either.
  *
- * @param {string} title Block title, e.g. "Product Price".
+ * @param {string} title        Block title, e.g. "Product Price".
+ * @param {string} instructions Text under the title.
  * @return {Function} React component.
  */
-export function createTeaserEdit( title ) {
+export function createTeaserEdit( title, instructions ) {
 	return function TeaserEdit() {
 		const blockProps = useBlockProps();
 		return (
@@ -19,14 +20,11 @@ export function createTeaserEdit( title ) {
 				<Placeholder
 					icon="lock"
 					label={ sprintf(
-						/* translators: %s: Template Block title, e.g. "Product Price". */
+						/* translators: %s: block title, e.g. "Product Price". */
 						__( '%s (Pro)', 'blockive-premium-addon-for-block' ),
 						title
 					) }
-					instructions={ __(
-						'This Template Block is part of Blockive Pro and is not available in the free version yet.',
-						'blockive-premium-addon-for-block'
-					) }
+					instructions={ instructions }
 				/>
 			</div>
 		);
