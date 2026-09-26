@@ -7,6 +7,7 @@
 	"category": "bpafb-widgets",
 	"icon": "info",
 	"description": "An icon box that displays an icon, title, description, and link.",
+	"example": {},
 	"attributes": {
 		"icon": {
 			"type": "string",

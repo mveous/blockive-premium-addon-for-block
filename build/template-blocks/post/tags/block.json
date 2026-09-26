@@ -12,6 +12,7 @@
     "postType"
   ],
   "textdomain": "blockive-premium-addon-for-block",
+  "example": {},
   "attributes": {
     "separator": {
       "type": "string",

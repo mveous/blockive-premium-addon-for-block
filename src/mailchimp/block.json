@@ -7,6 +7,7 @@
 	"category": "bpafb-widgets",
 	"icon": "email",
 	"description": "MailChimp newsletter subscription block.",
+	"example": {},
 	"attributes": {
 		"title": {
 			"type": "string",

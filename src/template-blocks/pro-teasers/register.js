@@ -52,6 +52,8 @@ export function registerTeasers( blocks, { prefix, category, instructions } ) {
 				customClassName: false,
 				reusable: false,
 			},
+			// Hover preview in the inserter: the locked placeholder.
+			example: {},
 			edit: createTeaserEdit( title, instructions ),
 			save: () => null,
 		} );

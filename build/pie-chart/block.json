@@ -7,6 +7,7 @@
   "category": "bpafb-widgets",
   "icon": "chart-pie",
   "description": "A dynamic pie and donut chart block using Chart.js.",
+  "example": {},
   "attributes": {
     "chartData": {
       "type": "array",

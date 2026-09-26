@@ -7,6 +7,7 @@
   "category": "bpafb-widgets",
   "icon": "editor-textcolor",
   "description": "Advanced drop caps block with customizable view, shape, and styling.",
+  "example": {},
   "attributes": {
     "content": {
       "type": "string",

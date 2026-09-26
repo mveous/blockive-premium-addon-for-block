@@ -19,6 +19,7 @@
 		},
 		"anchor": true
 	},
+	"example": {},
 	"attributes": {
 		"showCount": {
 			"type": "boolean",

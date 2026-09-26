@@ -7,6 +7,7 @@
   "category": "bpafb-widgets",
   "icon": "format-image",
   "description": "An image box that displays an image, title, description, and link.",
+  "example": {},
   "attributes": {
     "imageUrl": {
       "type": "string",

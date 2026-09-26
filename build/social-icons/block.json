@@ -7,6 +7,7 @@
   "category": "bpafb-widgets",
   "icon": "share",
   "description": "A premium social icons block with customizable controls.",
+  "example": {},
   "attributes": {
     "items": {
       "type": "array",

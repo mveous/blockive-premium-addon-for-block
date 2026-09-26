@@ -10,6 +10,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'list-view',
 		'description' => 'Accordion block with advanced layout and style settings.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -411,6 +414,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'clock',
 		'description' => 'Business Hours block to display opening and closing times.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'title' => array(
 				'type' => 'string',
@@ -887,6 +893,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'button',
 		'description' => 'A highly customizable button with icon and badge support.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'text' => array(
 				'type' => 'string',
@@ -1312,6 +1321,9 @@ return array(
 			),
 			'anchor' => true
 		),
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'showCount' => array(
 				'type' => 'boolean',
@@ -1665,6 +1677,9 @@ return array(
 			),
 			'anchor' => true
 		),
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'formId' => array(
 				'type' => 'string',
@@ -1947,6 +1962,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'clock',
 		'description' => 'A customizable countdown timer block with rich styling settings.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'targetDate' => array(
 				'type' => 'string',
@@ -2340,6 +2358,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'editor-textcolor',
 		'description' => 'Advanced drop caps block with customizable view, shape, and styling.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'content' => array(
 				'type' => 'string',
@@ -2713,6 +2734,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'editor-help',
 		'description' => 'FAQ block with rich schema.org markup for SEO, based on accordion behavior.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -3142,6 +3166,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'chart-bar',
 		'description' => 'Animated statistics/counter block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -3452,6 +3479,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'heading',
 		'description' => 'Advanced heading block with rich customized settings.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'content' => array(
 				'type' => 'string',
@@ -3792,6 +3822,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'info',
 		'description' => 'An icon box that displays an icon, title, description, and link.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'icon' => array(
 				'type' => 'string',
@@ -4257,6 +4290,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'format-image',
 		'description' => 'Image accordion block with advanced styling options.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -4575,6 +4611,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'format-image',
 		'description' => 'An image box that displays an image, title, description, and link.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'imageUrl' => array(
 				'type' => 'string',
@@ -4940,6 +4979,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'format-image',
 		'description' => 'Before/after image comparison slider block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'beforeImage' => array(
 				'type' => 'string',
@@ -5253,6 +5295,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'format-image',
 		'description' => 'Lottie animation player block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'animationUrl' => array(
 				'type' => 'string',
@@ -5539,6 +5584,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'email',
 		'description' => 'MailChimp newsletter subscription block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'title' => array(
 				'type' => 'string',
@@ -5895,6 +5943,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'chart-pie',
 		'description' => 'A dynamic pie and donut chart block using Chart.js.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'chartData' => array(
 				'type' => 'array',
@@ -6218,6 +6269,9 @@ return array(
 				'lineHeight' => true
 			),
 			'anchor' => true
+		),
+		'example' => array(
+			
 		),
 		'attributes' => array(
 			'columns' => array(
@@ -6557,6 +6611,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'money-alt',
 		'description' => 'A fully customizable pricing table block with features list and button.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'tables' => array(
 				'type' => 'array',
@@ -6959,6 +7016,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'performance',
 		'description' => 'A premium animated progress bar widget.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'title' => array(
 				'type' => 'string',
@@ -7293,6 +7353,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'share',
 		'description' => 'A premium social icons block with customizable controls.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -7624,6 +7687,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'index-card',
 		'description' => 'A modern Tab block with premium segmented control styling.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -7950,6 +8016,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'groups',
 		'description' => 'Team members showcase block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'members' => array(
 				'type' => 'array',
@@ -8325,6 +8394,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'format-quote',
 		'description' => 'Customer testimonials slider block.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'testimonials' => array(
 				'type' => 'array',
@@ -8735,6 +8807,9 @@ return array(
 		'category' => 'bpafb-widgets',
 		'icon' => 'video-alt',
 		'description' => 'Video embedding block with customization options.',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'videoUrl' => array(
 				'type' => 'string',
@@ -9027,6 +9102,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'displayFormat' => array(
 				'type' => 'string',
@@ -9334,6 +9412,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'size' => array(
 				'type' => 'number',
@@ -9638,6 +9719,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'separator' => array(
 				'type' => 'string',
@@ -9938,6 +10022,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'separator' => array(
 				'type' => 'string',
@@ -10238,6 +10325,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'icon' => array(
 				'type' => 'string',
@@ -10536,6 +10626,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'imageSize' => array(
 				'type' => 'string',
@@ -10867,6 +10960,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'videoUrl' => array(
 				'type' => 'string',
@@ -11186,6 +11282,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'dateFormat' => array(
 				'type' => 'string',
@@ -11471,6 +11570,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'displayMode' => array(
 				'type' => 'string',
@@ -11782,6 +11884,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'items' => array(
 				'type' => 'array',
@@ -12101,6 +12206,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'tagName' => array(
 				'type' => 'string',
@@ -12412,6 +12520,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'prevLabel' => array(
 				'type' => 'string',
@@ -12723,6 +12834,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'dateFormat' => array(
 				'type' => 'string',
@@ -13018,6 +13132,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'wpm' => array(
 				'type' => 'number',
@@ -13316,6 +13433,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'numberOfPosts' => array(
 				'type' => 'number',
@@ -13734,6 +13854,9 @@ return array(
 			'postType'
 		),
 		'textdomain' => 'blockive-premium-addon-for-block',
+		'example' => array(
+			
+		),
 		'attributes' => array(
 			'separator' => array(
 				'type' => 'string',

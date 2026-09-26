@@ -7,6 +7,7 @@
 	"category": "bpafb-widgets",
 	"icon": "editor-help",
 	"description": "FAQ block with rich schema.org markup for SEO, based on accordion behavior.",
+	"example": {},
 	"attributes": {
 		"items": {
 			"type": "array",
