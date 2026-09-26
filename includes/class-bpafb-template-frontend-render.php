@@ -199,7 +199,7 @@ class Bpafb_Template_Frontend_Render
 	private function __construct()
 	{
 		add_action('template_redirect', [$this, 'resolve_matched_template']);
-		// Priority PHP_INT_MAX: page builders like Elementor set their own
+		// Priority PHP_INT_MAX: page builders and themes set their own
 		// content on `the_content` and don't check what ran before them.
 		// Running last means a matched template always wins.
 		add_filter('the_content', [$this, 'filter_the_content'], PHP_INT_MAX);

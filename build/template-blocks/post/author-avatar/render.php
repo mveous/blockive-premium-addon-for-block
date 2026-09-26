@@ -23,13 +23,12 @@ if (!$bpafb_author_id) {
 
 $bpafb_size = isset($attributes['size']) ? (int) $attributes['size'] : 96;
 $bpafb_radius = isset($attributes['borderRadius']) ? (int) $attributes['borderRadius'] : 9999;
-$bpafb_border_type = isset($attributes['borderType']) ? $attributes['borderType'] : 'none';
+$bpafb_border_type = isset($attributes['borderType']) && in_array($attributes['borderType'], ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'], true) ? $attributes['borderType'] : 'none';
 $bpafb_border_width = isset($attributes['borderWidth']) ? (int) $attributes['borderWidth'] : 0;
-$bpafb_border_color = isset($attributes['borderColor']) ? $attributes['borderColor'] : '';
+$bpafb_border_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['borderColor']) ? $attributes['borderColor'] : '');
 $bpafb_shadow_enabled = !empty($attributes['shadowEnabled']);
-$bpafb_shadow_color = isset($attributes['shadowColor']) && $attributes['shadowColor'] !== ''
-	? $attributes['shadowColor']
-	: 'rgba(0,0,0,0.15)';
+$bpafb_shadow_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['shadowColor']) ? $attributes['shadowColor'] : '');
+$bpafb_shadow_color = $bpafb_shadow_color !== '' ? $bpafb_shadow_color : 'rgba(0,0,0,0.15)';
 $bpafb_shadow_blur = isset($attributes['shadowBlur']) ? (int) $attributes['shadowBlur'] : 15;
 $bpafb_shadow_spread = isset($attributes['shadowSpread']) ? (int) $attributes['shadowSpread'] : 0;
 
