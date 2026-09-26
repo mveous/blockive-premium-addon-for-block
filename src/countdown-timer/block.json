@@ -12,6 +12,37 @@
 			"type": "string",
 			"default": ""
 		},
+		"timerType": {
+			"type": "string",
+			"default": "due"
+		},
+		"targetTimestamp": {
+			"type": "number"
+		},
+		"evergreenHours": {
+			"type": "number",
+			"default": 24
+		},
+		"evergreenMinutes": {
+			"type": "number",
+			"default": 0
+		},
+		"evergreenId": {
+			"type": "string",
+			"default": ""
+		},
+		"expireAction": {
+			"type": "string",
+			"default": "none"
+		},
+		"expireMessage": {
+			"type": "string",
+			"default": ""
+		},
+		"expireRedirect": {
+			"type": "string",
+			"default": ""
+		},
 		"showDays": {
 			"type": "boolean",
 			"default": true

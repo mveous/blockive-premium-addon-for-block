@@ -1952,6 +1952,37 @@ return array(
 				'type' => 'string',
 				'default' => ''
 			),
+			'timerType' => array(
+				'type' => 'string',
+				'default' => 'due'
+			),
+			'targetTimestamp' => array(
+				'type' => 'number'
+			),
+			'evergreenHours' => array(
+				'type' => 'number',
+				'default' => 24
+			),
+			'evergreenMinutes' => array(
+				'type' => 'number',
+				'default' => 0
+			),
+			'evergreenId' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'expireAction' => array(
+				'type' => 'string',
+				'default' => 'none'
+			),
+			'expireMessage' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'expireRedirect' => array(
+				'type' => 'string',
+				'default' => ''
+			),
 			'showDays' => array(
 				'type' => 'boolean',
 				'default' => true
