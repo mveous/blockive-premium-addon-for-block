@@ -33,3 +33,30 @@
 	color: #757575;
 	margin: 8px 0 0;
 }
+
+/* Mveous logo on Blockive block icons (assets/js/editor-brand.js). */
+.bpafb-brand-icon {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bpafb-brand-icon__badge {
+	position: absolute;
+	top: -5px;
+	right: -9px;
+	box-sizing: content-box;
+	width: 12px;
+	height: 6px;
+	padding: 2px 1px;
+	background: #fff;
+	border-radius: 3px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+	pointer-events: none;
+}
+
+.bpafb-brand-category-icon {
+	width: 24px;
+	height: auto;
+}

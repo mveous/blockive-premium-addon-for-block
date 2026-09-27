@@ -221,6 +221,23 @@ class Blockive_Premium_Addon_For_Block
 	}
 
 	/**
+	 * Makes every editor script from this plugin's build/ folder depend on
+	 * the Mveous logo script, so its `blocks.registerBlockType` filter is
+	 * in place before any Blockive block registers.
+	 */
+	public function bpafb_brand_script_first()
+	{
+		$build = BPAFB_URL . 'build/';
+		foreach (wp_scripts()->registered as $handle => $script) {
+			if ('bpafb-editor-brand' === $handle || !is_string($script->src) || 0 !== strpos($script->src, $build)
+				|| false !== strpos($script->src, '/view.js') || in_array('bpafb-editor-brand', $script->deps, true)) {
+				continue;
+			}
+			$script->deps[] = 'bpafb-editor-brand';
+		}
+	}
+
+	/**
 	 * Loads the script for the block editor's "Advanced" tab settings.
 	 */
 	public function bpafb_enqueue_editor_assets()
@@ -242,6 +259,19 @@ class Blockive_Premium_Addon_For_Block
 			BPAFB_VERSION,
 			true
 		);
+
+		// The Mveous logo on every Blockive block's icon and category.
+		wp_enqueue_script(
+			'bpafb-editor-brand',
+			BPAFB_URL . 'assets/js/editor-brand.js',
+			['wp-element', 'wp-hooks', 'wp-blocks', 'wp-components', 'wp-data'],
+			BPAFB_VERSION,
+			true
+		);
+		wp_localize_script('bpafb-editor-brand', 'bpafbBrand', [
+			'logo' => BPAFB_URL . 'assets/icons/mveous-mark.png',
+		]);
+		add_action('admin_print_scripts', [$this, 'bpafb_brand_script_first'], 1);
 
 		// Tells the Advanced tab, in the editor, whether the current user
 		// is allowed to use the Custom CSS field. This only changes what
