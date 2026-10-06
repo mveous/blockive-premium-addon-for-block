@@ -5,6 +5,23 @@
 	margin-bottom: 8px;
 }
 
+.bpafb-spacing-controls__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.bpafb-spacing-controls__header .bpafb-spacing-controls__label {
+	margin-bottom: 8px;
+}
+
+.bpafb-spacing-controls__unit {
+	width: 80px;
+	flex-shrink: 0;
+	margin-bottom: 8px;
+}
+
 .bpafb-spacing-controls__grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;

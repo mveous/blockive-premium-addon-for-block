@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { RangeControl } from '@wordpress/components';
+import { RangeControl, SelectControl } from '@wordpress/components';
 
 const SIDES = [ 'top', 'right', 'bottom', 'left' ];
 const SIDE_LABELS = {
@@ -9,17 +9,48 @@ const SIDE_LABELS = {
 	left: __( 'Left', 'blockive-premium-addon-for-block' ),
 };
 
+const UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+
+// Sensible slider ceilings per unit - the px max a caller passes in (via
+// `max`) rarely makes sense once the same value means "%" or "em".
+const UNIT_MAX = { '%': 100, em: 20, rem: 20 };
+
 /**
  * Reusable box-model (Top/Right/Bottom/Left) control for Padding, Margin,
  * Gap, Icon Spacing, etc.
  *
  * value: { top, right, bottom, left }
  * onChange( { top, right, bottom, left } )
+ *
+ * Pass `unit` + `onUnitChange` to also show a px/%/em/rem unit picker next
+ * to the label (one unit for the whole group, same as Max Width). Callers
+ * that omit them keep the plain, unit-less control.
  */
-export default function SpacingControls( { label, value = {}, onChange, min = -100, max = 200 } ) {
+export default function SpacingControls( { label, value = {}, onChange, min = -100, max = 200, unit, onUnitChange } ) {
+	const effectiveMax = unit && UNIT_MAX[ unit ] ? UNIT_MAX[ unit ] : max;
+
 	return (
 		<div className="bpafb-spacing-controls">
-			{ label && <p className="bpafb-spacing-controls__label">{ label }</p> }
+			{ ( label || onUnitChange ) && (
+				<div className="bpafb-spacing-controls__header">
+					{ label && <p className="bpafb-spacing-controls__label">{ label }</p> }
+					{ onUnitChange && (
+						<SelectControl
+							className="bpafb-spacing-controls__unit"
+							label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+							hideLabelFromVision
+							value={ unit || 'px' }
+							options={ UNITS }
+							onChange={ onUnitChange }
+						/>
+					) }
+				</div>
+			) }
 			<div className="bpafb-spacing-controls__grid">
 				{ SIDES.map( ( side ) => (
 					<RangeControl
@@ -28,7 +59,7 @@ export default function SpacingControls( { label, value = {}, onChange, min = -1
 						value={ value[ side ] }
 						onChange={ ( val ) => onChange( { ...value, [ side ]: val } ) }
 						min={ min }
-						max={ max }
+						max={ effectiveMax }
 					/>
 				) ) }
 			</div>

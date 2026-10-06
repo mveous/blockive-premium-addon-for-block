@@ -100,6 +100,8 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 		bpafbPosition = '',
 		bpafbContainerWidth,
 		bpafbContainerWidthUnit = 'px',
+		bpafbContainerPaddingUnit = 'px',
+		bpafbContainerMarginUnit = 'px',
 		bpafbContainerMinHeight,
 		bpafbContainerMaxHeight,
 		bpafbContainerBgType = 'color',
@@ -285,7 +287,7 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 						{ ( device ) => (
 							<>
 								<SpacingControls
-									label={ __( 'Padding (px)', 'blockive-premium-addon-for-block' ) }
+									label={ __( 'Padding', 'blockive-premium-addon-for-block' ) }
 									value={ boxValueFromAttrs( attributes, PADDING_ATTR[ device ] ) }
 									onChange={ ( box ) => {
 										const [ top, right, bottom, left ] = PADDING_ATTR[ device ];
@@ -297,9 +299,11 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 										} );
 									} }
 									min={ 0 }
+									unit={ bpafbContainerPaddingUnit }
+									onUnitChange={ ( val ) => setAttributes( { bpafbContainerPaddingUnit: val } ) }
 								/>
 								<SpacingControls
-									label={ __( 'Margin (px)', 'blockive-premium-addon-for-block' ) }
+									label={ __( 'Margin', 'blockive-premium-addon-for-block' ) }
 									value={ boxValueFromAttrs( attributes, MARGIN_ATTR[ device ] ) }
 									onChange={ ( box ) => {
 										const [ top, right, bottom, left ] = MARGIN_ATTR[ device ];
@@ -310,6 +314,8 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 											[ left ]: box.left,
 										} );
 									} }
+									unit={ bpafbContainerMarginUnit }
+									onUnitChange={ ( val ) => setAttributes( { bpafbContainerMarginUnit: val } ) }
 								/>
 							</>
 						) }

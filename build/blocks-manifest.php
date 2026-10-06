@@ -168,6 +168,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -647,6 +655,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -1064,6 +1080,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -1432,6 +1456,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -1726,6 +1758,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -1963,7 +2003,10 @@ return array(
 		'icon' => 'clock',
 		'description' => 'A customizable countdown timer block with rich styling settings.',
 		'example' => array(
-			
+			'attributes' => array(
+				'timerType' => 'evergreen',
+				'evergreenHours' => 50
+			)
 		),
 		'attributes' => array(
 			'targetDate' => array(
@@ -2101,6 +2144,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -2486,6 +2537,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -2920,6 +2979,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -3239,6 +3306,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -3555,6 +3630,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -4045,6 +4128,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -4367,6 +4458,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -4726,6 +4825,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -5054,6 +5161,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -5342,6 +5457,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -5703,6 +5826,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -6014,6 +6145,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -6370,6 +6509,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -6764,6 +6911,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -7100,6 +7255,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -7442,6 +7605,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -7759,6 +7930,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -8151,6 +8330,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -8566,6 +8753,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -8858,6 +9053,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -9146,6 +9349,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -9475,6 +9686,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -9763,6 +9982,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -10069,6 +10296,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -10365,6 +10600,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -10712,6 +10955,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -11034,6 +11285,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -11314,6 +11573,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -11614,6 +11881,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -11952,6 +12227,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -12254,6 +12537,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -12575,6 +12866,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -12870,6 +13169,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -13172,6 +13479,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),
@@ -13605,6 +13920,14 @@ return array(
 				'type' => 'string',
 				'default' => 'px'
 			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
 			'bpafbContainerMinHeight' => array(
 				'type' => 'number'
 			),
@@ -13890,6 +14213,14 @@ return array(
 				'type' => 'number'
 			),
 			'bpafbContainerWidthUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerPaddingUnit' => array(
+				'type' => 'string',
+				'default' => 'px'
+			),
+			'bpafbContainerMarginUnit' => array(
 				'type' => 'string',
 				'default' => 'px'
 			),

@@ -120,6 +120,14 @@
 			"type": "string",
 			"default": "px"
 		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerMinHeight": {
 			"type": "number"
 		},

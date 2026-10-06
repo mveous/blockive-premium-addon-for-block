@@ -70,14 +70,46 @@ The plugin includes **16 dynamic template blocks** specifically designed for sin
 ---
 
 ## Blockive Pro
-
-[Blockive Pro](https://mveous.com) is a standalone plugin (this free plugin isn't required alongside it) that adds on top of everything here:
-
-- **3 more blocks**: Mega Menu, Menu, and Loop Grid.
-- **Full Template Builder**: Header, Footer, Archive, Search Results, 404, and Popup templates, in addition to the Single post/page templates built with this free plugin.
-- **17 WooCommerce and 9 Events template blocks** for custom product and event pages.
-- **Dynamic Tags**: `{{tag}}` tokens in any text or URL field on any block.
-- **Admin bar "Edit Template" quick access** and premium support.
+ 
+ [Blockive Pro](https://mveous.com) is a standalone, full-featured site builder plugin (the free plugin is not required alongside it) that unlocks:
+ 
+ - **60 Total Blocks (35 additional Pro blocks)**:
+   - **Interactive & Media**: Form (native contact/lead form with 12 field types, email notifications, DB submissions storage, webhooks & spam protection), Media Carousel (with lightbox), Video Playlist, Slides (Ken Burns, touch/swipe), Hotspot (image pins with tooltips), Gallery (with category filters & lightbox), Portfolio, Facebook Embed, Animated Headline, Code Highlight (Prism.js with 19 languages), Off-Canvas panel.
+   - **Navigation & Menus**: Mega Menu (template-driven dropdowns), Menu, Table of Contents (auto-generated with smooth scroll).
+   - **Query & Dynamic Loops**: Loop Grid (custom card template per item), Loop Carousel, Loop Filter (instant AJAX filter buttons), Nested Carousel (slides containing any blocks).
+   - **Commerce & Conversion**: Products, Product Categories, Add to Cart Button, Call to Action, Flip Box (3D flip effects), Price List, Floating Buttons (WhatsApp, Phone, Telegram, Messenger), Link in Bio (mobile-first profile card), Share Buttons, Reviews (half-stars with brand icons), Testimonial Carousel, Google Maps (keyless embed), Progress Tracker, Blockquote.
+ - **Full Template Builder (10 Template Kinds)**:
+   - Design Header, Footer, Single Post/Page, Archive, Search Results, 404, Popup, Loop Item, Mega Menu Item, and Section templates with granular Display Conditions (include/exclude rules).
+ - **Header & Footer Template Blocks (9)**: Site Logo, Site Title, Site Tagline, Page Title, Search Form (with live instant AJAX search), Menu Cart, Login/Logout, Sitemap, and dynamic Copyright.
+ - **Sticky Header**: Responsive sticky navigation with scroll-up reveal, scroll-distance offset, and transition styles.
+ - **Archive Template Blocks (2)**: Archive Posts and Archive Products (with native WooCommerce loop or custom Loop Item templates).
+ - **Single Post Template Blocks (3 Pro Additions)**: Author Box, Post Comments (threaded native comments & form), and Post Excerpt.
+ - **22 WooCommerce Template Blocks**: Product Title, Gallery, Images, Price, Sale Badge, Rating, Add To Cart, SKU, Stock, Short Description, Description, Attributes, Meta, Tabs, Variations, Related Products, Upsells, Cross Sells, WooCommerce Breadcrumb, Store Notices, Category Image, Shop Archive Description.
+ - **9 Events Template Blocks**: Event Title, Image, Date, Time, Venue, Organizer, Cost, Map, Register Button.
+ - **Popup Builder**: Advanced popups with triggers (page load delay, scroll %, click, exit intent, element scroll, inactivity), frequency rules (once per session, every N days), and advanced device/referrer targeting.
+ - **Dynamic Tags**: Inject live `{{post_title}}`, `{{post_custom_field:key}}`, `{{author_name}}`, `{{site_logo}}`, `{{user_name}}`, `{{current_date}}`, etc. into any text or URL field across all blocks.
+ - **Site Tools**: Custom Code snippets (`<head>`, `<body>`, `</body>`), Page Transitions (View Transitions API), Custom Fonts manager (upload WOFF2/TTF/OTF), Template Role Manager, Scroll Snap, and Element Manager (toggle unused blocks).
+ - **Admin Bar Quick Access**: "Edit Template" dropdown on the live site listing every template active on the current page.
+ - **Premium Support & Continuous Updates**.
+ 
+ ### Free vs. Pro Feature Comparison
+ 
+ | Feature | Free Version | Pro Version |
+ |:---|:---|:---|
+ | **Total Blocks** | 25 Blocks | 60 Blocks |
+ | **Template Builder** | Single Post / Page Only | Full Site: Single, Header, Footer, Archive, Search, 404, Popup, Loop Item, Mega Menu, Section |
+ | **Loop Builder** | ❌ Standard Post Grid | ✅ Loop Grid, Loop Carousel, Loop Filter & Nested Carousel |
+ | **Native Form Builder** | ❌ CF7 / Mailchimp only | ✅ Native Form block (12 fields, DB submissions, webhooks, spam guards) |
+ | **Header & Footer Blocks** | ❌ | ✅ 9 Site blocks (Site Logo, Live Search, Menu Cart, Login, etc.) |
+ | **Sticky Header** | ❌ | ✅ Scroll-up reveal, scroll effects & device controls |
+ | **WooCommerce Template Blocks** | ❌ | ✅ 22 dedicated WooCommerce product & shop blocks |
+ | **Events Template Blocks** | ❌ | ✅ 9 dedicated single-event template blocks |
+ | **Popup Builder** | ❌ | ✅ Exit intent, scroll, click & delay triggers with frequency control |
+ | **Dynamic Tags** | ❌ | ✅ Post, Author, Site, User, Custom Fields & Request tokens |
+ | **Site Tools & Custom Fonts** | ❌ | ✅ Custom code, Custom fonts upload, View transitions, Role manager |
+ | **Admin Bar Template Switcher**| ❌ | ✅ Live template inspector & quick edit |
+ | **Plugin Dependency** | Standalone | Standalone (Free plugin not required) |
+ | **Support** | Community Support | Dedicated Premium Support |
 
 ---
 

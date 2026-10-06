@@ -320,6 +320,11 @@ class Blockive_Premium_Addon_For_Block
 		$styles = [];
 		$classes = ['bpafb-has-container-settings'];
 
+		// Padding/Margin unit (px/%/em/rem), same idea as bpafbContainerWidthUnit.
+		$allowed_spacing_units = ['px', '%', 'em', 'rem'];
+		$padding_unit = isset($attrs['bpafbContainerPaddingUnit']) && in_array($attrs['bpafbContainerPaddingUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerPaddingUnit'] : 'px';
+		$margin_unit = isset($attrs['bpafbContainerMarginUnit']) && in_array($attrs['bpafbContainerMarginUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerMarginUnit'] : 'px';
+
 		// Width and Alignment logic
 		if (isset($attrs['bpafbContainerWidth'])) {
 			$allowed_units = ['px', '%', 'rem', 'em', 'vw'];
@@ -341,26 +346,26 @@ class Blockive_Premium_Addon_For_Block
 			} else {
 				// If neither is set, fall back to left/right margins.
 				if (isset($attrs['bpafbContainerMarginLeft'])) {
-					$styles[] = 'margin-left: ' . intval($attrs['bpafbContainerMarginLeft']) . 'px;';
+					$styles[] = 'margin-left: ' . floatval($attrs['bpafbContainerMarginLeft']) . esc_attr($margin_unit) . ';';
 				}
 				if (isset($attrs['bpafbContainerMarginRight'])) {
-					$styles[] = 'margin-right: ' . intval($attrs['bpafbContainerMarginRight']) . 'px;';
+					$styles[] = 'margin-right: ' . floatval($attrs['bpafbContainerMarginRight']) . esc_attr($margin_unit) . ';';
 				}
 			}
 		}
 
 		// Margins
 		if (isset($attrs['bpafbContainerMarginTop'])) {
-			$styles[] = 'margin-top: ' . intval($attrs['bpafbContainerMarginTop']) . 'px;';
+			$styles[] = 'margin-top: ' . floatval($attrs['bpafbContainerMarginTop']) . esc_attr($margin_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerMarginRight'])) {
-			$styles[] = 'margin-right: ' . intval($attrs['bpafbContainerMarginRight']) . 'px;';
+			$styles[] = 'margin-right: ' . floatval($attrs['bpafbContainerMarginRight']) . esc_attr($margin_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerMarginBottom'])) {
-			$styles[] = 'margin-bottom: ' . intval($attrs['bpafbContainerMarginBottom']) . 'px;';
+			$styles[] = 'margin-bottom: ' . floatval($attrs['bpafbContainerMarginBottom']) . esc_attr($margin_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerMarginLeft'])) {
-			$styles[] = 'margin-left: ' . intval($attrs['bpafbContainerMarginLeft']) . 'px;';
+			$styles[] = 'margin-left: ' . floatval($attrs['bpafbContainerMarginLeft']) . esc_attr($margin_unit) . ';';
 		}
 
 		// Background
@@ -391,16 +396,16 @@ class Blockive_Premium_Addon_For_Block
 
 		// Padding
 		if (isset($attrs['bpafbContainerPaddingTop'])) {
-			$styles[] = 'padding-top: ' . intval($attrs['bpafbContainerPaddingTop']) . 'px;';
+			$styles[] = 'padding-top: ' . floatval($attrs['bpafbContainerPaddingTop']) . esc_attr($padding_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerPaddingRight'])) {
-			$styles[] = 'padding-right: ' . intval($attrs['bpafbContainerPaddingRight']) . 'px;';
+			$styles[] = 'padding-right: ' . floatval($attrs['bpafbContainerPaddingRight']) . esc_attr($padding_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerPaddingBottom'])) {
-			$styles[] = 'padding-bottom: ' . intval($attrs['bpafbContainerPaddingBottom']) . 'px;';
+			$styles[] = 'padding-bottom: ' . floatval($attrs['bpafbContainerPaddingBottom']) . esc_attr($padding_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerPaddingLeft'])) {
-			$styles[] = 'padding-left: ' . intval($attrs['bpafbContainerPaddingLeft']) . 'px;';
+			$styles[] = 'padding-left: ' . floatval($attrs['bpafbContainerPaddingLeft']) . esc_attr($padding_unit) . ';';
 		}
 
 		// Border
@@ -626,6 +631,11 @@ class Blockive_Premium_Addon_For_Block
 			'Mobile' => '(max-width: 767px)',
 		];
 		$sides = ['Top', 'Right', 'Bottom', 'Left'];
+		$allowed_spacing_units = ['px', '%', 'em', 'rem'];
+		$box_units = [
+			'Padding' => isset($attrs['bpafbContainerPaddingUnit']) && in_array($attrs['bpafbContainerPaddingUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerPaddingUnit'] : 'px',
+			'Margin' => isset($attrs['bpafbContainerMarginUnit']) && in_array($attrs['bpafbContainerMarginUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerMarginUnit'] : 'px',
+		];
 		$css = '';
 
 		foreach ($breakpoints as $suffix => $media) {
@@ -634,7 +644,7 @@ class Blockive_Premium_Addon_For_Block
 				foreach ($sides as $side) {
 					$key = 'bpafbContainer' . $box . $side . $suffix;
 					if (isset($attrs[$key])) {
-						$rules .= strtolower($box) . '-' . strtolower($side) . ': ' . intval($attrs[$key]) . 'px !important;';
+						$rules .= strtolower($box) . '-' . strtolower($side) . ': ' . floatval($attrs[$key]) . esc_attr($box_units[$box]) . ' !important;';
 					}
 				}
 			}

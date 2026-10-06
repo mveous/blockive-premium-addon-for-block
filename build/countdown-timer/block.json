@@ -7,7 +7,12 @@
   "category": "bpafb-widgets",
   "icon": "clock",
   "description": "A customizable countdown timer block with rich styling settings.",
-  "example": {},
+  "example": {
+    "attributes": {
+      "timerType": "evergreen",
+      "evergreenHours": 50
+    }
+  },
   "attributes": {
     "targetDate": {
       "type": "string",
@@ -144,6 +149,14 @@
       "type": "number"
     },
     "bpafbContainerWidthUnit": {
+      "type": "string",
+      "default": "px"
+    },
+    "bpafbContainerPaddingUnit": {
+      "type": "string",
+      "default": "px"
+    },
+    "bpafbContainerMarginUnit": {
       "type": "string",
       "default": "px"
     },
