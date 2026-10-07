@@ -222,7 +222,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -278,7 +278,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -709,7 +709,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -765,7 +765,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -1134,7 +1134,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -1190,7 +1190,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -1510,7 +1510,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -1566,7 +1566,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -1812,7 +1812,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -1868,7 +1868,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -2201,7 +2201,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -2257,7 +2257,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -2594,7 +2594,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -2650,7 +2650,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -3033,7 +3033,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -3089,7 +3089,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -3360,7 +3360,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -3416,7 +3416,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -3687,7 +3687,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -3743,7 +3743,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -4182,7 +4182,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -4238,7 +4238,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -4515,7 +4515,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -4571,7 +4571,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -4879,7 +4879,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -4935,7 +4935,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -5215,7 +5215,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -5271,7 +5271,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -5514,7 +5514,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -5570,7 +5570,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -5880,7 +5880,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -5936,7 +5936,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -6202,7 +6202,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -6258,7 +6258,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -6566,7 +6566,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -6622,7 +6622,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -6965,7 +6965,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -7021,7 +7021,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -7312,7 +7312,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -7368,7 +7368,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -7659,7 +7659,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -7715,7 +7715,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -7987,7 +7987,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -8043,7 +8043,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -8387,7 +8387,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -8443,7 +8443,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -8807,7 +8807,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -8863,7 +8863,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -9107,7 +9107,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -9163,7 +9163,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -9406,7 +9406,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -9462,7 +9462,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -9740,7 +9740,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -9796,7 +9796,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -10039,7 +10039,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -10095,7 +10095,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -10350,7 +10350,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -10406,7 +10406,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -10657,7 +10657,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -10713,7 +10713,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -11009,7 +11009,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -11065,7 +11065,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -11339,7 +11339,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -11395,7 +11395,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -11630,7 +11630,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -11686,7 +11686,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -11938,7 +11938,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -11994,7 +11994,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -12281,7 +12281,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -12337,7 +12337,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -12594,7 +12594,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -12650,7 +12650,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -12920,7 +12920,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -12976,7 +12976,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -13226,7 +13226,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -13282,7 +13282,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -13536,7 +13536,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -13592,7 +13592,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -13974,7 +13974,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -14030,7 +14030,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',
@@ -14270,7 +14270,7 @@ return array(
 			),
 			'bpafbContainerBorderColor' => array(
 				'type' => 'string',
-				'default' => ''
+				'default' => '#000000'
 			),
 			'bpafbContainerBoxShadow' => array(
 				'type' => 'boolean',
@@ -14326,7 +14326,7 @@ return array(
 			),
 			'bpafbAnimationDelay' => array(
 				'type' => 'number',
-				'default' => 0
+				'default' => 100
 			),
 			'bpafbAnimationEasing' => array(
 				'type' => 'string',

@@ -146,7 +146,7 @@
     },
     "bpafbContainerBorderColor": {
       "type": "string",
-      "default": ""
+      "default": "#000000"
     },
     "bpafbContainerBoxShadow": {
       "type": "boolean",
@@ -202,7 +202,7 @@
     },
     "bpafbAnimationDelay": {
       "type": "number",
-      "default": 0
+      "default": 100
     },
     "bpafbAnimationEasing": {
       "type": "string",
