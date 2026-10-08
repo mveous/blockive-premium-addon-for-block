@@ -101,10 +101,16 @@ final class Blockive_Premium_Addon_For_Block_Loader
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-display-conditions.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-frontend-render.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-locked-blocks.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-site-tools.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-custom-fonts.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-role-manager.php';
 
 		Blockive_Premium_Addon_For_Block::get_instance();
 		// Free plugin only (not in the shared core): Pro has the real blocks.
 		Bpafb_Locked_Blocks::get_instance();
+		Bpafb_Site_Tools::get_instance();
+		Bpafb_Custom_Fonts::get_instance();
+		Bpafb_Role_Manager::get_instance();
 	}
 
 	/**
