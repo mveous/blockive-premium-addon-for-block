@@ -90,6 +90,25 @@ class Bpafb_Template_Frontend_Render
 	];
 
 	/**
+	 * Theme blocks that show comments. Hidden when the "Hide comments"
+	 * setting is on.
+	 *
+	 * @var string[]
+	 */
+	private static $comments_block_names = [
+		'core/comments',
+		'core/post-comments',
+		'core/post-comments-form',
+		'core/comments-title',
+		'core/comment-template',
+		'core/comments-pagination',
+		'core/comments-pagination-next',
+		'core/comments-pagination-numbers',
+		'core/comments-pagination-previous',
+		'core/comment-reply-link',
+	];
+
+	/**
 	 * Block names that loop over their own items (other posts, comments,
 	 * and so on). We must not hide blocks found inside these, since they
 	 * belong to the loop's own items, not the page's own title/image area.
@@ -99,7 +118,6 @@ class Bpafb_Template_Frontend_Render
 	private static $loop_boundary_block_names = [
 		'core/query',
 		'core/post-template',
-		'core/comments',
 		'core/comment-template',
 	];
 
@@ -207,6 +225,10 @@ class Bpafb_Template_Frontend_Render
 		add_filter('post_thumbnail_id', [$this, 'suppress_duplicate_featured_image_id'], 10, 2);
 		add_filter('post_thumbnail_html', [$this, 'suppress_duplicate_featured_image'], 10, 2);
 		add_filter('comments_template', [$this, 'suppress_duplicate_comments_template']);
+		add_filter('comments_open', [$this, 'suppress_comments_open'], 10, 2);
+		add_filter('pings_open', [$this, 'suppress_pings_open'], 10, 2);
+		add_filter('get_comments_number', [$this, 'suppress_comments_number'], 10, 2);
+		add_filter('comments_array', [$this, 'suppress_comments_array'], 10, 2);
 		add_filter('pre_render_block', [$this, 'track_loop_boundary_enter'], 1, 2);
 		add_filter('pre_render_block', [$this, 'suppress_duplicate_theme_blocks'], 10, 2);
 		add_filter('render_block', [$this, 'track_loop_boundary_exit'], 999, 2);
@@ -218,6 +240,7 @@ class Bpafb_Template_Frontend_Render
 		add_filter('template_include', [$this, 'maybe_swap_events_template'], PHP_INT_MAX);
 		add_action('wp_head', [$this, 'print_full_width_container_css']);
 		add_action('wp_head', [$this, 'print_hide_title_meta_css']);
+		add_action('wp_head', [$this, 'print_hide_comments_css']);
 		$this->register_sidebar_layout_adapter();
 		$this->register_post_nav_adapter();
 	}
@@ -444,6 +467,28 @@ class Bpafb_Template_Frontend_Render
 	}
 
 	/**
+	 * Hides classic theme comments area with CSS when "Hide comments" is on,
+	 * as a fallback for themes with standalone comments wrapper elements.
+	 */
+	public function print_hide_comments_css()
+	{
+		if (is_admin() || !is_singular()) {
+			return;
+		}
+
+		$template_id = self::get_matched_template_id();
+		if (!$template_id) {
+			return;
+		}
+
+		if (!get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true)) {
+			return;
+		}
+
+		echo '<style>body:not(.wp-admin) #comments, body:not(.wp-admin) .comments-area:not(.bpafb-template-render .comments-area), body:not(.wp-admin) .ast-separate-container .comments-area { display: none !important; }</style>';
+	}
+
+	/**
 	 * Checks a CSS selector from an adapter's `container_selector` before
 	 * it is placed inside a `<style>` tag. `esc_html()` alone stops it
 	 * from closing the tag early, but does nothing about CSS characters
@@ -567,7 +612,11 @@ class Bpafb_Template_Frontend_Render
 	 */
 	public function suppress_duplicate_comments_template($template)
 	{
-		if (is_admin() || !is_singular() || !is_main_query()) {
+		if (is_admin() || !is_singular()) {
+			return $template;
+		}
+
+		if (self::$is_rendering) {
 			return $template;
 		}
 
@@ -582,6 +631,120 @@ class Bpafb_Template_Frontend_Render
 
 		$blank = BPAFB_PATH . 'includes/templates/blank-comments.php';
 		return file_exists($blank) ? $blank : $template;
+	}
+
+	/**
+	 * Closes comments for the matched post when "Hide comments" is on.
+	 *
+	 * @param bool $open    Whether comments are open.
+	 * @param int  $post_id Post ID.
+	 * @return bool
+	 */
+	public function suppress_comments_open($open, $post_id)
+	{
+		if (is_admin() || !is_singular()) {
+			return $open;
+		}
+
+		if (self::$is_rendering) {
+			return $open;
+		}
+
+		if ((int) $post_id !== (int) get_queried_object_id()) {
+			return $open;
+		}
+
+		$template_id = self::get_matched_template_id();
+		if (!$template_id) {
+			return $open;
+		}
+
+		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true)) {
+			return false;
+		}
+
+		return $open;
+	}
+
+	/**
+	 * Closes pings for the matched post when "Hide comments" is on.
+	 *
+	 * @param bool $open    Whether pings are open.
+	 * @param int  $post_id Post ID.
+	 * @return bool
+	 */
+	public function suppress_pings_open($open, $post_id)
+	{
+		return $this->suppress_comments_open($open, $post_id);
+	}
+
+	/**
+	 * Returns 0 comments for the matched post when "Hide comments" is on,
+	 * so theme templates that check `get_comments_number()` don't print
+	 * comment count headers or wrappers.
+	 *
+	 * @param int|string $count   Comment count.
+	 * @param int        $post_id Post ID.
+	 * @return int|string
+	 */
+	public function suppress_comments_number($count, $post_id)
+	{
+		if (is_admin() || !is_singular()) {
+			return $count;
+		}
+
+		if (self::$is_rendering) {
+			return $count;
+		}
+
+		if ((int) $post_id !== (int) get_queried_object_id()) {
+			return $count;
+		}
+
+		$template_id = self::get_matched_template_id();
+		if (!$template_id) {
+			return $count;
+		}
+
+		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true)) {
+			return 0;
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Returns an empty array of comments for the matched post when
+	 * "Hide comments" is on.
+	 *
+	 * @param array $comments Array of comments.
+	 * @param int   $post_id  Post ID.
+	 * @return array
+	 */
+	public function suppress_comments_array($comments, $post_id)
+	{
+		if (is_admin() || !is_singular()) {
+			return $comments;
+		}
+
+		if (self::$is_rendering) {
+			return $comments;
+		}
+
+		if ((int) $post_id !== (int) get_queried_object_id()) {
+			return $comments;
+		}
+
+		$template_id = self::get_matched_template_id();
+		if (!$template_id) {
+			return $comments;
+		}
+
+		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true)) {
+			return [];
+		}
+
+		return $comments;
 	}
 
 	/**
@@ -645,7 +808,11 @@ class Bpafb_Template_Frontend_Render
 			return $pre_render;
 		}
 
-		if (is_admin() || !is_singular() || !is_main_query()) {
+		if (is_admin() || !is_singular()) {
+			return $pre_render;
+		}
+
+		if (self::$is_rendering) {
 			return $pre_render;
 		}
 
@@ -658,17 +825,15 @@ class Bpafb_Template_Frontend_Render
 			return $pre_render;
 		}
 
-		if ('core/comments' === $block_name) {
-			$hide_comments = get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true);
-			return $hide_comments ? '' : $pre_render;
-		}
-
 		$suppressed_names = [];
 		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_TITLE, true)) {
 			$suppressed_names = array_merge($suppressed_names, self::$title_block_names);
 		}
 		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_FEATURED, true)) {
 			$suppressed_names = array_merge($suppressed_names, self::$featured_image_block_names);
+		}
+		if (get_post_meta($template_id, Bpafb_Template_Display_Conditions::META_HIDE_COMMENTS, true)) {
+			$suppressed_names = array_merge($suppressed_names, self::$comments_block_names);
 		}
 
 		if (empty($suppressed_names)) {
