@@ -12200,6 +12200,18 @@ return array(
 				'type' => 'boolean',
 				'default' => true
 			),
+			'badgeStyle' => array(
+				'type' => 'string',
+				'default' => 'none'
+			),
+			'badgeBgColor' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'badgeTextColor' => array(
+				'type' => 'string',
+				'default' => ''
+			),
 			'linkHoverColor' => array(
 				'type' => 'string',
 				'default' => ''

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl, TextControl, BaseControl, ColorPalette, Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { PanelBody, ToggleControl, TextControl, SelectControl, BaseControl, ColorPalette, Button } from '@wordpress/components';
+import { useState, Fragment } from '@wordpress/element';
 
 import InspectorTabs from '../../../components/inspector-tabs';
 import AdvancedTab from '../../../components/advanced-tab';
@@ -103,7 +103,7 @@ function ReorderableItemsList( { items, onChange } ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { items, separator, showIcons, linkHoverColor } = attributes;
+	const { items, separator, showIcons, badgeStyle = 'none', badgeBgColor, badgeTextColor, linkHoverColor } = attributes;
 	const { record } = usePreviewContext();
 
 	const blockProps = useBlockProps( { className: 'bpafb-tb-post-meta' } );
@@ -145,6 +145,33 @@ export default function Edit( { attributes, setAttributes } ) {
 							checked={ !! showIcons }
 							onChange={ ( value ) => setAttributes( { showIcons: value } ) }
 						/>
+						<SelectControl
+							label={ __( 'Badge Style', 'blockive-premium-addon-for-block' ) }
+							value={ badgeStyle }
+							options={ [
+								{ label: __( 'None', 'blockive-premium-addon-for-block' ), value: 'none' },
+								{ label: __( 'Solid', 'blockive-premium-addon-for-block' ), value: 'solid' },
+								{ label: __( 'Soft', 'blockive-premium-addon-for-block' ), value: 'soft' },
+								{ label: __( 'Outline', 'blockive-premium-addon-for-block' ), value: 'outline' },
+							] }
+							onChange={ ( value ) => setAttributes( { badgeStyle: value } ) }
+						/>
+						{ badgeStyle !== 'none' && (
+							<>
+								<BaseControl label={ __( 'Badge Background Color', 'blockive-premium-addon-for-block' ) }>
+									<ColorPalette
+										value={ badgeBgColor }
+										onChange={ ( value ) => setAttributes( { badgeBgColor: value } ) }
+									/>
+								</BaseControl>
+								<BaseControl label={ __( 'Badge Text Color', 'blockive-premium-addon-for-block' ) }>
+									<ColorPalette
+										value={ badgeTextColor }
+										onChange={ ( value ) => setAttributes( { badgeTextColor: value } ) }
+									/>
+								</BaseControl>
+							</>
+						) }
 						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
 							<ColorPalette
 								value={ linkHoverColor }
@@ -161,12 +188,20 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				{ enabledItems.map( ( item, index ) => (
-					<span className="bpafb-tb-post-meta-item" key={ item.key }>
+					<Fragment key={ item.key }>
 						{ index > 0 && separator && <span className="bpafb-tb-post-meta-sep">{ separator }</span> }
-						{ showIcons && <i className={ ICONS[ item.key ] || 'fa-regular fa-circle' } /> }
-						{ ' ' }
-						{ previewValue( item.key ) }
-					</span>
+						<span
+							className={ `bpafb-tb-post-meta-item${ badgeStyle !== 'none' ? ` bpafb-tb-post-meta-item--badge-${ badgeStyle }` : '' }` }
+							style={ badgeStyle !== 'none' ? {
+								'--bpafb-meta-badge-bg': badgeBgColor || undefined,
+								'--bpafb-meta-badge-color': badgeTextColor || undefined,
+							} : undefined }
+						>
+							{ showIcons && <i className={ ICONS[ item.key ] || 'fa-regular fa-circle' } /> }
+							{ ' ' }
+							{ previewValue( item.key ) }
+						</span>
+					</Fragment>
 				) ) }
 			</div>
 		</>
