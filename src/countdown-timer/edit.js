@@ -21,7 +21,8 @@ import { getDate } from '@wordpress/date';
 import { evergreenSeconds } from './save';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -137,7 +138,7 @@ export default function Edit({ attributes, setAttributes }) {
 				general={(
 					<>
 			<PanelBody title={__('Timer Settings', 'blockive-premium-addon-for-block')} initialOpen={true}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Timer Type', 'blockive-premium-addon-for-block')}
 					value={timerType}
 					options={[
@@ -166,7 +167,7 @@ export default function Edit({ attributes, setAttributes }) {
 					/>
 				)}
 
-				<SelectControl
+				<SegmentedControl
 					label={__('View Style', 'blockive-premium-addon-for-block')}
 					value={styleType}
 					options={[
@@ -213,7 +214,7 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 			</PanelBody>
 			<PanelBody title={__('When the Timer Ends', 'blockive-premium-addon-for-block')} initialOpen={false}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Action', 'blockive-premium-addon-for-block')}
 					value={expireAction}
 					options={[
@@ -309,7 +310,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

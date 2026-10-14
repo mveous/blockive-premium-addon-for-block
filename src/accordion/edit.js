@@ -6,14 +6,13 @@ import {
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
-	SelectControl,
 	TextControl,
 	Button,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls, { getBorderStyles } from '../components/border-controls';
@@ -135,7 +134,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			</PanelBody>
 
 			<PanelBody title={ __( 'Settings', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Icon', 'blockive-premium-addon-for-block' ) }
 					value={ icon }
 					options={ [
@@ -146,7 +145,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					] }
 					onChange={ ( val ) => setAttributes( { icon: val } ) }
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Icon Alignment', 'blockive-premium-addon-for-block' ) }
 					value={ iconAlign }
 					options={ [
@@ -211,7 +210,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

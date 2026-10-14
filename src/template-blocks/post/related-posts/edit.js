@@ -3,7 +3,8 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import SegmentedControl from '../../../components/segmented-control';
+import StepperControl from '../../../components/stepper-control';
 import ColorStateControls from '../../../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../../../components/typography-controls';
 
@@ -165,19 +166,19 @@ export default function Edit( { attributes, setAttributes } ) {
 				general={
 					<>
 						<PanelBody title={ __( 'Layout & Style', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-							<SelectControl
+							<SegmentedControl
 								label={ __( 'Card Style Preset', 'blockive-premium-addon-for-block' ) }
 								value={ cardStyle }
 								options={ CARD_STYLE_OPTIONS }
 								onChange={ ( value ) => setAttributes( { cardStyle: value } ) }
 							/>
-							<SelectControl
+							<SegmentedControl
 								label={ __( 'Layout Mode', 'blockive-premium-addon-for-block' ) }
 								value={ layout }
 								options={ LAYOUT_OPTIONS }
 								onChange={ ( value ) => setAttributes( { layout: value } ) }
 							/>
-							<RangeControl
+							<StepperControl
 								label={ __( 'Total Posts to Fetch', 'blockive-premium-addon-for-block' ) }
 								value={ numberOfPosts }
 								onChange={ ( value ) => setAttributes( { numberOfPosts: value } ) }
@@ -186,7 +187,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							/>
 							{ layout === 'grid' && (
 								<>
-									<RangeControl
+									<StepperControl
 										label={ __( 'Grid Columns (Desktop)', 'blockive-premium-addon-for-block' ) }
 										value={ columns }
 										onChange={ ( value ) => setAttributes( { columns: value } ) }
@@ -204,7 +205,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							) }
 							{ layout === 'slider' && (
 								<>
-									<RangeControl
+									<StepperControl
 										label={ __( 'Slides to Show (Desktop)', 'blockive-premium-addon-for-block' ) }
 										value={ sliderColumns }
 										onChange={ ( value ) => setAttributes( { sliderColumns: value } ) }
@@ -259,13 +260,13 @@ export default function Edit( { attributes, setAttributes } ) {
 								onChange={ ( value ) => setAttributes( { sameCategory: value } ) }
 								help={ __( 'Only show posts sharing a category (or primary taxonomy) with current context.', 'blockive-premium-addon-for-block' ) }
 							/>
-							<SelectControl
+							<SegmentedControl
 								label={ __( 'Order By', 'blockive-premium-addon-for-block' ) }
 								value={ orderBy }
 								options={ ORDER_BY_OPTIONS }
 								onChange={ ( value ) => setAttributes( { orderBy: value } ) }
 							/>
-							<SelectControl
+							<SegmentedControl
 								label={ __( 'Order', 'blockive-premium-addon-for-block' ) }
 								value={ order }
 								options={ ORDER_OPTIONS }
@@ -284,7 +285,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								checked={ !! showDate }
 								onChange={ ( value ) => setAttributes( { showDate: value } ) }
 							/>
-							<SelectControl
+							<SegmentedControl
 								label={ __( 'Post Content', 'blockive-premium-addon-for-block' ) }
 								value={ contentType }
 								options={ CONTENT_TYPE_OPTIONS }
@@ -384,7 +385,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						</PanelBody>
 					</>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

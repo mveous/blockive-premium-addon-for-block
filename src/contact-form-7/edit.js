@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
 
 export default function Edit({ attributes, setAttributes }) {
 	const { formId, showTitle, title, description, titleColor, descriptionColor } = attributes;
@@ -71,7 +70,8 @@ export default function Edit({ attributes, setAttributes }) {
 			<InspectorTabs
 				general={generalTab}
 				style={styleTab}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

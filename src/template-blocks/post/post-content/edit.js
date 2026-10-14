@@ -9,7 +9,7 @@ import { PanelBody, SelectControl, RangeControl, ToggleControl, BaseControl, Col
 import { RawHTML } from '@wordpress/element';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import SegmentedControl from '../../../components/segmented-control';
 import usePreviewContext from '../../shared/use-preview-context';
 
 export default function Edit( { attributes, setAttributes } ) {
@@ -57,7 +57,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={
 					<PanelBody title={ __( 'Content', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-						<SelectControl
+						<SegmentedControl
 							label={ __( 'Display', 'blockive-premium-addon-for-block' ) }
 							value={ displayMode }
 							options={ [
@@ -93,7 +93,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

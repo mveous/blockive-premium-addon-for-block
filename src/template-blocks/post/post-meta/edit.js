@@ -4,7 +4,7 @@ import { PanelBody, ToggleControl, TextControl, SelectControl, BaseControl, Colo
 import { useState, Fragment } from '@wordpress/element';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import SegmentedControl from '../../../components/segmented-control';
 import usePreviewContext from '../../shared/use-preview-context';
 import { formatPreviewDate } from '../../shared/format';
 
@@ -145,7 +145,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							checked={ !! showIcons }
 							onChange={ ( value ) => setAttributes( { showIcons: value } ) }
 						/>
-						<SelectControl
+						<SegmentedControl
 							label={ __( 'Badge Style', 'blockive-premium-addon-for-block' ) }
 							value={ badgeStyle }
 							options={ [
@@ -183,7 +183,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

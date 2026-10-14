@@ -17,7 +17,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import ColorStateControls from '../components/color-state-controls';
 
 export default function Edit({ attributes, setAttributes }) {
@@ -138,7 +139,7 @@ export default function Edit({ attributes, setAttributes }) {
 				/>
 			)}
 
-			<SelectControl
+			<SegmentedControl
 				label={__('Image Position', 'blockive-premium-addon-for-block')}
 				value={imagePosition}
 				options={[
@@ -149,7 +150,7 @@ export default function Edit({ attributes, setAttributes }) {
 				onChange={(val) => setAttributes({ imagePosition: val })}
 			/>
 
-			<SelectControl
+			<SegmentedControl
 				label={__('Content Alignment', 'blockive-premium-addon-for-block')}
 				value={contentAlign}
 				options={[
@@ -162,7 +163,7 @@ export default function Edit({ attributes, setAttributes }) {
 			/>
 
 			{(imagePosition === 'left' || imagePosition === 'right') && (
-				<SelectControl
+				<SegmentedControl
 					label={__('Vertical Alignment', 'blockive-premium-addon-for-block')}
 					value={verticalAlign}
 					options={[
@@ -223,7 +224,8 @@ export default function Edit({ attributes, setAttributes }) {
 			<InspectorTabs
 				general={generalTab}
 				style={styleTab}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

@@ -612,16 +612,54 @@ unless explicitly approved.
 
 ## Inspector UI
 
-The preferred Blockive inspector structure is:
+As of the Events-Loop-Builder-inspired redesign, every block's inspector has
+exactly one tab row — Blockive's own:
 
 ```text
-Native Gutenberg Settings
-Native Gutenberg Styles
+General | Style | Advanced   <- Blockive's own tabs (rendered by <InspectorTabs>)
 ```
 
-Do not create unnecessary duplicate navigation.
+WordPress's own Settings/Styles icon tabs are switched off for every
+Blockive block via the `blockInspectorTabs` editor setting
+(`Blockive_Premium_Addon_For_Block::bpafb_disable_native_inspector_tabs()`
+in `includes/class-bpafb-core.php`). WordPress then lists its own panels —
+native color/typography supports, the HTML anchor field — underneath
+Blockive's tabs in the same column, so they stay reachable.
 
-Use normal Gutenberg panels where appropriate.
+This deliberately replaces the plugin's earlier "native Settings/Styles only,
+no custom navigation" rule. `<InspectorTabs general={...} style={...}
+attributes={...} setAttributes={...} />` (`src/components/inspector-tabs/`)
+is the single place this shell lives — every block renders through it, so
+changing the shell means changing that one file, not each block. It also
+wraps each tab's panels in `<Accordion>` (`src/components/accordion/`) so
+only one panel is open at a time; `general`/`style` still work exactly like
+plain `PanelBody` lists, the accordion coordinates them automatically.
+
+`AdvancedTab` (`src/components/advanced-tab/`) is no longer a single
+component blocks pass in as an `advanced` prop — it's split into
+`AdvancedStyleSection` (Spacing/Background/Border/Shadow — how the block
+looks, rendered under Style after the block's own style panels) and
+`AdvancedSettingsSection` (Layout/Visibility/Z-Index, then
+`AdvancedEffectsSection`'s Animation/Transform/Motion Effects, then Custom
+Attributes — how it behaves, rendered under Advanced), all consumed directly
+by `InspectorTabs`. Blocks only ever pass `general`, `style`, `attributes`,
+and `setAttributes`.
+
+**Native supports**: ~21 blocks declare `supports.color` /
+`supports.typography` in `block.json`. Most have no equivalent custom
+control of their own, so those native panels are their only
+text-color/font-size mechanism — don't strip them. With WordPress's own tabs
+switched off they appear below Blockive's tabs, not behind a second tab row.
+If a block later gets its own equivalent custom controls, its native
+supports can be removed then.
+
+When adding a new block, favor the small shared control library
+(`SegmentedControl` for 2-4 option choices, `StepperControl` for small
+bounded integers, `StyleTilePicker` for visual preset pickers,
+`ResponsiveControls`/`ControlRow` for per-device values) over bespoke
+`SelectControl`/`RangeControl` usage, so new blocks keep the same feel.
+
+Use normal `PanelBody` panels within `general`/`style` where appropriate.
 
 Do not remove settings simply to simplify the UI.
 

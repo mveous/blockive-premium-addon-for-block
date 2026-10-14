@@ -3,7 +3,8 @@ import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-edi
 import { PanelBody, SelectControl, TextControl, ToggleControl, RangeControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls, { getBorderStyles } from '../components/border-controls';
@@ -130,7 +131,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				/>
 			) }
 
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'Icon Position', 'blockive-premium-addon-for-block' ) }
 				value={ iconPosition }
 				options={ [
@@ -141,7 +142,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				onChange={ ( val ) => setAttributes( { iconPosition: val } ) }
 			/>
 
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'Text Alignment', 'blockive-premium-addon-for-block' ) }
 				value={ boxAlignment }
 				options={ [
@@ -294,7 +295,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

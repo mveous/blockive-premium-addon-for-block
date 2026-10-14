@@ -12,7 +12,8 @@ import { useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 function buildCategoryTree(categories) {
 	const map = {};
@@ -126,7 +127,7 @@ export default function Edit({ attributes, setAttributes }) {
 					onChange={(val) => setAttributes({ taxonomy: val })}
 				/>
 
-				<SelectControl
+				<SegmentedControl
 					label={__('Layout Type', 'blockive-premium-addon-for-block')}
 					value={layoutType}
 					options={[
@@ -136,7 +137,7 @@ export default function Edit({ attributes, setAttributes }) {
 					onChange={(val) => setAttributes({ layoutType: val })}
 				/>
 
-				<RangeControl
+				<StepperControl
 					label={__('Limit', 'blockive-premium-addon-for-block')}
 					value={limit}
 					onChange={(val) => setAttributes({ limit: val })}
@@ -145,7 +146,7 @@ export default function Edit({ attributes, setAttributes }) {
 				/>
 
 				{layoutType === 'horizontal' && (
-					<RangeControl
+					<StepperControl
 						label={__('Columns', 'blockive-premium-addon-for-block')}
 						value={columns}
 						onChange={(val) => setAttributes({ columns: val })}
@@ -162,7 +163,7 @@ export default function Edit({ attributes, setAttributes }) {
 					max={100}
 				/>
 
-				<SelectControl
+				<SegmentedControl
 					label={__('Text Alignment', 'blockive-premium-addon-for-block')}
 					value={textAlign}
 					options={[
@@ -173,7 +174,7 @@ export default function Edit({ attributes, setAttributes }) {
 					onChange={(val) => setAttributes({ textAlign: val })}
 				/>
 
-				<SelectControl
+				<SegmentedControl
 					label={__('Order By', 'blockive-premium-addon-for-block')}
 					value={orderBy}
 					options={[
@@ -184,7 +185,7 @@ export default function Edit({ attributes, setAttributes }) {
 					onChange={(val) => setAttributes({ orderBy: val })}
 				/>
 
-				<SelectControl
+				<SegmentedControl
 					label={__('Order Direction', 'blockive-premium-addon-for-block')}
 					value={order}
 					options={[
@@ -285,7 +286,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

@@ -9,7 +9,8 @@ import {
 import { PanelBody, SelectControl, RangeControl } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls from '../components/border-controls';
@@ -69,7 +70,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const generalTab = (
 		<PanelBody title={ __( 'Drop Cap Settings', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'View', 'blockive-premium-addon-for-block' ) }
 				value={ view }
 				options={ [
@@ -81,7 +82,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			/>
 
 			{ view !== 'default' && (
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Shape', 'blockive-premium-addon-for-block' ) }
 					value={ shape }
 					options={ [
@@ -184,7 +185,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<RichText

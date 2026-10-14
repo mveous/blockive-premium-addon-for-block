@@ -78,6 +78,33 @@ class Blockive_Premium_Addon_For_Block
 		add_filter('render_block', [$this, 'bpafb_render_block_container'], 10, 2);
 		add_filter('render_block', [$this, 'bpafb_inject_faq_schema'], 10, 3);
 		add_filter('content_save_pre', [$this, 'bpafb_strip_unauthorized_custom_css']);
+		add_filter('block_editor_settings_all', [$this, 'bpafb_disable_native_inspector_tabs']);
+	}
+
+	/**
+	 * Turns off WordPress's own Settings/Styles icon tabs for every Blockive
+	 * block, since each one renders its own General / Style / Advanced tabs
+	 * (see src/components/inspector-tabs). WordPress then lists any of its
+	 * own panels (native color/typography supports, HTML anchor) below ours
+	 * in a single column instead of hiding them behind a second tab row.
+	 *
+	 * @param array $settings Block editor settings.
+	 * @return array
+	 */
+	public function bpafb_disable_native_inspector_tabs($settings)
+	{
+		$tabs = isset($settings['blockInspectorTabs']) && is_array($settings['blockInspectorTabs'])
+			? $settings['blockInspectorTabs']
+			: [];
+
+		foreach (array_keys(WP_Block_Type_Registry::get_instance()->get_all_registered()) as $block_name) {
+			if (0 === strpos($block_name, 'blockive-premium-addon-for-block/')) {
+				$tabs[$block_name] = false;
+			}
+		}
+
+		$settings['blockInspectorTabs'] = $tabs;
+		return $settings;
 	}
 
 	/**

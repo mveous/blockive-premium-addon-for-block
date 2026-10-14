@@ -18,7 +18,8 @@ import {
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -150,7 +151,7 @@ export default function Edit({ attributes, setAttributes }) {
 								/>
 							</MediaUploadCheck>
 						</div>
-						<RangeControl
+						<StepperControl
 							label={__('Rating', 'blockive-premium-addon-for-block')}
 							value={testimonial.rating}
 							onChange={(val) => updateTestimonial(index, 'rating', val)}
@@ -188,7 +189,7 @@ export default function Edit({ attributes, setAttributes }) {
 					checked={showArrows}
 					onChange={(val) => setAttributes({ showArrows: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Arrow Icon', 'blockive-premium-addon-for-block')}
 					value={arrowIcon}
 					options={[
@@ -224,7 +225,7 @@ export default function Edit({ attributes, setAttributes }) {
 				style={(
 					<>
 			<PanelBody title={__('Card Styles', 'blockive-premium-addon-for-block')}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Image Position', 'blockive-premium-addon-for-block')}
 					value={imagePosition}
 					options={[
@@ -235,7 +236,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ imagePosition: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Image Style', 'blockive-premium-addon-for-block')}
 					value={imageStyle}
 					options={[
@@ -245,7 +246,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ imageStyle: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Text Alignment', 'blockive-premium-addon-for-block')}
 					value={textAlign}
 					options={[
@@ -390,7 +391,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

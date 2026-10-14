@@ -77,3 +77,264 @@
 	width: 24px;
 	height: auto;
 }
+
+/*
+ * Inspector skin: the General / Style / Advanced tab bar + accordion panels
+ * every block renders through <InspectorTabs>, plus the new SegmentedControl/
+ * StepperControl/ControlRow primitives. Tokens intentionally match the ones
+ * already defined in assets/css/admin-site-tools.css (Site Tools is the one
+ * surface Blockive already has real custom visual polish) -- duplicated here
+ * rather than shared via a build-time partial since the two stylesheets are
+ * never enqueued on the same page.
+ */
+.bpafb-inspector {
+	--bpafb-primary: #3b82f6;
+	--bpafb-primary-hover: #2563eb;
+	--bpafb-primary-light: #eff6ff;
+	--bpafb-slate-800: #1e293b;
+	--bpafb-slate-700: #334155;
+	--bpafb-slate-600: #475569;
+	--bpafb-slate-500: #64748b;
+	--bpafb-slate-300: #cbd5e1;
+	--bpafb-slate-200: #e2e8f0;
+	--bpafb-slate-100: #f1f5f9;
+	--bpafb-slate-50: #f8fafc;
+	--bpafb-radius-sm: 6px;
+	--bpafb-radius-md: 10px;
+	--bpafb-radius-full: 9999px;
+	--bpafb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.bpafb-inspector {
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--bpafb-slate-200);
+}
+
+/* Tab bar: one pill track, matching the SegmentedControl. */
+.bpafb-inspector-tabs .components-tab-panel__tabs {
+	display: flex;
+	gap: 2px;
+	margin: 12px 16px;
+	padding: 3px;
+	background: var(--bpafb-slate-100);
+	border: none;
+	border-radius: var(--bpafb-radius-md);
+}
+
+.bpafb-inspector-tabs .components-tab-panel__tabs-item {
+	flex: 1;
+	justify-content: center;
+	height: 32px;
+	padding: 0 8px;
+	border-radius: var(--bpafb-radius-sm);
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--bpafb-slate-600);
+	box-shadow: none !important;
+}
+
+.bpafb-inspector-tabs .components-tab-panel__tabs-item::after {
+	display: none;
+}
+
+.bpafb-inspector-tabs .components-tab-panel__tabs-item:hover {
+	color: var(--bpafb-slate-800);
+}
+
+.bpafb-inspector-tabs .components-tab-panel__tabs-item.is-active {
+	color: var(--bpafb-primary);
+	background: #fff;
+	box-shadow: var(--bpafb-shadow-sm) !important;
+}
+
+/* Panels: quiet cards, consistent spacing, clear open state. */
+.bpafb-inspector-tabs .components-panel__body {
+	margin: 0 16px 8px;
+	background: #fff;
+	border: 1px solid var(--bpafb-slate-200);
+	border-radius: var(--bpafb-radius-md);
+	box-shadow: none;
+	overflow: hidden;
+}
+
+.bpafb-inspector-tabs .components-panel__body.is-opened {
+	border-color: var(--bpafb-slate-300);
+}
+
+.bpafb-inspector-tabs .components-panel__body > .components-panel__body-title {
+	margin: 0;
+}
+
+.bpafb-inspector-tabs .components-panel__body > .components-panel__body-title > .components-panel__body-toggle {
+	padding: 12px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--bpafb-slate-800);
+}
+
+.bpafb-inspector-tabs .components-panel__body.is-opened > .components-panel__body-title {
+	border-bottom: 1px solid var(--bpafb-slate-100);
+	margin-bottom: 12px;
+}
+
+.bpafb-inspector-tabs .components-panel__body.is-opened {
+	padding: 0 16px 4px;
+}
+
+.bpafb-inspector-tabs .components-panel__body.is-opened > .components-panel__body-title {
+	margin-left: -16px;
+	margin-right: -16px;
+}
+
+.bpafb-inspector-tabs .components-panel__body .components-base-control {
+	margin-bottom: 16px;
+}
+
+.bpafb-inspector-section-label {
+	margin: 16px 16px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--bpafb-slate-500);
+}
+
+.bpafb-segmented-control.components-button-group {
+	display: flex;
+	width: 100%;
+	background: var(--bpafb-slate-100);
+	border-radius: var(--bpafb-radius-full);
+	padding: 3px;
+	gap: 2px;
+}
+
+/* Options share the width evenly and wrap long labels inside the pill
+   instead of overflowing it (WordPress buttons default to fixed height,
+   wide padding, and no wrapping). */
+.bpafb-segmented-control .bpafb-segmented-control__option {
+	flex: 1 1 0;
+	min-width: 0;
+	height: auto;
+	min-height: 28px;
+	padding: 4px 6px;
+	line-height: 1.25;
+	white-space: normal;
+	text-align: center;
+	justify-content: center;
+	border: none;
+	border-radius: var(--bpafb-radius-full);
+	box-shadow: none;
+	background: transparent;
+	color: var(--bpafb-slate-600);
+	font-size: 12px;
+}
+
+/* Overrides ButtonGroup's own adjacent-button border, which otherwise draws
+   a divider between options regardless of our own styling. */
+.bpafb-segmented-control.components-button-group > .components-button:not(:first-child) {
+	border-left: none;
+	margin-left: 0;
+}
+
+.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed {
+	background: #fff;
+	color: var(--bpafb-primary);
+	box-shadow: var(--bpafb-shadow-sm);
+}
+
+.bpafb-stepper-control {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: fit-content;
+	border: 1px solid var(--bpafb-slate-200);
+	border-radius: var(--bpafb-radius-full);
+	padding: 2px;
+}
+
+.bpafb-stepper-control__value {
+	min-width: 28px;
+	text-align: center;
+	font-weight: 500;
+}
+
+.bpafb-control-row {
+	display: flex;
+	align-items: flex-end;
+	gap: 6px;
+}
+
+.bpafb-control-row__control {
+	flex-grow: 1;
+}
+
+.bpafb-control-row__reset {
+	color: var(--bpafb-slate-500);
+	margin-bottom: 8px;
+}
+
+.bpafb-control-row__reset:hover {
+	color: var(--bpafb-primary);
+}
+
+.bpafb-style-tile-picker__label {
+	font-weight: 500;
+	margin-bottom: 8px;
+}
+
+.bpafb-style-tile-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.bpafb-style-tile-picker__tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 6px;
+	background: #fff;
+	border: 1px solid var(--bpafb-slate-200);
+	border-radius: var(--bpafb-radius-md);
+	cursor: pointer;
+}
+
+.bpafb-style-tile-picker__tile:hover {
+	border-color: var(--bpafb-slate-300);
+}
+
+.bpafb-style-tile-picker__tile.is-active {
+	border-color: var(--bpafb-primary);
+	box-shadow: 0 0 0 1px var(--bpafb-primary);
+	background: var(--bpafb-primary-light);
+}
+
+.bpafb-style-tile-picker__preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 32px;
+	color: var(--bpafb-slate-300);
+}
+
+.bpafb-style-tile-picker__tile.is-active .bpafb-style-tile-picker__preview {
+	color: var(--bpafb-primary);
+}
+
+.bpafb-style-tile-picker__preview svg {
+	width: 100%;
+	height: 100%;
+}
+
+.bpafb-style-tile-picker__title {
+	font-size: 11px;
+	color: var(--bpafb-slate-600);
+}
+
+.bpafb-style-tile-picker__tile.is-active .bpafb-style-tile-picker__title {
+	color: var(--bpafb-primary);
+	font-weight: 500;
+}

@@ -15,7 +15,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import { getSafeSocialIconsUrl } from './utils';
 
 const PREDEFINED_NETWORKS = [
@@ -144,7 +145,7 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 
 			<PanelBody title={__('Settings', 'blockive-premium-addon-for-block')} initialOpen={false}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Shape', 'blockive-premium-addon-for-block')}
 					value={shape}
 					options={[
@@ -154,7 +155,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ shape: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Hover Animation', 'blockive-premium-addon-for-block')}
 					value={hoverAnimation}
 					options={[
@@ -191,7 +192,7 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 				style={(
 			<PanelBody title={__('Colors', 'blockive-premium-addon-for-block')} initialOpen={true}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Color Type', 'blockive-premium-addon-for-block')}
 					value={colorType}
 					options={[
@@ -218,7 +219,8 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 			</PanelBody>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

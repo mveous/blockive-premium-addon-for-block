@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls, { getBorderStyles } from '../components/border-controls';
@@ -199,7 +199,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					checked={ highlightToday }
 					onChange={ ( val ) => setAttributes( { highlightToday: val } ) }
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Time Format', 'blockive-premium-addon-for-block' ) }
 					value={ timeFormat }
 					options={ [
@@ -279,7 +279,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

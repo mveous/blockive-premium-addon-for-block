@@ -16,7 +16,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -105,7 +106,7 @@ export default function Edit({ attributes, setAttributes }) {
 							value={afterLabel}
 							onChange={(val) => setAttributes({ afterLabel: val })}
 						/>
-						<SelectControl
+						<SegmentedControl
 							label={__('Label Position', 'blockive-premium-addon-for-block')}
 							value={labelPosition}
 							options={[
@@ -173,7 +174,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div

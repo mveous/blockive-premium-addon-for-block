@@ -8,7 +8,6 @@ import {
 import { PanelBody, SelectControl, ToggleControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
 import usePreviewContext, { getEmbeddedAuthorName } from '../../shared/use-preview-context';
 
 const DISPLAY_FORMAT_OPTIONS = [
@@ -74,7 +73,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<span { ...blockProps }>
