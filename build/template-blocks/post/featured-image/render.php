@@ -26,7 +26,9 @@ $bpafb_is_link = !isset($attributes['isLink']) || !empty($attributes['isLink']);
 $bpafb_overlay_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['overlayColor']) ? $attributes['overlayColor'] : '');
 $bpafb_hover_effect = isset($attributes['hoverEffect']) ? $attributes['hoverEffect'] : 'none';
 $bpafb_border_type = isset($attributes['borderType']) && in_array($attributes['borderType'], ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'], true) ? $attributes['borderType'] : 'none';
-$bpafb_border_width = isset($attributes['borderWidth']) ? (int) $attributes['borderWidth'] : 0;
+$bpafb_border_width = isset($attributes['borderWidth']) ? (float) $attributes['borderWidth'] : 0;
+$bpafb_allowed_border_width_units = ['px', 'em', 'rem'];
+$bpafb_border_width_unit = isset($attributes['borderWidthUnit']) && in_array($attributes['borderWidthUnit'], $bpafb_allowed_border_width_units, true) ? $attributes['borderWidthUnit'] : 'px';
 $bpafb_border_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['borderColor']) ? $attributes['borderColor'] : '');
 $bpafb_shadow_enabled = !empty($attributes['shadowEnabled']);
 $bpafb_shadow_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['shadowColor']) ? $attributes['shadowColor'] : '');
@@ -46,7 +48,7 @@ if ($bpafb_overlay_color) {
 }
 if ($bpafb_border_type && $bpafb_border_type !== 'none') {
 	$bpafb_figure_style .= '--bpafb-fi-border-style:' . esc_attr($bpafb_border_type) . ';';
-	$bpafb_figure_style .= '--bpafb-fi-border-width:' . $bpafb_border_width . 'px;';
+	$bpafb_figure_style .= '--bpafb-fi-border-width:' . $bpafb_border_width . esc_attr($bpafb_border_width_unit) . ';';
 	if ($bpafb_border_color) {
 		$bpafb_figure_style .= '--bpafb-fi-border-color:' . esc_attr($bpafb_border_color) . ';';
 	}

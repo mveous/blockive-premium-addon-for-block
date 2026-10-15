@@ -15,13 +15,17 @@ export default function save( { attributes } ) {
 		contentBgColor,
 		borderColor,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderType,
 		borderRadius,
+		borderRadiusUnit = 'px',
 		titleFontFamily,
 		titleFontSize,
+		titleFontSizeUnit = 'px',
 		titleFontWeight,
 		titleLineHeight,
 		titleLetterSpacing,
+		titleLetterSpacingUnit = 'px',
 		titleTextTransform,
 		titleTextDecoration,
 		boxShadow,
@@ -46,8 +50,8 @@ export default function save( { attributes } ) {
 		'--bpafb-accordion-title-bg': titleBgColor,
 		'--bpafb-accordion-content-color': contentColor,
 		'--bpafb-accordion-content-bg': contentBgColor,
-		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-accordion-title' ),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-accordion' ),
+		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontSizeUnit: titleFontSizeUnit, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, letterSpacingUnit: titleLetterSpacingUnit, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-accordion-title' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-accordion' ),
 	};
 
 	// Only emit the shadow custom properties when a custom shadow is actually

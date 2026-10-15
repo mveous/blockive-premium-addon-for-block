@@ -183,11 +183,11 @@
 					styles.borderColor = attributes.bpafbContainerBorderColor;
 				}
 				if ( attributes.bpafbContainerBorderWidth !== undefined ) {
-					styles.borderWidth = attributes.bpafbContainerBorderWidth + 'px';
+					styles.borderWidth = attributes.bpafbContainerBorderWidth + ( attributes.bpafbContainerBorderWidthUnit || 'px' );
 				}
 			}
 			if ( attributes.bpafbContainerBorderRadius !== undefined ) {
-				styles.borderRadius = attributes.bpafbContainerBorderRadius + 'px';
+				styles.borderRadius = attributes.bpafbContainerBorderRadius + ( attributes.bpafbContainerBorderRadiusUnit || 'px' );
 			}
 
 			if ( attributes.bpafbContainerBoxShadow ) {
@@ -207,10 +207,10 @@
 				styles.position = attributes.bpafbPosition;
 			}
 			if ( attributes.bpafbContainerMinHeight !== undefined ) {
-				styles.minHeight = attributes.bpafbContainerMinHeight + 'px';
+				styles.minHeight = attributes.bpafbContainerMinHeight + ( attributes.bpafbContainerHeightUnit || 'px' );
 			}
 			if ( attributes.bpafbContainerMaxHeight !== undefined ) {
-				styles.maxHeight = attributes.bpafbContainerMaxHeight + 'px';
+				styles.maxHeight = attributes.bpafbContainerMaxHeight + ( attributes.bpafbContainerHeightUnit || 'px' );
 			}
 			if ( attributes.bpafbZIndex !== undefined ) {
 				styles.zIndex = attributes.bpafbZIndex;
@@ -225,7 +225,8 @@
 			if ( attributes.bpafbTransformTranslateX || attributes.bpafbTransformTranslateY ) {
 				const tx = attributes.bpafbTransformTranslateX || 0;
 				const ty = attributes.bpafbTransformTranslateY || 0;
-				styles.translate = `${ tx }px ${ ty }px`;
+				const translateUnit = attributes.bpafbTransformTranslateUnit || 'px';
+				styles.translate = `${ tx }${ translateUnit } ${ ty }${ translateUnit }`;
 			}
 
 			const existingStyle = props.wrapperProps?.style || {};

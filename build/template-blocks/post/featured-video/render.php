@@ -19,9 +19,13 @@ $bpafb_video_url_attr = isset($attributes['videoUrl']) ? trim($attributes['video
 $bpafb_meta_key = isset($attributes['metaKey']) && $attributes['metaKey'] !== '' ? $attributes['metaKey'] : 'featured_video_url';
 $bpafb_auto_detect = !isset($attributes['autoDetect']) || !empty($attributes['autoDetect']);
 $bpafb_aspect_ratio = isset($attributes['aspectRatio']) ? $attributes['aspectRatio'] : '16/9';
-$bpafb_border_radius = isset($attributes['borderRadius']) ? (int) $attributes['borderRadius'] : 0;
+$bpafb_border_radius = isset($attributes['borderRadius']) ? (float) $attributes['borderRadius'] : 0;
+$bpafb_allowed_border_radius_units = ['px', '%', 'em', 'rem'];
+$bpafb_border_radius_unit = isset($attributes['borderRadiusUnit']) && in_array($attributes['borderRadiusUnit'], $bpafb_allowed_border_radius_units, true) ? $attributes['borderRadiusUnit'] : 'px';
 $bpafb_border_type = isset($attributes['borderType']) && in_array($attributes['borderType'], ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'], true) ? $attributes['borderType'] : 'none';
-$bpafb_border_width = isset($attributes['borderWidth']) ? (int) $attributes['borderWidth'] : 0;
+$bpafb_border_width = isset($attributes['borderWidth']) ? (float) $attributes['borderWidth'] : 0;
+$bpafb_allowed_border_width_units = ['px', 'em', 'rem'];
+$bpafb_border_width_unit = isset($attributes['borderWidthUnit']) && in_array($attributes['borderWidthUnit'], $bpafb_allowed_border_width_units, true) ? $attributes['borderWidthUnit'] : 'px';
 $bpafb_border_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['borderColor']) ? $attributes['borderColor'] : '');
 $bpafb_shadow_enabled = !empty($attributes['shadowEnabled']);
 $bpafb_shadow_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['shadowColor']) ? $attributes['shadowColor'] : '');
@@ -73,11 +77,11 @@ if ($bpafb_aspect_ratio) {
 	$bpafb_style_vars[] = 'aspect-ratio:' . esc_attr($bpafb_aspect_ratio);
 }
 if ($bpafb_border_radius) {
-	$bpafb_style_vars[] = '--bpafb-fv-border-radius:' . $bpafb_border_radius . 'px';
+	$bpafb_style_vars[] = '--bpafb-fv-border-radius:' . $bpafb_border_radius . esc_attr($bpafb_border_radius_unit);
 }
 if ($bpafb_border_type && $bpafb_border_type !== 'none') {
 	$bpafb_style_vars[] = '--bpafb-fv-border-style:' . esc_attr($bpafb_border_type);
-	$bpafb_style_vars[] = '--bpafb-fv-border-width:' . $bpafb_border_width . 'px';
+	$bpafb_style_vars[] = '--bpafb-fv-border-width:' . $bpafb_border_width . esc_attr($bpafb_border_width_unit);
 	if ($bpafb_border_color) {
 		$bpafb_style_vars[] = '--bpafb-fv-border-color:' . esc_attr($bpafb_border_color);
 	}

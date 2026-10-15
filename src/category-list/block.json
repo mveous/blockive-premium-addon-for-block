@@ -136,6 +136,10 @@
 			"type": "string",
 			"default": "px"
 		},
+		"bpafbContainerHeightUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerMinHeight": {
 			"type": "number"
 		},
@@ -179,6 +183,14 @@
 		},
 		"bpafbContainerBorderRadius": {
 			"type": "number"
+		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
@@ -259,6 +271,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

@@ -10,6 +10,7 @@ export default function save( { attributes } ) {
 		primaryColor,
 		secondaryColor,
 		size,
+		sizeUnit = 'px',
 		space,
 		borderWidth,
 		borderType,
@@ -20,6 +21,7 @@ export default function save( { attributes } ) {
 		fontWeight,
 		lineHeight,
 		letterSpacing,
+		letterSpacingUnit = 'px',
 		textTransform,
 		textDecoration,
 		boxShadow,
@@ -46,7 +48,7 @@ export default function save( { attributes } ) {
 		'--bpafb-dc-radius': borderRadius > 0 ? `${ borderRadius }px` : ( shape === 'circle' ? '50%' : ( shape === 'rounded' ? '5px' : '0' ) ),
 		'--bpafb-dc-shadow': getShadowStyle( { enabled: boxShadow, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
 		'--bpafb-dc-shadow-hover': getShadowStyle( { enabled: hoverBoxShadow, color: hoverShadowColor, blur: hoverShadowBlur, spread: hoverShadowSpread } ),
-		...getTypographyStyles( { fontFamily, fontSize: size, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration }, '--bpafb-dc-letter' ),
+		...getTypographyStyles( { fontFamily, fontSize: size, fontSizeUnit: sizeUnit, fontWeight, lineHeight, letterSpacing, letterSpacingUnit, textTransform, textDecoration }, '--bpafb-dc-letter' ),
 	};
 
 	const blockProps = useBlockProps.save( {

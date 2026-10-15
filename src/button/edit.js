@@ -37,14 +37,18 @@ export default function Edit( { attributes, setAttributes } ) {
 		iconSpacing,
 		fontFamily,
 		fontSize,
+		fontSizeUnit = 'px',
 		fontWeight,
 		lineHeight,
 		letterSpacing,
+		letterSpacingUnit = 'px',
 		textTransform,
 		textDecoration,
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderRadius,
+		borderRadiusUnit = 'px',
 		borderColor,
 		borderColorHover,
 		boxShadow,
@@ -71,8 +75,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-btn-border-color-hover': borderColorHover,
 		'--bpafb-btn-shadow': getShadowStyle( { enabled: boxShadow, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
 		'--bpafb-btn-shadow-hover': getShadowStyle( { enabled: hoverBoxShadow, color: hoverShadowColor, blur: hoverShadowBlur, spread: hoverShadowSpread } ),
-		...getTypographyStyles( { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration }, '--bpafb-btn-text' ),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-btn' ),
+		...getTypographyStyles( { fontFamily, fontSize, fontSizeUnit, fontWeight, lineHeight, letterSpacing, letterSpacingUnit, textTransform, textDecoration }, '--bpafb-btn-text' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-btn' ),
 	};
 
 	const blockProps = useBlockProps( {
@@ -152,6 +156,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					fontSizeUnit={ fontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { fontSizeUnit: val } ) }
+					letterSpacingUnit={ letterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { letterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -193,6 +201,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<BorderControls
 					values={ { borderType, borderWidth, borderRadius, borderColor } }
 					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					widthUnit={ borderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { borderWidthUnit: val } ) }
+					radiusUnit={ borderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { borderRadiusUnit: val } ) }
 				/>
 				<BaseControl label={ __( 'Border Color (Hover)', 'blockive-premium-addon-for-block' ) }>
 					<ColorPalette value={ borderColorHover } onChange={ ( val ) => setAttributes( { borderColorHover: val } ) } />

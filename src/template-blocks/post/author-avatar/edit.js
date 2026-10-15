@@ -13,6 +13,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		borderRadius,
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderColor,
 		shadowEnabled,
 		shadowColor,
@@ -30,7 +31,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-aa-size': `${ size || 96 }px`,
 		'--bpafb-aa-radius': `${ borderRadius !== undefined ? borderRadius : 9999 }px`,
 		'--bpafb-aa-shadow': getShadowStyle( { enabled: shadowEnabled, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
-		...getBorderStyles( { borderType, borderWidth, borderColor }, '--bpafb-aa' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderColor }, '--bpafb-aa' ),
 	};
 
 	const blockProps = useBlockProps( {
@@ -66,6 +67,8 @@ export default function Edit( { attributes, setAttributes } ) {
 								values={ { borderType, borderWidth, borderColor } }
 								onChange={ ( key, value ) => setAttributes( { [ key ]: value } ) }
 								showRadius={ false }
+								widthUnit={ borderWidthUnit }
+								onWidthUnitChange={ ( value ) => setAttributes( { borderWidthUnit: value } ) }
 							/>
 						</PanelBody>
 						<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>

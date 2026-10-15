@@ -147,6 +147,17 @@
 	box-shadow: var(--bpafb-shadow-sm) !important;
 }
 
+/* The `box-shadow: none !important` above also strips WP core's own
+   focus-ring box-shadow, leaving keyboard users with no visible indicator of
+   which tab is focused. Restore one explicitly. */
+.bpafb-inspector-tabs .components-tab-panel__tabs-item:focus-visible {
+	box-shadow: 0 0 0 2px var(--bpafb-primary) !important;
+}
+
+.bpafb-inspector-tabs .components-tab-panel__tabs-item.is-active:focus-visible {
+	box-shadow: var(--bpafb-shadow-sm), 0 0 0 2px var(--bpafb-primary) !important;
+}
+
 /* Panels: quiet cards, consistent spacing, clear open state. */
 .bpafb-inspector-tabs .components-panel__body {
 	margin: 0 16px 8px;
@@ -227,6 +238,7 @@
 	background: transparent;
 	color: var(--bpafb-slate-600);
 	font-size: 12px;
+	transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
 }
 
 /* Overrides ButtonGroup's own adjacent-button border, which otherwise draws
@@ -236,10 +248,40 @@
 	margin-left: 0;
 }
 
+/* Unselected option, mouse over: same darkening the Tab bar uses
+   (.bpafb-inspector-tabs .components-tab-panel__tabs-item:hover), instead of
+   the WP core Button default (a blue text tint that doesn't match our
+   palette and gives no sense of which pill is selected). */
+.bpafb-segmented-control .bpafb-segmented-control__option:hover:not(.is-pressed):not(:disabled) {
+	color: var(--bpafb-slate-800);
+}
+
+/* Mouse-down press feedback, both selected and unselected. */
+.bpafb-segmented-control .bpafb-segmented-control__option:active:not(:disabled) {
+	transform: scale(0.96);
+}
+
 .bpafb-segmented-control .bpafb-segmented-control__option.is-pressed {
 	background: #fff;
 	color: var(--bpafb-primary);
 	box-shadow: var(--bpafb-shadow-sm);
+}
+
+/* WP core's default Button focus style paints a dark (#1e1e1e) background on
+   any toggled (aria-pressed) button once focused, including via a plain
+   mouse click -- not just keyboard nav. Nothing here previously overrode
+   `background` for the focus state, so that dark fill showed through on top
+   of both the selected (white) and unselected (transparent) pill look,
+   clashing badly with this pill design. Keep WP's own focus outline (already
+   consistent with the rest of wp-admin) but keep our own background/color. */
+.bpafb-segmented-control .bpafb-segmented-control__option:focus:not(:disabled) {
+	background: transparent;
+	color: var(--bpafb-slate-800);
+}
+
+.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed:focus:not(:disabled) {
+	background: #fff;
+	color: var(--bpafb-primary);
 }
 
 .bpafb-stepper-control {

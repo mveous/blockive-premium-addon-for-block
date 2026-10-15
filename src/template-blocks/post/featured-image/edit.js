@@ -48,6 +48,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		hoverEffect,
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderColor,
 		shadowEnabled,
 		shadowColor,
@@ -66,7 +67,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			overflow: borderRadius ? 'hidden' : undefined,
 			'--bpafb-fi-overlay-color': overlayColor || undefined,
 			'--bpafb-fi-shadow': getShadowStyle( { enabled: shadowEnabled, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
-			...getBorderStyles( { borderType, borderWidth, borderColor }, '--bpafb-fi' ),
+			...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderColor }, '--bpafb-fi' ),
 		},
 	} );
 
@@ -130,6 +131,8 @@ export default function Edit( { attributes, setAttributes } ) {
 								values={ { borderType, borderWidth, borderColor } }
 								onChange={ ( key, value ) => setAttributes( { [ key ]: value } ) }
 								showRadius={ false }
+								widthUnit={ borderWidthUnit }
+								onWidthUnitChange={ ( value ) => setAttributes( { borderWidthUnit: value } ) }
 							/>
 						</PanelBody>
 						<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>

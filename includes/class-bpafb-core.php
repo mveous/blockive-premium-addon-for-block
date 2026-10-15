@@ -352,6 +352,16 @@ class Blockive_Premium_Addon_For_Block
 		$padding_unit = isset($attrs['bpafbContainerPaddingUnit']) && in_array($attrs['bpafbContainerPaddingUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerPaddingUnit'] : 'px';
 		$margin_unit = isset($attrs['bpafbContainerMarginUnit']) && in_array($attrs['bpafbContainerMarginUnit'], $allowed_spacing_units, true) ? $attrs['bpafbContainerMarginUnit'] : 'px';
 
+		// Height/Border-width/Border-radius/Translate units, same idea as the above.
+		$allowed_height_units = ['px', '%', 'vh', 'em', 'rem'];
+		$height_unit = isset($attrs['bpafbContainerHeightUnit']) && in_array($attrs['bpafbContainerHeightUnit'], $allowed_height_units, true) ? $attrs['bpafbContainerHeightUnit'] : 'px';
+		$allowed_border_width_units = ['px', 'em', 'rem'];
+		$border_width_unit = isset($attrs['bpafbContainerBorderWidthUnit']) && in_array($attrs['bpafbContainerBorderWidthUnit'], $allowed_border_width_units, true) ? $attrs['bpafbContainerBorderWidthUnit'] : 'px';
+		$allowed_border_radius_units = ['px', '%', 'em', 'rem'];
+		$border_radius_unit = isset($attrs['bpafbContainerBorderRadiusUnit']) && in_array($attrs['bpafbContainerBorderRadiusUnit'], $allowed_border_radius_units, true) ? $attrs['bpafbContainerBorderRadiusUnit'] : 'px';
+		$allowed_translate_units = ['px', '%', 'em', 'rem'];
+		$translate_unit = isset($attrs['bpafbTransformTranslateUnit']) && in_array($attrs['bpafbTransformTranslateUnit'], $allowed_translate_units, true) ? $attrs['bpafbTransformTranslateUnit'] : 'px';
+
 		// Width and Alignment logic
 		if (isset($attrs['bpafbContainerWidth'])) {
 			$allowed_units = ['px', '%', 'rem', 'em', 'vw'];
@@ -447,11 +457,11 @@ class Blockive_Premium_Addon_For_Block
 				$styles[] = 'border-color: ' . esc_attr($border_color) . ';';
 			}
 			if (isset($attrs['bpafbContainerBorderWidth'])) {
-				$styles[] = 'border-width: ' . intval($attrs['bpafbContainerBorderWidth']) . 'px;';
+				$styles[] = 'border-width: ' . floatval($attrs['bpafbContainerBorderWidth']) . esc_attr($border_width_unit) . ';';
 			}
 		}
 		if (isset($attrs['bpafbContainerBorderRadius'])) {
-			$styles[] = 'border-radius: ' . intval($attrs['bpafbContainerBorderRadius']) . 'px;';
+			$styles[] = 'border-radius: ' . floatval($attrs['bpafbContainerBorderRadius']) . esc_attr($border_radius_unit) . ';';
 		}
 
 		// Shadow (normal and hover; hover is done with a CSS class, since PHP can't check for a mouse hover)
@@ -487,10 +497,10 @@ class Blockive_Premium_Addon_For_Block
 			$styles[] = 'position: ' . esc_attr($attrs['bpafbPosition']) . ';';
 		}
 		if (isset($attrs['bpafbContainerMinHeight'])) {
-			$styles[] = 'min-height: ' . intval($attrs['bpafbContainerMinHeight']) . 'px;';
+			$styles[] = 'min-height: ' . floatval($attrs['bpafbContainerMinHeight']) . esc_attr($height_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerMaxHeight'])) {
-			$styles[] = 'max-height: ' . intval($attrs['bpafbContainerMaxHeight']) . 'px;';
+			$styles[] = 'max-height: ' . floatval($attrs['bpafbContainerMaxHeight']) . esc_attr($height_unit) . ';';
 		}
 		if (isset($attrs['bpafbZIndex'])) {
 			$styles[] = 'z-index: ' . intval($attrs['bpafbZIndex']) . ';';
@@ -510,9 +520,10 @@ class Blockive_Premium_Addon_For_Block
 			$has_transform = true;
 		}
 		if (!empty($attrs['bpafbTransformTranslateX']) || !empty($attrs['bpafbTransformTranslateY'])) {
-			$tx = !empty($attrs['bpafbTransformTranslateX']) ? intval($attrs['bpafbTransformTranslateX']) : 0;
-			$ty = !empty($attrs['bpafbTransformTranslateY']) ? intval($attrs['bpafbTransformTranslateY']) : 0;
-			$styles[] = 'translate: ' . $tx . 'px ' . $ty . 'px;';
+			$tx = !empty($attrs['bpafbTransformTranslateX']) ? floatval($attrs['bpafbTransformTranslateX']) : 0;
+			$ty = !empty($attrs['bpafbTransformTranslateY']) ? floatval($attrs['bpafbTransformTranslateY']) : 0;
+			$translate_unit_esc = esc_attr($translate_unit);
+			$styles[] = 'translate: ' . $tx . $translate_unit_esc . ' ' . $ty . $translate_unit_esc . ';';
 			$has_transform = true;
 		}
 

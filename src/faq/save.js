@@ -15,15 +15,19 @@ export default function save( { attributes } ) {
 		contentBgColor,
 		borderColor,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderType,
 		borderRadius,
+		borderRadiusUnit = 'px',
 		titleColorHover,
 		titleBgColorHover,
 		questionFontFamily,
 		questionFontSize,
+		questionFontSizeUnit = 'px',
 		questionFontWeight,
 		questionLineHeight,
 		questionLetterSpacing,
+		questionLetterSpacingUnit = 'px',
 		questionTextTransform,
 		questionTextDecoration,
 		boxShadow,
@@ -58,15 +62,17 @@ export default function save( { attributes } ) {
 			{
 				fontFamily: questionFontFamily,
 				fontSize: questionFontSize,
+				fontSizeUnit: questionFontSizeUnit,
 				fontWeight: questionFontWeight,
 				lineHeight: questionLineHeight,
 				letterSpacing: questionLetterSpacing,
+				letterSpacingUnit: questionLetterSpacingUnit,
 				textTransform: questionTextTransform,
 				textDecoration: questionTextDecoration,
 			},
 			'--bpafb-faq-title'
 		),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-faq' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-faq' ),
 	};
 
 	if ( animationType !== 'none' ) {

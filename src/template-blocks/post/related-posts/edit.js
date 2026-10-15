@@ -68,9 +68,11 @@ export default function Edit( { attributes, setAttributes } ) {
 		titleHoverColor,
 		titleFontFamily,
 		titleFontSize,
+		titleFontSizeUnit = 'px',
 		titleFontWeight,
 		titleLineHeight,
 		titleLetterSpacing,
+		titleLetterSpacingUnit = 'px',
 		titleTextTransform,
 		titleTextDecoration,
 		dateColor,
@@ -103,9 +105,11 @@ export default function Edit( { attributes, setAttributes } ) {
 			{
 				fontFamily: titleFontFamily,
 				fontSize: titleFontSize,
+				fontSizeUnit: titleFontSizeUnit,
 				fontWeight: titleFontWeight,
 				lineHeight: titleLineHeight,
 				letterSpacing: titleLetterSpacing,
+				letterSpacingUnit: titleLetterSpacingUnit,
 				textTransform: titleTextTransform,
 				textDecoration: titleTextDecoration,
 			},
@@ -350,6 +354,10 @@ export default function Edit( { attributes, setAttributes } ) {
 									textDecoration: titleTextDecoration,
 								} }
 								onChange={ ( key, value ) => setAttributes( { [ `title${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: value } ) }
+								fontSizeUnit={ titleFontSizeUnit }
+								onFontSizeUnitChange={ ( value ) => setAttributes( { titleFontSizeUnit: value } ) }
+								letterSpacingUnit={ titleLetterSpacingUnit }
+								onLetterSpacingUnitChange={ ( value ) => setAttributes( { titleLetterSpacingUnit: value } ) }
 							/>
 							<ColorStateControls
 								normal={ [

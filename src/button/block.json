@@ -81,6 +81,10 @@
 			"type": "number",
 			"default": null
 		},
+		"fontSizeUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"fontWeight": {
 			"type": "string",
 			"default": ""
@@ -92,6 +96,10 @@
 		"letterSpacing": {
 			"type": "number",
 			"default": null
+		},
+		"letterSpacingUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"textTransform": {
 			"type": "string",
@@ -109,9 +117,17 @@
 			"type": "number",
 			"default": 0
 		},
+		"borderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"borderRadius": {
 			"type": "number",
 			"default": 4
+		},
+		"borderRadiusUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"borderColor": {
 			"type": "string",
@@ -184,6 +200,10 @@
 			"type": "string",
 			"default": "px"
 		},
+		"bpafbContainerHeightUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerMinHeight": {
 			"type": "number"
 		},
@@ -227,6 +247,14 @@
 		},
 		"bpafbContainerBorderRadius": {
 			"type": "number"
+		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
@@ -307,6 +335,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

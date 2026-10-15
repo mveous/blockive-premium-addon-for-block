@@ -73,6 +73,25 @@ function boxValueFromAttrs( attributes, attrNames ) {
 	};
 }
 
+const HEIGHT_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'vh', value: 'vh' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+// Sensible slider ceilings per unit, same idea as SpacingControls' UNIT_MAX.
+const MIN_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
+const MAX_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
+
+const TRANSLATE_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+const TRANSLATE_UNIT_MAX = { '%': 100, em: 20, rem: 20 };
+
 function generateUid() {
 	return Math.random().toString( 36 ).slice( 2, 10 );
 }
@@ -121,6 +140,7 @@ export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 		bpafbContainerWidthUnit = 'px',
 		bpafbContainerMinHeight,
 		bpafbContainerMaxHeight,
+		bpafbContainerHeightUnit = 'px',
 		bpafbHideDesktop = false,
 		bpafbHideTablet = false,
 		bpafbHideMobile = false,
@@ -171,19 +191,30 @@ export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 						/>
 					</div>
 				</div>
+				<div className="bpafb-spacing-controls__header">
+					<p className="bpafb-spacing-controls__label">{ __( 'Height', 'blockive-premium-addon-for-block' ) }</p>
+					<SelectControl
+						className="bpafb-spacing-controls__unit"
+						label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+						hideLabelFromVision
+						value={ bpafbContainerHeightUnit }
+						options={ HEIGHT_UNITS }
+						onChange={ ( val ) => setAttributes( { bpafbContainerHeightUnit: val } ) }
+					/>
+				</div>
 				<RangeControl
-					label={ __( 'Min Height (px)', 'blockive-premium-addon-for-block' ) }
+					label={ __( 'Min Height', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbContainerMinHeight }
 					onChange={ ( val ) => setAttributes( { bpafbContainerMinHeight: val } ) }
 					min={ 0 }
-					max={ 1200 }
+					max={ MIN_HEIGHT_UNIT_MAX[ bpafbContainerHeightUnit ] || 1200 }
 				/>
 				<RangeControl
-					label={ __( 'Max Height (px)', 'blockive-premium-addon-for-block' ) }
+					label={ __( 'Max Height', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbContainerMaxHeight }
 					onChange={ ( val ) => setAttributes( { bpafbContainerMaxHeight: val } ) }
 					min={ 0 }
-					max={ 2000 }
+					max={ MAX_HEIGHT_UNIT_MAX[ bpafbContainerHeightUnit ] || 2000 }
 				/>
 				<SelectControl
 					label={ __( 'Overflow', 'blockive-premium-addon-for-block' ) }
@@ -279,7 +310,9 @@ export function AdvancedStyleSection( { attributes, setAttributes } ) {
 		bpafbContainerOverlayColor = '',
 		bpafbContainerBorderStyle = 'none',
 		bpafbContainerBorderWidth,
+		bpafbContainerBorderWidthUnit = 'px',
 		bpafbContainerBorderRadius,
+		bpafbContainerBorderRadiusUnit = 'px',
 		bpafbContainerBorderColor = '#000000',
 		bpafbContainerBoxShadow = false,
 		bpafbContainerShadowColor,
@@ -386,6 +419,10 @@ export function AdvancedStyleSection( { attributes, setAttributes } ) {
 						};
 						setAttributes( { [ map[ key ] ]: val } );
 					} }
+					widthUnit={ bpafbContainerBorderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { bpafbContainerBorderWidthUnit: val } ) }
+					radiusUnit={ bpafbContainerBorderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { bpafbContainerBorderRadiusUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -431,6 +468,7 @@ export function AdvancedEffectsSection( { attributes, setAttributes } ) {
 		bpafbTransformScale = 100,
 		bpafbTransformTranslateX = 0,
 		bpafbTransformTranslateY = 0,
+		bpafbTransformTranslateUnit = 'px',
 		bpafbHoverAnimation = 'none',
 		bpafbFloatingEffect = false,
 	} = attributes;
@@ -462,19 +500,30 @@ export function AdvancedEffectsSection( { attributes, setAttributes } ) {
 					min={ 10 }
 					max={ 300 }
 				/>
+				<div className="bpafb-spacing-controls__header">
+					<p className="bpafb-spacing-controls__label">{ __( 'Translate', 'blockive-premium-addon-for-block' ) }</p>
+					<SelectControl
+						className="bpafb-spacing-controls__unit"
+						label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+						hideLabelFromVision
+						value={ bpafbTransformTranslateUnit }
+						options={ TRANSLATE_UNITS }
+						onChange={ ( val ) => setAttributes( { bpafbTransformTranslateUnit: val } ) }
+					/>
+				</div>
 				<RangeControl
-					label={ __( 'Translate X (px)', 'blockive-premium-addon-for-block' ) }
+					label={ __( 'Translate X', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbTransformTranslateX }
 					onChange={ ( val ) => setAttributes( { bpafbTransformTranslateX: val } ) }
-					min={ -300 }
-					max={ 300 }
+					min={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] ? -TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] : -300 }
+					max={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] || 300 }
 				/>
 				<RangeControl
-					label={ __( 'Translate Y (px)', 'blockive-premium-addon-for-block' ) }
+					label={ __( 'Translate Y', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbTransformTranslateY }
 					onChange={ ( val ) => setAttributes( { bpafbTransformTranslateY: val } ) }
-					min={ -300 }
-					max={ 300 }
+					min={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] ? -TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] : -300 }
+					max={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] || 300 }
 				/>
 			</PanelBody>
 

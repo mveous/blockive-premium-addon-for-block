@@ -53,9 +53,13 @@ $bpafb_title_hover_color     = Bpafb_Template_Block_Render::sanitize_css_color(
 );
 $bpafb_title_font_family     = isset($attributes['titleFontFamily']) ? $attributes['titleFontFamily'] : '';
 $bpafb_title_font_size       = isset($attributes['titleFontSize']) ? $attributes['titleFontSize'] : null;
+$bpafb_allowed_font_size_units = ['px', 'em', 'rem', '%'];
+$bpafb_title_font_size_unit  = isset($attributes['titleFontSizeUnit']) && in_array($attributes['titleFontSizeUnit'], $bpafb_allowed_font_size_units, true) ? $attributes['titleFontSizeUnit'] : 'px';
 $bpafb_title_font_weight     = isset($attributes['titleFontWeight']) ? $attributes['titleFontWeight'] : '';
 $bpafb_title_line_height     = isset($attributes['titleLineHeight']) ? $attributes['titleLineHeight'] : null;
 $bpafb_title_letter_spacing  = isset($attributes['titleLetterSpacing']) ? $attributes['titleLetterSpacing'] : null;
+$bpafb_allowed_letter_spacing_units = ['px', 'em', 'rem'];
+$bpafb_title_letter_spacing_unit = isset($attributes['titleLetterSpacingUnit']) && in_array($attributes['titleLetterSpacingUnit'], $bpafb_allowed_letter_spacing_units, true) ? $attributes['titleLetterSpacingUnit'] : 'px';
 $bpafb_title_text_transform  = isset($attributes['titleTextTransform']) ? $attributes['titleTextTransform'] : '';
 $bpafb_title_text_decoration = isset($attributes['titleTextDecoration']) ? $attributes['titleTextDecoration'] : '';
 $bpafb_date_color            = isset($attributes['dateColor']) ? $attributes['dateColor'] : '';
@@ -203,7 +207,7 @@ if ($bpafb_title_font_family) {
 	$bpafb_styles[] = '--bpafb-rp-title-font-family:' . esc_attr($bpafb_title_font_family) . ';';
 }
 if ($bpafb_title_font_size !== null) {
-	$bpafb_styles[] = '--bpafb-rp-title-font-size:' . (float) $bpafb_title_font_size . 'px;';
+	$bpafb_styles[] = '--bpafb-rp-title-font-size:' . (float) $bpafb_title_font_size . esc_attr($bpafb_title_font_size_unit) . ';';
 }
 if ($bpafb_title_font_weight) {
 	$bpafb_styles[] = '--bpafb-rp-title-font-weight:' . esc_attr($bpafb_title_font_weight) . ';';
@@ -212,7 +216,7 @@ if ($bpafb_title_line_height !== null) {
 	$bpafb_styles[] = '--bpafb-rp-title-line-height:' . (float) $bpafb_title_line_height . ';';
 }
 if ($bpafb_title_letter_spacing !== null) {
-	$bpafb_styles[] = '--bpafb-rp-title-letter-spacing:' . (float) $bpafb_title_letter_spacing . 'px;';
+	$bpafb_styles[] = '--bpafb-rp-title-letter-spacing:' . (float) $bpafb_title_letter_spacing . esc_attr($bpafb_title_letter_spacing_unit) . ';';
 }
 if ($bpafb_title_text_transform) {
 	$bpafb_styles[] = '--bpafb-rp-title-text-transform:' . esc_attr($bpafb_title_text_transform) . ';';

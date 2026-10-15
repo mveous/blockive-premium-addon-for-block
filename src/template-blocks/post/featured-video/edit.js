@@ -21,8 +21,10 @@ export default function Edit( { attributes, setAttributes } ) {
 		autoDetect,
 		aspectRatio,
 		borderRadius,
+		borderRadiusUnit = 'px',
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderColor,
 		shadowEnabled,
 		shadowColor,
@@ -37,7 +39,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		style: {
 			aspectRatio: aspectRatio || undefined,
 			'--bpafb-fv-shadow': getShadowStyle( { enabled: shadowEnabled, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
-			...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-fv' ),
+			...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-fv' ),
 		},
 	} );
 
@@ -80,6 +82,10 @@ export default function Edit( { attributes, setAttributes } ) {
 							<BorderControls
 								values={ { borderType, borderWidth, borderRadius, borderColor } }
 								onChange={ ( key, value ) => setAttributes( { [ key ]: value } ) }
+								widthUnit={ borderWidthUnit }
+								onWidthUnitChange={ ( value ) => setAttributes( { borderWidthUnit: value } ) }
+								radiusUnit={ borderRadiusUnit }
+								onRadiusUnitChange={ ( value ) => setAttributes( { borderRadiusUnit: value } ) }
 							/>
 						</PanelBody>
 						<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>

@@ -36,21 +36,27 @@ export default function Edit( { attributes, setAttributes } ) {
 		itemTextColorHover,
 		dayFontFamily,
 		dayFontSize,
+		dayFontSizeUnit = 'px',
 		dayFontWeight,
 		dayLineHeight,
 		dayLetterSpacing,
+		dayLetterSpacingUnit = 'px',
 		dayTextTransform,
 		dayTextDecoration,
 		timeFontFamily,
 		timeFontSize,
+		timeFontSizeUnit = 'px',
 		timeFontWeight,
 		timeLineHeight,
 		timeLetterSpacing,
+		timeLetterSpacingUnit = 'px',
 		timeTextTransform,
 		timeTextDecoration,
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderRadius,
+		borderRadiusUnit = 'px',
 		borderColor,
 		boxShadow,
 		shadowColor,
@@ -74,9 +80,9 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-bh-item-text-color-hover': itemTextColorHover,
 		'--bpafb-bh-shadow': getShadowStyle( { enabled: boxShadow, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
 		'--bpafb-bh-shadow-hover': getShadowStyle( { enabled: hoverBoxShadow, color: hoverShadowColor, blur: hoverShadowBlur, spread: hoverShadowSpread } ),
-		...getTypographyStyles( { fontFamily: dayFontFamily, fontSize: dayFontSize, fontWeight: dayFontWeight, lineHeight: dayLineHeight, letterSpacing: dayLetterSpacing, textTransform: dayTextTransform, textDecoration: dayTextDecoration }, '--bpafb-bh-day' ),
-		...getTypographyStyles( { fontFamily: timeFontFamily, fontSize: timeFontSize, fontWeight: timeFontWeight, lineHeight: timeLineHeight, letterSpacing: timeLetterSpacing, textTransform: timeTextTransform, textDecoration: timeTextDecoration }, '--bpafb-bh-time' ),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-bh-container' ),
+		...getTypographyStyles( { fontFamily: dayFontFamily, fontSize: dayFontSize, fontSizeUnit: dayFontSizeUnit, fontWeight: dayFontWeight, lineHeight: dayLineHeight, letterSpacing: dayLetterSpacing, letterSpacingUnit: dayLetterSpacingUnit, textTransform: dayTextTransform, textDecoration: dayTextDecoration }, '--bpafb-bh-day' ),
+		...getTypographyStyles( { fontFamily: timeFontFamily, fontSize: timeFontSize, fontSizeUnit: timeFontSizeUnit, fontWeight: timeFontWeight, lineHeight: timeLineHeight, letterSpacing: timeLetterSpacing, letterSpacingUnit: timeLetterSpacingUnit, textTransform: timeTextTransform, textDecoration: timeTextDecoration }, '--bpafb-bh-time' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-bh-container' ),
 	};
 
 	const blockProps = useBlockProps( {
@@ -243,6 +249,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily: dayFontFamily, fontSize: dayFontSize, fontWeight: dayFontWeight, lineHeight: dayLineHeight, letterSpacing: dayLetterSpacing, textTransform: dayTextTransform, textDecoration: dayTextDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ `day${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ dayFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { dayFontSizeUnit: val } ) }
+					letterSpacingUnit={ dayLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { dayLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -250,11 +260,22 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily: timeFontFamily, fontSize: timeFontSize, fontWeight: timeFontWeight, lineHeight: timeLineHeight, letterSpacing: timeLetterSpacing, textTransform: timeTextTransform, textDecoration: timeTextDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ `time${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ timeFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { timeFontSizeUnit: val } ) }
+					letterSpacingUnit={ timeLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { timeLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
 			<PanelBody title={ __( 'Container Border', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-				<BorderControls values={ { borderType, borderWidth, borderRadius, borderColor } } onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) } />
+				<BorderControls
+					values={ { borderType, borderWidth, borderRadius, borderColor } }
+					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					widthUnit={ borderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { borderWidthUnit: val } ) }
+					radiusUnit={ borderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { borderRadiusUnit: val } ) }
+				/>
 			</PanelBody>
 
 			<PanelBody title={ __( 'Container Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>

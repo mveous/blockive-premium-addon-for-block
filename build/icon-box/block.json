@@ -109,6 +109,10 @@
       "type": "number",
       "default": null
     },
+    "titleFontSizeUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "titleFontWeight": {
       "type": "string",
       "default": ""
@@ -120,6 +124,10 @@
     "titleLetterSpacing": {
       "type": "number",
       "default": null
+    },
+    "titleLetterSpacingUnit": {
+      "type": "string",
+      "default": "px"
     },
     "titleTextTransform": {
       "type": "string",
@@ -137,6 +145,10 @@
       "type": "number",
       "default": null
     },
+    "descFontSizeUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "descFontWeight": {
       "type": "string",
       "default": ""
@@ -148,6 +160,10 @@
     "descLetterSpacing": {
       "type": "number",
       "default": null
+    },
+    "descLetterSpacingUnit": {
+      "type": "string",
+      "default": "px"
     },
     "descTextTransform": {
       "type": "string",
@@ -165,9 +181,17 @@
       "type": "number",
       "default": 0
     },
+    "borderWidthUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "borderRadius": {
       "type": "number",
       "default": 0
+    },
+    "borderRadiusUnit": {
+      "type": "string",
+      "default": "px"
     },
     "borderColor": {
       "type": "string",
@@ -236,6 +260,10 @@
       "type": "string",
       "default": "px"
     },
+    "bpafbContainerHeightUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "bpafbContainerMinHeight": {
       "type": "number"
     },
@@ -279,6 +307,14 @@
     },
     "bpafbContainerBorderRadius": {
       "type": "number"
+    },
+    "bpafbContainerBorderWidthUnit": {
+      "type": "string",
+      "default": "px"
+    },
+    "bpafbContainerBorderRadiusUnit": {
+      "type": "string",
+      "default": "px"
     },
     "bpafbContainerBorderColor": {
       "type": "string",
@@ -359,6 +395,10 @@
     "bpafbTransformTranslateY": {
       "type": "number",
       "default": 0
+    },
+    "bpafbTransformTranslateUnit": {
+      "type": "string",
+      "default": "px"
     },
     "bpafbHoverAnimation": {
       "type": "string",

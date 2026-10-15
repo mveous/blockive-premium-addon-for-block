@@ -36,15 +36,19 @@ export default function Edit( { attributes, setAttributes } ) {
 		contentBgColor,
 		borderColor,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderType,
 		borderRadius,
+		borderRadiusUnit = 'px',
 		titleColorHover,
 		titleBgColorHover,
 		questionFontFamily,
 		questionFontSize,
+		questionFontSizeUnit = 'px',
 		questionFontWeight,
 		questionLineHeight,
 		questionLetterSpacing,
+		questionLetterSpacingUnit = 'px',
 		questionTextTransform,
 		questionTextDecoration,
 		boxShadow,
@@ -81,15 +85,17 @@ export default function Edit( { attributes, setAttributes } ) {
 			{
 				fontFamily: questionFontFamily,
 				fontSize: questionFontSize,
+				fontSizeUnit: questionFontSizeUnit,
 				fontWeight: questionFontWeight,
 				lineHeight: questionLineHeight,
 				letterSpacing: questionLetterSpacing,
+				letterSpacingUnit: questionLetterSpacingUnit,
 				textTransform: questionTextTransform,
 				textDecoration: questionTextDecoration,
 			},
 			'--bpafb-faq-title'
 		),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-faq' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-faq' ),
 	};
 
 	if ( animationType !== 'none' ) {
@@ -221,6 +227,10 @@ export default function Edit( { attributes, setAttributes } ) {
 						textDecoration: questionTextDecoration,
 					} }
 					onChange={ ( key, val ) => setAttributes( { [ `question${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ questionFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { questionFontSizeUnit: val } ) }
+					letterSpacingUnit={ questionLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { questionLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -250,6 +260,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<BorderControls
 					values={ { borderType, borderWidth, borderRadius, borderColor } }
 					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					widthUnit={ borderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { borderWidthUnit: val } ) }
+					radiusUnit={ borderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { borderRadiusUnit: val } ) }
 				/>
 			</PanelBody>
 
