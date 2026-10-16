@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { RangeControl, SelectControl } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { Dashicon } from '@wordpress/components';
 
 const SIDES = [ 'top', 'right', 'bottom', 'left' ];
 const SIDE_LABELS = {
@@ -16,52 +17,111 @@ const UNITS = [
 	{ label: 'rem', value: 'rem' },
 ];
 
-// Sensible slider ceilings per unit - the px max a caller passes in (via
-// `max`) rarely makes sense once the same value means "%" or "em".
-const UNIT_MAX = { '%': 100, em: 20, rem: 20 };
-
 /**
- * Reusable box-model (Top/Right/Bottom/Left) control for Padding, Margin,
- * Gap, Icon Spacing, etc.
+ * Compact box-model (Top / Right / Bottom / Left) control inspired by
+ * Events Loop Builder (.elb-box).
  *
- * value: { top, right, bottom, left }
- * onChange( { top, right, bottom, left } )
+ * Renders all 4 sides in a single compact horizontal grid with an
+ * interactive Link / Unlink toggle and unit selector, saving over 70% of
+ * the vertical space of 4 stacked sliders.
  *
- * Pass `unit` + `onUnitChange` to also show a px/%/em/rem unit picker next
- * to the label (one unit for the whole group, same as Max Width). Callers
- * that omit them keep the plain, unit-less control.
+ * @param {Object}   props
+ * @param {string}   [props.label]        Section title, e.g. "Padding".
+ * @param {Object}   [props.value]        { top, right, bottom, left }
+ * @param {Function} props.onChange       Receives updated { top, right, bottom, left }
+ * @param {string}   [props.unit]         Current unit, e.g. "px".
+ * @param {Function} [props.onUnitChange] Receives new unit string.
  */
-export default function SpacingControls( { label, value = {}, onChange, min = -100, max = 200, unit, onUnitChange } ) {
-	const effectiveMax = unit && UNIT_MAX[ unit ] ? UNIT_MAX[ unit ] : max;
+export default function SpacingControls( { label, value = {}, onChange, unit, onUnitChange } ) {
+	const topVal = value?.top;
+	const rightVal = value?.right;
+	const bottomVal = value?.bottom;
+	const leftVal = value?.left;
+
+	// Automatically start linked if all defined sides are identical.
+	const [ isLinked, setIsLinked ] = useState( () => {
+		const defined = [ topVal, rightVal, bottomVal, leftVal ].filter( ( v ) => v !== undefined && v !== '' );
+		if ( defined.length <= 1 ) {
+			return true;
+		}
+		return defined.every( ( v ) => v === defined[ 0 ] );
+	} );
+
+	const handleSideChange = ( side, rawVal ) => {
+		const parsed = rawVal === '' ? undefined : parseFloat( rawVal );
+		const nextVal = Number.isNaN( parsed ) ? undefined : parsed;
+
+		if ( isLinked ) {
+			onChange( {
+				top: nextVal,
+				right: nextVal,
+				bottom: nextVal,
+				left: nextVal,
+			} );
+		} else {
+			onChange( {
+				...value,
+				[ side ]: nextVal,
+			} );
+		}
+	};
+
+	const linkLabel = isLinked
+		? __( 'Unlink sides', 'blockive-premium-addon-for-block' )
+		: __( 'Link sides', 'blockive-premium-addon-for-block' );
 
 	return (
 		<div className="bpafb-spacing-controls">
 			{ ( label || onUnitChange ) && (
 				<div className="bpafb-spacing-controls__header">
-					{ label && <p className="bpafb-spacing-controls__label">{ label }</p> }
-					{ onUnitChange && (
-						<SelectControl
-							className="bpafb-spacing-controls__unit"
-							label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
-							hideLabelFromVision
-							value={ unit || 'px' }
-							options={ UNITS }
-							onChange={ onUnitChange }
-						/>
-					) }
+					{ label && <span className="bpafb-spacing-controls__label">{ label }</span> }
+					<div className="bpafb-spacing-controls__actions">
+						<button
+							type="button"
+							className={ `bpafb-spacing-controls__link-btn${ isLinked ? ' is-linked' : '' }` }
+							onClick={ () => setIsLinked( ! isLinked ) }
+							title={ linkLabel }
+							aria-label={ linkLabel }
+							aria-pressed={ isLinked }
+						>
+							<Dashicon icon={ isLinked ? 'admin-links' : 'editor-unlink' } />
+						</button>
+						{ onUnitChange && (
+							<select
+								className="bpafb-spacing-controls__unit-select"
+								value={ unit || 'px' }
+								onChange={ ( e ) => onUnitChange( e.target.value ) }
+								aria-label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+							>
+								{ UNITS.map( ( u ) => (
+									<option key={ u.value } value={ u.value }>
+										{ u.label }
+									</option>
+								) ) }
+							</select>
+						) }
+					</div>
 				</div>
 			) }
-			<div className="bpafb-spacing-controls__grid">
-				{ SIDES.map( ( side ) => (
-					<RangeControl
-						key={ side }
-						label={ SIDE_LABELS[ side ] }
-						value={ value[ side ] }
-						onChange={ ( val ) => onChange( { ...value, [ side ]: val } ) }
-						min={ min }
-						max={ effectiveMax }
-					/>
-				) ) }
+
+			<div className="bpafb-spacing-controls__inputs">
+				{ SIDES.map( ( side ) => {
+					const sideVal = value?.[ side ];
+					const displayVal = sideVal !== undefined && sideVal !== null ? sideVal : '';
+
+					return (
+						<label key={ side } className="bpafb-spacing-controls__field" title={ SIDE_LABELS[ side ] }>
+							<input
+								type="number"
+								className="bpafb-spacing-controls__input"
+								value={ displayVal }
+								placeholder="0"
+								onChange={ ( e ) => handleSideChange( side, e.target.value ) }
+							/>
+							<span className="bpafb-spacing-controls__side">{ SIDE_LABELS[ side ] }</span>
+						</label>
+					);
+				} ) }
 			</div>
 		</div>
 	);

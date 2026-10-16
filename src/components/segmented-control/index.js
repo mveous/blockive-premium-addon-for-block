@@ -1,10 +1,12 @@
 import { BaseControl, Button, ButtonGroup } from '@wordpress/components';
 
 /**
- * A pill-style switcher for a small, fixed set of choices (2-4 options),
- * matching Events Loop Builder's segmented controls (Asc/Desc, Grid/List,
- * pagination type, and so on). Drop-in alternative to `SelectControl` for
- * the same small-enum use case -- same `value`/`options`/`onChange` shape.
+ * A soft-rounded track switcher for a small, fixed set of choices (2-4
+ * options), matching Events Loop Builder's segmented controls (Asc/Desc,
+ * Grid/List, pagination type, and so on) -- same track/button radius pair as
+ * the Advanced tab's own tab bar, not a full pill. Drop-in alternative to
+ * `SelectControl` for the same small-enum use case -- same
+ * `value`/`options`/`onChange` shape.
  *
  * @param {Object}                               props
  * @param {string}                               [props.label]

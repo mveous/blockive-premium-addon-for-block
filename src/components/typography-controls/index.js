@@ -1,5 +1,70 @@
 import { __ } from '@wordpress/i18n';
+import { useEffect } from '@wordpress/element';
 import { SelectControl, RangeControl, TextControl } from '@wordpress/components';
+
+export const POPULAR_GOOGLE_FONTS = [
+	'Inter',
+	'Roboto',
+	'Poppins',
+	'Montserrat',
+	'Outfit',
+	'Plus Jakarta Sans',
+	'Open Sans',
+	'Lato',
+	'Playfair Display',
+	'Space Grotesk',
+	'DM Sans',
+	'Rubik',
+	'Nunito',
+	'Raleway',
+	'Ubuntu',
+	'Merriweather',
+	'Lora',
+	'Oswald',
+	'Cinzel',
+	'Work Sans',
+	'Manrope',
+	'Figtree',
+	'Urbanist',
+	'Bebas Neue',
+];
+
+/**
+ * Injects a Google Font stylesheet dynamically into the parent document and
+ * the Gutenberg canvas iframe so selected fonts render immediately in the editor.
+ *
+ * @param {string} fontName The Google Font family name.
+ */
+export function loadEditorGoogleFont( fontName ) {
+	if ( ! fontName || typeof document === 'undefined' ) {
+		return;
+	}
+	const safeId = 'bpafb-gfont-' + fontName.toLowerCase().replace( /[^a-z0-9]/g, '-' );
+	const href = `https://fonts.googleapis.com/css2?family=${ encodeURIComponent( fontName ).replace( /%20/g, '+' ) }:wght@300;400;500;600;700;800&display=swap`;
+
+	const targets = [ document ];
+	const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+	if ( iframe?.contentDocument ) {
+		targets.push( iframe.contentDocument );
+	}
+
+	targets.forEach( ( doc ) => {
+		if ( ! doc?.head || doc.getElementById( safeId ) ) {
+			return;
+		}
+		const link = doc.createElement( 'link' );
+		link.id = safeId;
+		link.rel = 'stylesheet';
+		link.href = href;
+		doc.head.appendChild( link );
+	} );
+}
+
+const FONT_OPTIONS = [
+	{ label: __( 'Default (Theme Font)', 'blockive-premium-addon-for-block' ), value: '' },
+	...POPULAR_GOOGLE_FONTS.map( ( font ) => ( { label: font, value: font } ) ),
+	{ label: __( 'Custom (type name below)...', 'blockive-premium-addon-for-block' ), value: '__custom__' },
+];
 
 const WEIGHT_OPTIONS = [
 	{ label: __( 'Default', 'blockive-premium-addon-for-block' ), value: '' },
@@ -70,14 +135,39 @@ export default function TypographyControls( { values = {}, onChange, fontSizeUni
 	const letterSpacingMax = letterSpacingUnit && LETTER_SPACING_UNIT_MAX[ letterSpacingUnit ] ? LETTER_SPACING_UNIT_MAX[ letterSpacingUnit ] : 20;
 	const letterSpacingMin = letterSpacingUnit && LETTER_SPACING_UNIT_MIN[ letterSpacingUnit ] !== undefined ? LETTER_SPACING_UNIT_MIN[ letterSpacingUnit ] : -5;
 
+	useEffect( () => {
+		if ( fontFamily && POPULAR_GOOGLE_FONTS.includes( fontFamily ) ) {
+			loadEditorGoogleFont( fontFamily );
+		}
+	}, [ fontFamily ] );
+
+	const isKnownFont = FONT_OPTIONS.some( ( opt ) => opt.value === fontFamily );
+	const selectValue = isKnownFont ? fontFamily : ( fontFamily ? '__custom__' : '' );
+
 	return (
 		<>
-			<TextControl
+			<SelectControl
 				label={ __( 'Font Family', 'blockive-premium-addon-for-block' ) }
-				value={ fontFamily }
-				onChange={ ( val ) => onChange( 'fontFamily', val ) }
-				help={ __( "e.g. 'Poppins', sans-serif", 'blockive-premium-addon-for-block' ) }
+				value={ selectValue }
+				options={ FONT_OPTIONS }
+				onChange={ ( val ) => {
+					if ( val === '__custom__' ) {
+						if ( isKnownFont ) {
+							onChange( 'fontFamily', '' );
+						}
+					} else {
+						onChange( 'fontFamily', val );
+					}
+				} }
 			/>
+			{ ( selectValue === '__custom__' || ( ! isKnownFont && fontFamily !== '' ) ) && (
+				<TextControl
+					label={ __( 'Custom Font Family', 'blockive-premium-addon-for-block' ) }
+					value={ fontFamily }
+					onChange={ ( val ) => onChange( 'fontFamily', val ) }
+					placeholder={ __( "e.g. 'Poppins', sans-serif", 'blockive-premium-addon-for-block' ) }
+				/>
+			) }
 			{ onFontSizeUnitChange ? (
 				<div style={ { display: 'flex', gap: '10px', alignItems: 'flex-end' } }>
 					<div style={ { flexGrow: 1 } }>

@@ -11,6 +11,8 @@ const TABS = [
 	{ name: 'advanced', title: __( 'Advanced', 'blockive-premium-addon-for-block' ), className: 'bpafb-inspector-tab-advanced' },
 ];
 
+const STORAGE_KEY = 'bpafb_last_inspector_tab';
+
 /**
  * Blockive's own inspector sidebar: a single custom General / Style /
  * Advanced tab bar nested inside WordPress's native Settings tab (see
@@ -26,10 +28,31 @@ const TABS = [
 export default function InspectorTabs( { general, style, attributes, setAttributes } ) {
 	useClaimBpafbUid( attributes, setAttributes );
 
+	const initialTab = ( () => {
+		try {
+			const saved = window?.localStorage?.getItem( STORAGE_KEY );
+			if ( saved && TABS.some( ( t ) => t.name === saved ) ) {
+				return saved;
+			}
+		} catch ( e ) {}
+		return 'general';
+	} )();
+
+	const handleSelectTab = ( tabName ) => {
+		try {
+			window?.localStorage?.setItem( STORAGE_KEY, tabName );
+		} catch ( e ) {}
+	};
+
 	return (
 		<InspectorControls>
 			<div className="bpafb-inspector">
-				<TabPanel className="bpafb-inspector-tabs" tabs={ TABS }>
+				<TabPanel
+					className="bpafb-inspector-tabs"
+					tabs={ TABS }
+					initialTabName={ initialTab }
+					onSelect={ handleSelectTab }
+				>
 					{ ( tab ) => {
 						if ( tab.name === 'general' ) {
 							return <Accordion>{ general }</Accordion>;

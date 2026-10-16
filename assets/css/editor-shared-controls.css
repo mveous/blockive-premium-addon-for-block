@@ -1,43 +1,193 @@
 /* Shared editor-only styling for the Blockive InspectorTabs component library */
 
-.bpafb-spacing-controls__label {
-	font-weight: 500;
-	margin-bottom: 8px;
+.bpafb-spacing-controls {
+	margin-bottom: 16px;
 }
 
 .bpafb-spacing-controls__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 10px;
-}
-
-.bpafb-spacing-controls__header .bpafb-spacing-controls__label {
 	margin-bottom: 8px;
 }
 
-.bpafb-spacing-controls__unit {
-	width: 80px;
-	flex-shrink: 0;
-	margin-bottom: 8px;
+.bpafb-spacing-controls__label {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--bpafb-slate-700, #334155);
 }
 
-.bpafb-spacing-controls__grid {
+.bpafb-spacing-controls__actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.bpafb-spacing-controls__link-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border-radius: var(--bpafb-radius-sm, 6px);
+	border: 1px solid var(--bpafb-slate-200, #e2e8f0);
+	background: #fff;
+	color: var(--bpafb-slate-500, #64748b);
+	cursor: pointer;
+	transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.bpafb-spacing-controls__link-btn .dashicon {
+	width: 14px;
+	height: 14px;
+	font-size: 14px;
+	line-height: 1;
+}
+
+.bpafb-spacing-controls__link-btn:hover {
+	color: var(--bpafb-primary, #3b82f6);
+	border-color: var(--bpafb-primary, #3b82f6);
+}
+
+.bpafb-spacing-controls__link-btn.is-linked {
+	background: var(--bpafb-primary-light, #eff6ff);
+	border-color: var(--bpafb-primary, #3b82f6);
+	color: var(--bpafb-primary, #3b82f6);
+}
+
+.bpafb-spacing-controls__link-btn:focus-visible {
+	outline: 2px solid var(--bpafb-primary, #3b82f6);
+	outline-offset: 1px;
+}
+
+.bpafb-spacing-controls__unit-select {
+	height: 26px;
+	padding: 0 16px 0 6px;
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--bpafb-slate-700, #334155);
+	background-color: #fff;
+	border: 1px solid var(--bpafb-slate-200, #e2e8f0);
+	border-radius: var(--bpafb-radius-sm, 6px);
+	cursor: pointer;
+	box-shadow: none;
+	line-height: 1;
+}
+
+.bpafb-spacing-controls__unit-select:focus {
+	border-color: var(--bpafb-primary, #3b82f6);
+	outline: none;
+}
+
+.bpafb-spacing-controls__inputs {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
-	margin-bottom: 15px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 6px;
+}
+
+.bpafb-spacing-controls__field {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 4px;
+	margin: 0;
+	cursor: default;
+}
+
+.bpafb-spacing-controls__input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 32px;
+	min-height: 0;
+	padding: 0 4px;
+	border: 1px solid var(--bpafb-slate-200, #e2e8f0);
+	border-radius: var(--bpafb-radius-sm, 6px);
+	background: #fff;
+	box-shadow: none;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--bpafb-slate-800, #1e293b);
+	-moz-appearance: textfield;
+	transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.bpafb-spacing-controls__input:hover {
+	border-color: var(--bpafb-slate-400, #94a3b8);
+}
+
+.bpafb-spacing-controls__input:focus {
+	border-color: var(--bpafb-primary, #3b82f6);
+	outline: 2px solid rgba(59, 130, 246, 0.2);
+	outline-offset: 0;
+}
+
+.bpafb-spacing-controls__input::-webkit-inner-spin-button,
+.bpafb-spacing-controls__input::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.bpafb-spacing-controls__side {
+	display: block;
+	text-align: center;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--bpafb-slate-400, #94a3b8);
+}
+
+/* Device Switcher (Responsive Controls) */
+.bpafb-responsive-controls {
+	margin-bottom: 16px;
 }
 
 .bpafb-responsive-controls__switch {
 	display: flex;
 	width: 100%;
-	margin-bottom: 15px;
+	background: var(--bpafb-slate-100, #f1f5f9);
+	border-radius: var(--bpafb-radius-md, 10px);
+	padding: 3px;
+	gap: 2px;
+	margin-bottom: 14px;
+	box-sizing: border-box;
 }
 
-.bpafb-responsive-controls__switch .components-button {
-	flex-grow: 1;
+.bpafb-responsive-controls__btn {
+	flex: 1 1 0;
+	min-width: 0;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
 	justify-content: center;
+	padding: 0 8px;
+	border: none;
+	border-radius: var(--bpafb-radius-sm, 6px);
+	background: transparent;
+	color: var(--bpafb-slate-600, #475569);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	box-shadow: none;
+	transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.bpafb-responsive-controls__btn:hover:not(.is-active) {
+	color: var(--bpafb-primary, #3b82f6);
+}
+
+.bpafb-responsive-controls__btn.is-active {
+	background: #fff;
+	color: var(--bpafb-primary, #3b82f6);
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.bpafb-responsive-controls__btn:focus-visible {
+	outline: 2px solid var(--bpafb-primary, #3b82f6);
+	outline-offset: 1px;
 }
 
 .bpafb-color-tab-content {
@@ -110,7 +260,11 @@
 	border-bottom: 1px solid var(--bpafb-slate-200);
 }
 
-/* Tab bar: one pill track, matching the SegmentedControl. */
+/* Tab bar: one soft-rounded track, matching the SegmentedControl's
+   outer-track/inner-button radius pair exactly (radius-md/radius-sm) --
+   same two-tier rounding Events Loop Builder uses throughout its own
+   inspector (.elb-qseg, .elb-device-toggle, its own tab bar), never a full
+   pill. */
 .bpafb-inspector-tabs .components-tab-panel__tabs {
 	display: flex;
 	gap: 2px;
@@ -138,7 +292,7 @@
 }
 
 .bpafb-inspector-tabs .components-tab-panel__tabs-item:hover {
-	color: var(--bpafb-slate-800);
+	color: var(--bpafb-primary);
 }
 
 .bpafb-inspector-tabs .components-tab-panel__tabs-item.is-active {
@@ -149,13 +303,18 @@
 
 /* The `box-shadow: none !important` above also strips WP core's own
    focus-ring box-shadow, leaving keyboard users with no visible indicator of
-   which tab is focused. Restore one explicitly. */
-.bpafb-inspector-tabs .components-tab-panel__tabs-item:focus-visible {
-	box-shadow: 0 0 0 2px var(--bpafb-primary) !important;
+   which tab is focused. Restore one explicitly -- as an outline rather than
+   another box-shadow, so it never has to be combined with .is-active's own
+   elevation shadow, and only on :focus-visible (not a plain mouse click),
+   matching Events Loop Builder's focus-ring convention throughout its own
+   inspector (e.g. .elb-qseg__btn:focus-visible). */
+.bpafb-inspector-tabs .components-tab-panel__tabs-item:focus:not(:focus-visible) {
+	outline: none;
 }
 
-.bpafb-inspector-tabs .components-tab-panel__tabs-item.is-active:focus-visible {
-	box-shadow: var(--bpafb-shadow-sm), 0 0 0 2px var(--bpafb-primary) !important;
+.bpafb-inspector-tabs .components-tab-panel__tabs-item:focus-visible {
+	outline: 2px solid var(--bpafb-primary);
+	outline-offset: 1px;
 }
 
 /* Panels: quiet cards, consistent spacing, clear open state. */
@@ -214,7 +373,7 @@
 	display: flex;
 	width: 100%;
 	background: var(--bpafb-slate-100);
-	border-radius: var(--bpafb-radius-full);
+	border-radius: var(--bpafb-radius-md);
 	padding: 3px;
 	gap: 2px;
 }
@@ -233,7 +392,7 @@
 	text-align: center;
 	justify-content: center;
 	border: none;
-	border-radius: var(--bpafb-radius-full);
+	border-radius: var(--bpafb-radius-sm);
 	box-shadow: none;
 	background: transparent;
 	color: var(--bpafb-slate-600);
@@ -248,12 +407,38 @@
 	margin-left: 0;
 }
 
-/* Unselected option, mouse over: same darkening the Tab bar uses
-   (.bpafb-inspector-tabs .components-tab-panel__tabs-item:hover), instead of
-   the WP core Button default (a blue text tint that doesn't match our
-   palette and gives no sense of which pill is selected). */
+.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed {
+	background: #fff;
+	color: var(--bpafb-primary);
+	box-shadow: var(--bpafb-shadow-sm);
+}
+
+/* WP core's default Button styling paints a dark (#1e1e1e) background on any
+   toggled (aria-pressed) button for :hover, :focus, AND :active alike --
+   confirmed by inspecting computed styles for each state individually, not
+   just focus. Override `background` unconditionally across all three so
+   that dark fill can never show through, on either pill state, regardless of
+   input modality. This rule intentionally leaves `outline` alone -- it used
+   to also reset `outline: none` here, but that has the SAME specificity
+   class-count as the dedicated :focus-visible ring rule below (both are 2
+   classes + 1 pseudo), and this rule's :is()/:not() combinator bumps it to
+   effectively higher specificity, so it was winning and suppressing the
+   keyboard focus ring entirely. Outline is handled solely by the
+   :focus-visible pair below now. */
+.bpafb-segmented-control .bpafb-segmented-control__option:is(:hover, :focus, :active):not(:disabled) {
+	background: transparent;
+}
+
+.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed:is(:hover, :focus, :active):not(:disabled) {
+	background: #fff;
+}
+
+/* Unselected option, mouse over: tints to the same accent color the
+   selected state uses, same as the Tab bar's hover and Events Loop
+   Builder's .elb-qseg__btn:hover -- a preview of "this is what clicking
+   selects", not just a generic darkening. */
 .bpafb-segmented-control .bpafb-segmented-control__option:hover:not(.is-pressed):not(:disabled) {
-	color: var(--bpafb-slate-800);
+	color: var(--bpafb-primary);
 }
 
 /* Mouse-down press feedback, both selected and unselected. */
@@ -261,27 +446,13 @@
 	transform: scale(0.96);
 }
 
-.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed {
-	background: #fff;
-	color: var(--bpafb-primary);
-	box-shadow: var(--bpafb-shadow-sm);
+.bpafb-segmented-control .bpafb-segmented-control__option:focus:not(:focus-visible) {
+	outline: none;
 }
 
-/* WP core's default Button focus style paints a dark (#1e1e1e) background on
-   any toggled (aria-pressed) button once focused, including via a plain
-   mouse click -- not just keyboard nav. Nothing here previously overrode
-   `background` for the focus state, so that dark fill showed through on top
-   of both the selected (white) and unselected (transparent) pill look,
-   clashing badly with this pill design. Keep WP's own focus outline (already
-   consistent with the rest of wp-admin) but keep our own background/color. */
-.bpafb-segmented-control .bpafb-segmented-control__option:focus:not(:disabled) {
-	background: transparent;
-	color: var(--bpafb-slate-800);
-}
-
-.bpafb-segmented-control .bpafb-segmented-control__option.is-pressed:focus:not(:disabled) {
-	background: #fff;
-	color: var(--bpafb-primary);
+.bpafb-segmented-control .bpafb-segmented-control__option:focus-visible {
+	outline: 2px solid var(--bpafb-primary);
+	outline-offset: 1px;
 }
 
 .bpafb-stepper-control {
@@ -290,7 +461,7 @@
 	gap: 8px;
 	width: fit-content;
 	border: 1px solid var(--bpafb-slate-200);
-	border-radius: var(--bpafb-radius-full);
+	border-radius: var(--bpafb-radius-md);
 	padding: 2px;
 }
 
@@ -298,6 +469,19 @@
 	min-width: 28px;
 	text-align: center;
 	font-weight: 500;
+}
+
+/* The -/+ buttons had no hover/active treatment at all -- same accent-tint
+   convention as the rest of the inspector (and Events Loop Builder's own
+   .elb-qnum__btn:hover), instead of relying on WP core's plain default. */
+.bpafb-stepper-control__btn.components-button {
+	border-radius: var(--bpafb-radius-sm);
+	color: var(--bpafb-slate-600);
+}
+
+.bpafb-stepper-control__btn.components-button:hover:not(:disabled) {
+	background: var(--bpafb-primary-light);
+	color: var(--bpafb-primary);
 }
 
 .bpafb-control-row {
