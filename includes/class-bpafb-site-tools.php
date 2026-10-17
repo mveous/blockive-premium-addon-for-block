@@ -97,6 +97,16 @@ class Bpafb_Site_Tools
 	private function __construct()
 	{
 		add_action('admin_menu', [$this, 'add_page']);
+		// Late, so every submenu item under the Blockive Templates menu
+		// (including WordPress's own "All Templates" / "Add New") has
+		// already been added by the time this moves ours to the top.
+		add_action('admin_menu', [$this, 'move_page_to_top'], 999);
+		// WordPress's own "Add New" submenu row, removed since every
+		// brand-new template already asks which kind to create (see
+		// src/template-builder/template-kind-picker-modal.js) from the
+		// "Add New Template" button already on the Blockive Templates list
+		// screen itself - this row was just a second way to the same place.
+		add_action('admin_menu', [$this, 'remove_add_new_submenu'], 999);
 		add_action('admin_init', [$this, 'register_settings']);
 		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
 		add_filter('register_block_type_args', [$this, 'hide_disabled_blocks'], 20, 2);
@@ -140,6 +150,52 @@ class Bpafb_Site_Tools
 			'manage_options',
 			self::PAGE,
 			[$this, 'render_page']
+		);
+	}
+
+	/**
+	 * Moves "Site Tools" to the very top of the Blockive Templates
+	 * submenu, above WordPress's own "All Templates" / "Add New" items.
+	 * There is no `add_submenu_page()` position argument for this - only
+	 * reordering the `$submenu` global directly, after every item is
+	 * already on it, works.
+	 *
+	 * Note: WordPress points the top-level "Blockive Templates" menu link
+	 * at whichever submenu item sits in this first slot, so with Site
+	 * Tools here, that top-level link and "Site Tools" now open the same
+	 * page - a deliberate trade-off for having Site Tools literally first.
+	 */
+	public function move_page_to_top()
+	{
+		global $submenu;
+
+		$parent = 'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE;
+		if (empty($submenu[$parent])) {
+			return;
+		}
+
+		foreach ($submenu[$parent] as $key => $item) {
+			if (isset($item[2]) && self::PAGE === $item[2]) {
+				$entry = $item;
+				unset($submenu[$parent][$key]);
+				array_unshift($submenu[$parent], $entry);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Removes the "Add New" row WordPress adds automatically for any
+	 * public post type (see `_add_post_type_submenus()` in
+	 * wp-admin/menu.php, which runs before `admin_menu` fires at all, so
+	 * this row already exists by the time any `admin_menu` callback - at
+	 * any priority - runs).
+	 */
+	public function remove_add_new_submenu()
+	{
+		remove_submenu_page(
+			'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE,
+			'post-new.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE
 		);
 	}
 

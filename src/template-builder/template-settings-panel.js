@@ -64,7 +64,7 @@ export function usePostTypeOptions() {
 // set. Pro's own, richer Template Type panel (with Archive/Search/404/
 // Popup/etc. on top of these same two) replaces this control entirely; see
 // blockive-premium-addon-for-block-pro/src/template-builder-pro/template-kind-panel.js.
-const KIND_OPTIONS = [
+export const KIND_OPTIONS = [
 	{ label: __( 'Single Post/Page', 'blockive-premium-addon-for-block' ), value: 'single' },
 	{ label: __( 'Header', 'blockive-premium-addon-for-block' ), value: 'header' },
 	{ label: __( 'Footer', 'blockive-premium-addon-for-block' ), value: 'footer' },

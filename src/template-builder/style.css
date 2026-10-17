@@ -16,3 +16,29 @@
 	gap: 8px;
 	margin-top: 20px;
 }
+
+/* "Create a New Template" kind-picker modal - free plugin's own
+   .bpafb-template-kind-picker-modal (template-kind-picker-modal.js) and
+   Pro's richer .bpafb-pro-template-kind-picker-modal (same file name, in
+   the Pro plugin) share this one stylesheet, so both are covered here. */
+.bpafb-template-kind-picker-modal.components-modal__frame,
+.components-modal__frame.bpafb-template-kind-picker-modal,
+.bpafb-template-kind-picker-modal,
+.bpafb-pro-template-kind-picker-modal.components-modal__frame,
+.components-modal__frame.bpafb-pro-template-kind-picker-modal,
+.bpafb-pro-template-kind-picker-modal {
+	max-width: 480px;
+}
+
+.bpafb-template-kind-picker-modal .components-base-control,
+.bpafb-pro-template-kind-picker-modal .components-base-control {
+	margin-bottom: 16px;
+}
+
+.bpafb-template-kind-picker-modal__actions,
+.bpafb-pro-template-kind-picker-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 20px;
+}
