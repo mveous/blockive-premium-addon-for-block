@@ -10,10 +10,6 @@ const extraEntry = {
 		__dirname,
 		'src/template-blocks/index.js'
 	),
-	'locked-blocks/index': path.resolve(
-		__dirname,
-		'src/locked-blocks/index.js'
-	),
 };
 
 // @wordpress/scripts sets `entry` to a function that lazily discovers every

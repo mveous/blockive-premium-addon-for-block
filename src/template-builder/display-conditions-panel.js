@@ -83,21 +83,14 @@ const DisplayConditionsPanel = () => {
 							),
 							value: 'all',
 						},
-						{
-							label: SPECIFIC_SCOPE_ENABLED
-								? __( 'Specific posts', 'blockive-premium-addon-for-block' )
-								: sprintf(
-									/* translators: %s: "(Pro)" suffix marking this option as a Pro-only feature. */
-									__( 'Specific posts %s', 'blockive-premium-addon-for-block' ),
-									__( '(Pro)', 'blockive-premium-addon-for-block' )
-								),
-							value: 'specific',
-							disabled: ! SPECIFIC_SCOPE_ENABLED,
-						},
+						...( SPECIFIC_SCOPE_ENABLED
+							? [ { label: __( 'Specific posts', 'blockive-premium-addon-for-block' ), value: 'specific' } ]
+							: [] ),
 					] }
 					onChange={ ( value ) => {
-						// Disabled options can't be picked, but guard anyway so
-						// the meta can never be set to "specific" from here.
+						// "specific" isn't offered as an option at all when
+						// disabled, but guard anyway so the meta can never be
+						// set to it from here.
 						if ( 'specific' === value && ! SPECIFIC_SCOPE_ENABLED ) {
 							return;
 						}

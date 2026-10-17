@@ -17,9 +17,9 @@ class Bpafb_Template_Post_Type
 	const POST_TYPE = 'blockive_template';
 
 	/**
-	 * Post types a template can target in the free version. Every other
-	 * viewable post type is a Pro feature: the Template Type control shows
-	 * them with a "(Pro)" label but keeps them disabled.
+	 * Post types a template can target in the free version. The Template
+	 * Type control only ever lists these - every other viewable post type
+	 * is simply left out of it.
 	 *
 	 * @var string[]
 	 */
@@ -216,15 +216,6 @@ class Bpafb_Template_Post_Type
 
 		if ('bpafb_template_type' === $column) {
 			$type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $post_type_slug;
-
-			if (!self::is_free_template_type($post_type_slug)) {
-				$type_label = sprintf(
-					/* translators: %s: post type name, e.g. "Product". */
-					__('%s (Pro)', 'blockive-premium-addon-for-block'),
-					$type_label
-				);
-			}
-
 			echo esc_html($type_label);
 			return;
 		}
@@ -244,7 +235,7 @@ class Bpafb_Template_Post_Type
 			echo esc_html(
 				sprintf(
 					/* translators: %s: post type name, e.g. "Posts". */
-					__('Specific %s (Pro)', 'blockive-premium-addon-for-block'),
+					__('Specific %s', 'blockive-premium-addon-for-block'),
 					$post_type_name
 				)
 			);

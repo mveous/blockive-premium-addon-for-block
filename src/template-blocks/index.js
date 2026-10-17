@@ -12,7 +12,3 @@ import './style.css';
 
 // Post / Core Template Blocks.
 import './post';
-
-// Pro-only Template Blocks (WooCommerce, Events, Dynamic Field). These are
-// just locked "(Pro)" placeholders here, shown in the block list.
-import './pro-teasers';

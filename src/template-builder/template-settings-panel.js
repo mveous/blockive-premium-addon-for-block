@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { PanelRow, SelectControl } from '@wordpress/components';
@@ -18,37 +18,26 @@ export const isFreePostType = ( slug ) => FREE_POST_TYPES.includes( slug );
 
 /**
  * Builds the list of post types a template can target, using the site's
- * real viewable post types. Each one is either open to use, or marked
- * "(Pro)", based on FREE_POST_TYPES. This is exported so Pro's own
- * Template Type panel can use the same list and the same rules (see
- * blockive-premium-addon-for-block-pro/src/template-builder-pro/template-kind-panel.js).
+ * real viewable post types, limited to FREE_POST_TYPES. This is exported
+ * so Pro's own Template Type panel can use the same list and the same
+ * rules (see
+ * blockive-premium-addon-for-block-pro/src/template-builder-pro/template-kind-panel.js) -
+ * where FREE_POST_TYPES covers every viewable post type, so nothing is
+ * left out there.
  *
- * @return {Array<{label: string, value: string, disabled?: boolean}>}
+ * @return {Array<{label: string, value: string}>}
  */
 export function usePostTypeOptions() {
 	const postTypes = useSelect(
 		( select ) =>
 			select( 'core' )
 				.getPostTypes( { per_page: -1 } )
-				?.filter( ( postType ) => postType.viewable ) || [],
+				?.filter( ( postType ) => postType.viewable && isFreePostType( postType.slug ) ) || [],
 		[]
 	);
 
 	return postTypes.length
-		? postTypes.map( ( postType ) => {
-				const free = isFreePostType( postType.slug );
-				return {
-					label: free
-						? postType.name
-						: sprintf(
-							/* translators: %s: post type name, e.g. "Products". */
-							__( '%s (Pro)', 'blockive-premium-addon-for-block' ),
-							postType.name
-						),
-					value: postType.slug,
-					disabled: ! free,
-				};
-		  } )
+		? postTypes.map( ( postType ) => ( { label: postType.name, value: postType.slug } ) )
 		: [
 				{ label: __( 'Post', 'blockive-premium-addon-for-block' ), value: 'post' },
 				{ label: __( 'Page', 'blockive-premium-addon-for-block' ), value: 'page' },
