@@ -197,6 +197,20 @@ class Bpafb_Template_Post_Type
 			return;
 		}
 
+		// Bpafb_Template_Kinds is a free-plugin-only class (Pro overrides
+		// this whole method with its own richer, kind-aware version - see
+		// Bpafb_Pro_Template_Kinds::render_admin_column()), guarded here
+		// only so this shared file stays safe to copy into Pro as-is.
+		$kind = class_exists('Bpafb_Template_Kinds') ? Bpafb_Template_Kinds::get_kind($post_id) : 'single';
+		if ('single' !== $kind) {
+			if ('bpafb_template_type' === $column) {
+				echo esc_html(Bpafb_Template_Kinds::KIND_LABELS[$kind] ?? ucfirst($kind));
+			} else {
+				esc_html_e('Entire Site', 'blockive-premium-addon-for-block');
+			}
+			return;
+		}
+
 		$post_type_slug = get_post_meta($post_id, '_bpafb_template_type', true) ?: 'post';
 		$post_type_obj  = get_post_type_object($post_type_slug);
 

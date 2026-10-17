@@ -15,6 +15,9 @@ const SPECIFIC_SCOPE_ENABLED = !! window.bpafbTemplateBuilder?.specificScopeEnab
 const DisplayConditionsPanel = () => {
 	const [ meta, setMeta ] = useEntityProp( 'postType', TEMPLATE_POST_TYPE, 'meta' );
 
+	const kind = meta?._bpafb_template_kind || 'single';
+	const isSingle = 'single' === kind;
+
 	const targetPostType = meta?._bpafb_template_type || 'post';
 	const scope = meta?._bpafb_display_condition_scope || 'all';
 	const priority = Number.isFinite( meta?._bpafb_template_priority ) ? meta._bpafb_template_priority : 10;
@@ -23,6 +26,43 @@ const DisplayConditionsPanel = () => {
 		( select ) => select( 'core' ).getPostType( targetPostType )?.labels?.name || targetPostType,
 		[ targetPostType ]
 	);
+
+	// Header and Footer always apply site-wide in the free version (no
+	// per-page conditions to pick), so this panel only shows them a plain
+	// notice plus the same Priority tiebreaker the single-post override
+	// already uses, in case more than one Header or Footer gets published
+	// at once. Pro's own Display Conditions panel (with a full rule list -
+	// Archive/Search/404/User Role/etc.) replaces this panel entirely for
+	// every kind; see template-kind-panel.js in the Pro plugin.
+	if ( ! isSingle ) {
+		return (
+			<PluginDocumentSettingPanel
+				name="bpafb-display-conditions"
+				title={ __( 'Display Conditions', 'blockive-premium-addon-for-block' ) }
+				className="bpafb-display-conditions-panel"
+			>
+				<PanelRow>
+					<p>
+						{ 'header' === kind
+							? __( 'This Header shows on every page of the site once published.', 'blockive-premium-addon-for-block' )
+							: __( 'This Footer shows on every page of the site once published.', 'blockive-premium-addon-for-block' ) }
+					</p>
+				</PanelRow>
+				<PanelRow>
+					<TextControl
+						type="number"
+						label={ __( 'Priority', 'blockive-premium-addon-for-block' ) }
+						help={ __( 'If more than one is published, the lower priority number wins.', 'blockive-premium-addon-for-block' ) }
+						value={ priority }
+						onChange={ ( value ) => {
+							const parsed = parseInt( value, 10 );
+							setMeta( { ...meta, _bpafb_template_priority: Number.isNaN( parsed ) ? 10 : parsed } );
+						} }
+					/>
+				</PanelRow>
+			</PluginDocumentSettingPanel>
+		);
+	}
 
 	return (
 		<PluginDocumentSettingPanel

@@ -100,12 +100,19 @@ final class Blockive_Premium_Addon_For_Block_Loader
 		require_once BPAFB_PATH . 'includes/class-bpafb-post-meta-items.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-display-conditions.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-frontend-render.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-kinds.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-theme-locations.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-locked-blocks.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-site-tools.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-custom-fonts.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-role-manager.php';
 
 		Blockive_Premium_Addon_For_Block::get_instance();
+		// Free plugin only (not in the shared core): Pro has its own,
+		// richer Template Kind system (Header/Footer plus Archive/Search/
+		// 404/Popup/etc.) in Bpafb_Pro_Template_Kinds / Bpafb_Pro_Theme_Locations.
+		Bpafb_Template_Kinds::get_instance();
+		Bpafb_Template_Theme_Locations::get_instance();
 		// Free plugin only (not in the shared core): Pro has the real blocks.
 		Bpafb_Locked_Blocks::get_instance();
 		Bpafb_Site_Tools::get_instance();
