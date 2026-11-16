@@ -3,7 +3,7 @@
  * Plugin Name:       Blockive - Premium Addon For Block
  * Description: A powerful Blockive addon plugin that offers a wide range of Blocks
  * Plugin URI: https://mveous.com
- * Version:           1.0.1
+ * Version:           1.1.0
  * Requires at least: 6.8
  * Requires PHP:      7.4
  * Author:            Mveous
@@ -89,7 +89,7 @@ final class Blockive_Premium_Addon_For_Block_Loader
 
 		define('BPAFB_PATH', plugin_dir_path(__FILE__));
 		define('BPAFB_URL', plugin_dir_url(__FILE__));
-		define('BPAFB_VERSION', '1.0.1');
+		define('BPAFB_VERSION', '1.1.0');
 
 		require_once BPAFB_PATH . 'includes/class-bpafb-core.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-post-type.php';

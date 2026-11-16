@@ -4,7 +4,7 @@ Tags:              block, blocks, gutenberg, blockive, block template builder
 Requires at least: 6.8
 Requires PHP:      7.4
 Tested up to:      7.1
-Stable tag:        1.0.1
+Stable tag:        1.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,6 +205,17 @@ Blockive Pro unlocks 60 total blocks (including native Form with submissions, Me
 
 == Changelog ==
 
+= 1.1.0 =
+* Added Site Tools dashboard with an Element Manager to easily turn unused blocks on or off.
+* Added Free vs Pro comparison tab in the dashboard.
+* Added Advanced tab for blocks with margin, padding, border, background, and animation controls.
+* Added live preview in the editor for container and advanced styling changes.
+* Added hover previews for blocks in the block inserter.
+* Added evergreen countdown timer mode and timer expiry actions.
+* Added template layout options to hide post title, featured image, comments, and enable full width.
+* Added WPML compatibility and FontAwesome 6 icon support.
+* Accessibility improvements for Accordion, Tabs, and Image Comparison blocks.
+
 = 1.0.1 =
 * Tested and confirmed compatibility up to WordPress 7.1.
 * Improved template builder block rendering and responsive control performance.
@@ -212,3 +223,8 @@ Blockive Pro unlocks 60 total blocks (including native Form with submissions, Me
 
 = 1.0.0 =
 * Initial public release with 25 premium blocks and dynamic Template Builder.
+
+== Upgrade Notice ==
+
+= 1.1.0 =
+Includes new Site Tools dashboard, Element Manager, advanced block styling settings, and important fixes.
