@@ -1,7 +1,7 @@
 <?php
 /**
  * Site Tools (Blockive Templates → Site Tools): Element Manager. Blockive
- * blocks turned off here are hidden from the inserter (blocks already on
+ * blocks (including Template Builder blocks) turned off here are hidden from the inserter (blocks already on
  * pages keep working).
  *
  * @package Blockive
@@ -246,8 +246,10 @@ class Bpafb_Site_Tools
 	}
 
 	/**
-	 * Blockive blocks a site owner would add (not template-only pieces or
-	 * child blocks), sorted by title.
+	 * Every Blockive block registered on this site, except child blocks
+	 * (they only exist inside a parent), grouped by category and then sorted
+	 * by title. Built from the block registry, so a block added to the plugin
+	 * shows up here with no extra step.
 	 *
 	 * @return WP_Block_Type[]
 	 */
@@ -255,19 +257,46 @@ class Bpafb_Site_Tools
 	{
 		$blocks = [];
 		foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type) {
-			if (0 !== strpos($name, self::NAMESPACE_PREFIX) || !empty($type->parent) || 0 === strpos($name, self::NAMESPACE_PREFIX . 'tb-')) {
+			if (0 !== strpos($name, self::NAMESPACE_PREFIX) || !empty($type->parent)) {
 				continue;
 			}
 			$blocks[] = $type;
 		}
-		usort($blocks, function ($a, $b) {
+		$order = array_keys(self::category_labels());
+		usort($blocks, function ($a, $b) use ($order) {
+			$cat_a = array_search(self::get_block_category($a->name), $order, true);
+			$cat_b = array_search(self::get_block_category($b->name), $order, true);
+			if ($cat_a !== $cat_b) {
+				return $cat_a <=> $cat_b;
+			}
 			return strcasecmp((string) $a->title, (string) $b->title);
 		});
 		return $blocks;
 	}
 
 	/**
-	 * Categorizes a block name for Element Manager filtering.
+	 * Category slug => label, in display order.
+	 *
+	 * @return string[]
+	 */
+	private static function category_labels()
+	{
+		return [
+			'content'     => __('Content', 'blockive-premium-addon-for-block'),
+			'interactive' => __('Interactive', 'blockive-premium-addon-for-block'),
+			'marketing'   => __('Marketing', 'blockive-premium-addon-for-block'),
+			'forms'       => __('Forms', 'blockive-premium-addon-for-block'),
+			'loops'       => __('Loops & Query', 'blockive-premium-addon-for-block'),
+			'navigation'  => __('Navigation', 'blockive-premium-addon-for-block'),
+			'woocommerce' => __('WooCommerce', 'blockive-premium-addon-for-block'),
+			'template'    => __('Template Builder', 'blockive-premium-addon-for-block'),
+		];
+	}
+
+	/**
+	 * Categorizes a block name for Element Manager filtering. Known blocks
+	 * come from the map below; a block not in it yet (a newly added one) is
+	 * placed by keyword, falling back to "content", so it still appears.
 	 *
 	 * @param string $name Block name slug.
 	 * @return string Category slug.
@@ -275,20 +304,57 @@ class Bpafb_Site_Tools
 	private static function get_block_category($name)
 	{
 		$slug = str_replace(self::NAMESPACE_PREFIX, '', $name);
-		if (false !== strpos($slug, 'product') || false !== strpos($slug, 'woo') || false !== strpos($slug, 'cart')) {
-			return 'woocommerce';
+
+		// Template Builder pieces (tb-author, tb-post-title, ...).
+		if (0 === strpos($slug, 'tb-')) {
+			return 'template';
 		}
-		if (false !== strpos($slug, 'loop') || false !== strpos($slug, 'grid') || false !== strpos($slug, 'portfolio') || false !== strpos($slug, 'archive')) {
-			return 'loops';
+
+		$map = [
+			'heading'          => 'content',
+			'drop-caps'        => 'content',
+			'button'           => 'content',
+			'icon-box'         => 'content',
+			'image-box'        => 'content',
+			'video'            => 'content',
+			'lottie'           => 'content',
+			'team'             => 'content',
+			'business-hours'   => 'content',
+			'accordion'        => 'interactive',
+			'faq'              => 'interactive',
+			'tabs'             => 'interactive',
+			'image-accordion'  => 'interactive',
+			'image-comparison' => 'interactive',
+			'countdown-timer'  => 'marketing',
+			'funfact'          => 'marketing',
+			'pie-chart'        => 'marketing',
+			'pricing-table'    => 'marketing',
+			'progress-bar'     => 'marketing',
+			'social-icons'     => 'marketing',
+			'testimonial'      => 'marketing',
+			'contact-form-7'   => 'forms',
+			'mailchimp'        => 'forms',
+			'post-grid'        => 'loops',
+			'category-list'    => 'loops',
+		];
+		if (isset($map[$slug])) {
+			return $map[$slug];
 		}
-		if (false !== strpos($slug, 'menu') || false !== strpos($slug, 'search') || false !== strpos($slug, 'sitemap') || false !== strpos($slug, 'breadcrumb') || false !== strpos($slug, 'toc') || false !== strpos($slug, 'table-of-contents')) {
-			return 'navigation';
-		}
-		if (false !== strpos($slug, 'carousel') || false !== strpos($slug, 'slides') || false !== strpos($slug, 'accordion') || false !== strpos($slug, 'tabs') || false !== strpos($slug, 'flip-box') || false !== strpos($slug, 'hotspot') || false !== strpos($slug, 'off-canvas') || false !== strpos($slug, 'form') || false !== strpos($slug, 'mailchimp')) {
-			return 'interactive';
-		}
-		if (false !== strpos($slug, 'price') || false !== strpos($slug, 'pricing') || false !== strpos($slug, 'fun-fact') || false !== strpos($slug, 'progress') || false !== strpos($slug, 'testimonial') || false !== strpos($slug, 'review') || false !== strpos($slug, 'social') || false !== strpos($slug, 'countdown') || false !== strpos($slug, 'floating-button') || false !== strpos($slug, 'link-in-bio') || false !== strpos($slug, 'call-to-action')) {
-			return 'marketing';
+
+		$keywords = [
+			'woocommerce' => ['product', 'woo', 'cart'],
+			'loops'       => ['loop', 'grid', 'portfolio', 'archive', 'query'],
+			'navigation'  => ['menu', 'search', 'sitemap', 'breadcrumb', 'toc', 'table-of-contents'],
+			'forms'       => ['form', 'mailchimp', 'newsletter'],
+			'interactive' => ['carousel', 'slider', 'slides', 'accordion', 'tabs', 'flip-box', 'hotspot', 'off-canvas', 'toggle', 'comparison'],
+			'marketing'   => ['price', 'pricing', 'fun', 'progress', 'chart', 'testimonial', 'review', 'social', 'countdown', 'floating-button', 'link-in-bio', 'call-to-action'],
+		];
+		foreach ($keywords as $category => $needles) {
+			foreach ($needles as $needle) {
+				if (false !== strpos($slug, $needle)) {
+					return $category;
+				}
+			}
 		}
 		return 'content';
 	}
@@ -305,6 +371,12 @@ class Bpafb_Site_Tools
 		$total_blocks = count($blocks);
 		$disabled_count = count(array_intersect_key($disabled, array_flip(wp_list_pluck($blocks, 'name'))));
 		$active_count = max(0, $total_blocks - $disabled_count);
+		$category_labels = self::category_labels();
+		$category_counts = [];
+		foreach ($blocks as $type) {
+			$slug = self::get_block_category($type->name);
+			$category_counts[$slug] = isset($category_counts[$slug]) ? $category_counts[$slug] + 1 : 1;
+		}
 		?>
 		<div class="wrap bpafb-dashboard-wrap">
 			<!-- Header Banner -->
@@ -370,30 +442,41 @@ class Bpafb_Site_Tools
 									<input type="text" class="bpafb-search-input" id="bpafb-block-search" placeholder="<?php esc_attr_e('Search blocks...', 'blockive-premium-addon-for-block'); ?>">
 								</div>
 								<div class="bpafb-filter-chips">
-									<button type="button" class="bpafb-chip-btn is-active" data-filter="all"><?php esc_html_e('All', 'blockive-premium-addon-for-block'); ?> (<?php echo (int) $total_blocks; ?>)</button>
-									<button type="button" class="bpafb-chip-btn" data-filter="content"><?php esc_html_e('Content', 'blockive-premium-addon-for-block'); ?></button>
-									<button type="button" class="bpafb-chip-btn" data-filter="interactive"><?php esc_html_e('Interactive', 'blockive-premium-addon-for-block'); ?></button>
-									<button type="button" class="bpafb-chip-btn" data-filter="navigation"><?php esc_html_e('Navigation', 'blockive-premium-addon-for-block'); ?></button>
-									<button type="button" class="bpafb-chip-btn" data-filter="loops"><?php esc_html_e('Loops & Query', 'blockive-premium-addon-for-block'); ?></button>
-									<button type="button" class="bpafb-chip-btn" data-filter="marketing"><?php esc_html_e('Marketing', 'blockive-premium-addon-for-block'); ?></button>
-									<button type="button" class="bpafb-chip-btn" data-filter="woocommerce"><?php esc_html_e('WooCommerce', 'blockive-premium-addon-for-block'); ?></button>
-								</div>
+										<button type="button" class="bpafb-chip-btn is-active" data-filter="all"><?php esc_html_e('All', 'blockive-premium-addon-for-block'); ?> (<?php echo (int) $total_blocks; ?>)</button>
+										<?php foreach ($category_labels as $slug => $label) : ?>
+											<?php if (!empty($category_counts[$slug])) : ?>
+												<button type="button" class="bpafb-chip-btn" data-filter="<?php echo esc_attr($slug); ?>"><?php echo esc_html($label); ?> (<?php echo (int) $category_counts[$slug]; ?>)</button>
+											<?php endif; ?>
+										<?php endforeach; ?>
+									</div>
 							</div>
 
 							<fieldset>
 								<legend class="screen-reader-text"><?php esc_html_e('Blocks List', 'blockive-premium-addon-for-block'); ?></legend>
 								<input type="hidden" name="<?php echo esc_attr(self::OPTION_DISABLED); ?>" value="">
-								<div class="bpafb-blocks-grid" id="bpafb-blocks-grid">
-									<?php foreach ($blocks as $type) : ?>
-										<?php
+								<div id="bpafb-blocks-grid">
+									<?php
+									$current_group = null;
+									foreach ($blocks as $type) :
 										$is_disabled = isset($disabled[$type->name]);
 										$category = self::get_block_category($type->name);
 										$title = $type->title ? $type->title : $type->name;
-										?>
+										if ($category !== $current_group) :
+											if (null !== $current_group) :
+												echo '</div></div>';
+											endif;
+											$current_group = $category;
+											?>
+											<div class="bpafb-block-group" data-group="<?php echo esc_attr($category); ?>">
+												<h3 class="bpafb-block-group-title">
+													<?php echo esc_html(isset($category_labels[$category]) ? $category_labels[$category] : $category); ?>
+													<span>(<?php echo (int) $category_counts[$category]; ?>)</span>
+												</h3>
+												<div class="bpafb-blocks-grid">
+										<?php endif; ?>
 										<div class="bpafb-block-card <?php echo $is_disabled ? 'is-disabled' : ''; ?>" data-name="<?php echo esc_attr(strtolower($title . ' ' . $type->name)); ?>" data-category="<?php echo esc_attr($category); ?>">
 											<div class="bpafb-block-info">
 												<span class="bpafb-block-title" title="<?php echo esc_attr($title); ?>"><?php echo esc_html($title); ?></span>
-												<span class="bpafb-block-category"><?php echo esc_html($category); ?></span>
 											</div>
 											<label class="bpafb-switch" title="<?php printf(esc_attr__('Toggle %s block', 'blockive-premium-addon-for-block'), esc_attr($title)); ?>">
 												<input type="checkbox" class="bpafb-block-checkbox" name="<?php echo esc_attr(self::OPTION_DISABLED); ?>[]" value="<?php echo esc_attr($type->name); ?>" <?php checked(!$is_disabled); ?>>
@@ -401,6 +484,9 @@ class Bpafb_Site_Tools
 											</label>
 										</div>
 									<?php endforeach; ?>
+									<?php if (null !== $current_group) : ?>
+										</div></div>
+									<?php endif; ?>
 								</div>
 							</fieldset>
 						</div>
@@ -443,6 +529,10 @@ class Bpafb_Site_Tools
 					var matchesCategory = ( currentFilter === 'all' || card.getAttribute( 'data-category' ) === currentFilter );
 					var matchesQuery = ( currentQuery === '' || card.getAttribute( 'data-name' ).indexOf( currentQuery ) !== -1 );
 					card.style.display = ( matchesCategory && matchesQuery ) ? 'flex' : 'none';
+				} );
+				document.querySelectorAll( '.bpafb-block-group' ).forEach( function ( group ) {
+					var hasVisible = Array.prototype.some.call( group.querySelectorAll( '.bpafb-block-card' ), function ( c ) { return c.style.display !== 'none'; } );
+					group.style.display = hasVisible ? '' : 'none';
 				} );
 			}
 

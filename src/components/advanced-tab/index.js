@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
 import {
 	PanelBody,
@@ -84,6 +84,13 @@ const HEIGHT_UNITS = [
 const MIN_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
 const MAX_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
 
+const WIDTH_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'rem', value: 'rem' },
+];
+const WIDTH_UNIT_MAX = { '%': 100, rem: 125 };
+
 const TRANSLATE_UNITS = [
 	{ label: 'px', value: 'px' },
 	{ label: '%', value: '%' },
@@ -91,6 +98,37 @@ const TRANSLATE_UNITS = [
 	{ label: 'rem', value: 'rem' },
 ];
 const TRANSLATE_UNIT_MAX = { '%': 100, em: 20, rem: 20 };
+
+// Label + its own unit dropdown above a full-width slider, so every size
+// setting carries an independent unit.
+function UnitRange( { label, value, unit, units, unitMax, defaultMax, min, onChange, onUnitChange } ) {
+	return (
+		<div className="bpafb-unit-range">
+			<div className="bpafb-spacing-controls__header">
+				<span className="bpafb-spacing-controls__label">{ label }</span>
+				<select
+					className="bpafb-spacing-controls__unit-select"
+					aria-label={ sprintf( /* translators: %s: setting name */ __( '%s unit', 'blockive-premium-addon-for-block' ), label ) }
+					value={ unit || 'px' }
+					onChange={ ( e ) => onUnitChange( e.target.value ) }
+				>
+					{ units.map( ( u ) => (
+						<option key={ u.value } value={ u.value }>{ u.label }</option>
+					) ) }
+				</select>
+			</div>
+			<RangeControl
+				label={ label }
+				hideLabelFromVision
+				value={ value }
+				onChange={ onChange }
+				min={ min }
+				max={ unitMax[ unit ] || defaultMax }
+				__nextHasNoMarginBottom
+			/>
+		</div>
+	);
+}
 
 function generateUid() {
 	return Math.random().toString( 36 ).slice( 2, 10 );
@@ -136,10 +174,15 @@ export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 		bpafbDisplay = '',
 		bpafbOverflow = '',
 		bpafbPosition = '',
+		bpafbPositionUnit = 'px',
 		bpafbContainerWidth,
 		bpafbContainerWidthUnit = 'px',
+		bpafbContainerMinWidth,
+		bpafbContainerMinWidthUnit = 'px',
 		bpafbContainerMinHeight,
+		bpafbContainerMinHeightUnit = '',
 		bpafbContainerMaxHeight,
+		bpafbContainerMaxHeightUnit = '',
 		bpafbContainerHeightUnit = 'px',
 		bpafbHideDesktop = false,
 		bpafbHideTablet = false,
@@ -168,53 +211,49 @@ export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 					options={ DISPLAY_OPTIONS }
 					onChange={ ( val ) => setAttributes( { bpafbDisplay: val } ) }
 				/>
-				<div style={ { display: 'flex', gap: '10px', alignItems: 'flex-end' } }>
-					<div style={ { flexGrow: 1 } }>
-						<RangeControl
-							label={ __( 'Max Width', 'blockive-premium-addon-for-block' ) }
-							value={ bpafbContainerWidth }
-							onChange={ ( val ) => setAttributes( { bpafbContainerWidth: val } ) }
-							min={ 10 }
-							max={ 2000 }
-						/>
-					</div>
-					<div style={ { width: '80px', marginBottom: '16px' } }>
-						<SelectControl
-							label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
-							value={ bpafbContainerWidthUnit }
-							options={ [
-								{ label: 'px', value: 'px' },
-								{ label: '%', value: '%' },
-								{ label: 'rem', value: 'rem' },
-							] }
-							onChange={ ( val ) => setAttributes( { bpafbContainerWidthUnit: val } ) }
-						/>
-					</div>
-				</div>
-				<div className="bpafb-spacing-controls__header">
-					<p className="bpafb-spacing-controls__label">{ __( 'Height', 'blockive-premium-addon-for-block' ) }</p>
-					<SelectControl
-						className="bpafb-spacing-controls__unit"
-						label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
-						hideLabelFromVision
-						value={ bpafbContainerHeightUnit }
-						options={ HEIGHT_UNITS }
-						onChange={ ( val ) => setAttributes( { bpafbContainerHeightUnit: val } ) }
-					/>
-				</div>
-				<RangeControl
+				<UnitRange
+					label={ __( 'Min Width', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerMinWidth }
+					unit={ bpafbContainerMinWidthUnit }
+					units={ WIDTH_UNITS }
+					unitMax={ WIDTH_UNIT_MAX }
+					defaultMax={ 2000 }
+					min={ 0 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMinWidth: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMinWidthUnit: val } ) }
+				/>
+				<UnitRange
+					label={ __( 'Max Width', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerWidth }
+					unit={ bpafbContainerWidthUnit }
+					units={ WIDTH_UNITS }
+					unitMax={ WIDTH_UNIT_MAX }
+					defaultMax={ 2000 }
+					min={ 10 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerWidth: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerWidthUnit: val } ) }
+				/>
+				<UnitRange
 					label={ __( 'Min Height', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbContainerMinHeight }
-					onChange={ ( val ) => setAttributes( { bpafbContainerMinHeight: val } ) }
+					unit={ bpafbContainerMinHeightUnit || bpafbContainerHeightUnit }
+					units={ HEIGHT_UNITS }
+					unitMax={ MIN_HEIGHT_UNIT_MAX }
+					defaultMax={ 1200 }
 					min={ 0 }
-					max={ MIN_HEIGHT_UNIT_MAX[ bpafbContainerHeightUnit ] || 1200 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMinHeight: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMinHeightUnit: val } ) }
 				/>
-				<RangeControl
+				<UnitRange
 					label={ __( 'Max Height', 'blockive-premium-addon-for-block' ) }
 					value={ bpafbContainerMaxHeight }
-					onChange={ ( val ) => setAttributes( { bpafbContainerMaxHeight: val } ) }
+					unit={ bpafbContainerMaxHeightUnit || bpafbContainerHeightUnit }
+					units={ HEIGHT_UNITS }
+					unitMax={ MAX_HEIGHT_UNIT_MAX }
+					defaultMax={ 2000 }
 					min={ 0 }
-					max={ MAX_HEIGHT_UNIT_MAX[ bpafbContainerHeightUnit ] || 2000 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMaxHeight: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMaxHeightUnit: val } ) }
 				/>
 				<SelectControl
 					label={ __( 'Overflow', 'blockive-premium-addon-for-block' ) }
@@ -228,6 +267,25 @@ export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 					options={ POSITION_OPTIONS }
 					onChange={ ( val ) => setAttributes( { bpafbPosition: val } ) }
 				/>
+				{ bpafbPosition && bpafbPosition !== 'static' && (
+					<SpacingControls
+						label={ __( 'Offset', 'blockive-premium-addon-for-block' ) }
+						value={ {
+							top: attributes.bpafbPositionTop,
+							right: attributes.bpafbPositionRight,
+							bottom: attributes.bpafbPositionBottom,
+							left: attributes.bpafbPositionLeft,
+						} }
+						onChange={ ( box ) => setAttributes( {
+							bpafbPositionTop: box.top,
+							bpafbPositionRight: box.right,
+							bpafbPositionBottom: box.bottom,
+							bpafbPositionLeft: box.left,
+						} ) }
+						unit={ bpafbPositionUnit }
+						onUnitChange={ ( val ) => setAttributes( { bpafbPositionUnit: val } ) }
+					/>
+				) }
 			</PanelBody>
 
 			<PanelBody title={ __( 'Visibility', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
@@ -500,16 +558,18 @@ export function AdvancedEffectsSection( { attributes, setAttributes } ) {
 					min={ 10 }
 					max={ 300 }
 				/>
-				<div className="bpafb-spacing-controls__header">
-					<p className="bpafb-spacing-controls__label">{ __( 'Translate', 'blockive-premium-addon-for-block' ) }</p>
-					<SelectControl
-						className="bpafb-spacing-controls__unit"
-						label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
-						hideLabelFromVision
-						value={ bpafbTransformTranslateUnit }
-						options={ TRANSLATE_UNITS }
-						onChange={ ( val ) => setAttributes( { bpafbTransformTranslateUnit: val } ) }
-					/>
+				<div className="bpafb-spacing-controls__header bpafb-spacing-controls__header--inline">
+					<span className="bpafb-spacing-controls__label">{ __( 'Translate', 'blockive-premium-addon-for-block' ) }</span>
+					<select
+						className="bpafb-spacing-controls__unit-select"
+						aria-label={ __( 'Translate unit', 'blockive-premium-addon-for-block' ) }
+						value={ bpafbTransformTranslateUnit || 'px' }
+						onChange={ ( e ) => setAttributes( { bpafbTransformTranslateUnit: e.target.value } ) }
+					>
+						{ TRANSLATE_UNITS.map( ( u ) => (
+							<option key={ u.value } value={ u.value }>{ u.label }</option>
+						) ) }
+					</select>
 				</div>
 				<RangeControl
 					label={ __( 'Translate X', 'blockive-premium-addon-for-block' ) }

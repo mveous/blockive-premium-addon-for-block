@@ -429,3 +429,25 @@
 	text-transform: capitalize;
 }
 
+
+.bpafb-block-group + .bpafb-block-group {
+	margin-top: 28px;
+}
+
+.bpafb-block-group-title {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin: 0 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--bpafb-slate-200);
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--bpafb-slate-800);
+}
+
+.bpafb-block-group-title span {
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--bpafb-slate-400);
+}

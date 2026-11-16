@@ -70,6 +70,7 @@ class Blockive_Premium_Addon_For_Block
 	 */
 	public function bpafb_setup_hooks()
 	{
+		add_filter('render_block_data', [$this, 'bpafb_migrate_legacy_block_names']);
 		add_filter('block_categories_all', [$this, 'bpafb_register_block_categories'], 10, 2);
 		add_action('init', [$this, 'bpafb_register_blocks']);
 		add_action('enqueue_block_assets', [$this, 'bpafb_enqueue_global_assets']);
@@ -79,6 +80,46 @@ class Blockive_Premium_Addon_For_Block
 		add_filter('render_block', [$this, 'bpafb_inject_faq_schema'], 10, 3);
 		add_filter('content_save_pre', [$this, 'bpafb_strip_unauthorized_custom_css']);
 		add_filter('block_editor_settings_all', [$this, 'bpafb_disable_native_inspector_tabs']);
+	}
+
+	/**
+	 * Block-name prefixes this plugin used before it was renamed. Content
+	 * saved back then still carries them, e.g. "lc-block-widgets/heading".
+	 *
+	 * @return string[]
+	 */
+	public static function bpafb_legacy_block_prefixes()
+	{
+		return ['lc-block-widgets/', 'lc-immeasurable-block-widgets-collection/'];
+	}
+
+	/**
+	 * Renders blocks saved under an old plugin prefix as the current block of
+	 * the same name, so renaming the plugin never makes saved blocks vanish
+	 * from the live site. Only renames when the current block exists.
+	 *
+	 * @param array $parsed_block Parsed block.
+	 * @return array
+	 */
+	public function bpafb_migrate_legacy_block_names($parsed_block)
+	{
+		if (!empty($parsed_block['blockName'])) {
+			foreach (self::bpafb_legacy_block_prefixes() as $prefix) {
+				if (0 === strpos($parsed_block['blockName'], $prefix)) {
+					$new_name = 'blockive-premium-addon-for-block/' . substr($parsed_block['blockName'], strlen($prefix));
+					if (WP_Block_Type_Registry::get_instance()->is_registered($new_name)) {
+						$parsed_block['blockName'] = $new_name;
+					}
+					break;
+				}
+			}
+		}
+		if (!empty($parsed_block['innerBlocks'])) {
+			foreach ($parsed_block['innerBlocks'] as $i => $inner) {
+				$parsed_block['innerBlocks'][$i] = $this->bpafb_migrate_legacy_block_names($inner);
+			}
+		}
+		return $parsed_block;
 	}
 
 	/**
@@ -298,6 +339,19 @@ class Blockive_Premium_Addon_For_Block
 		wp_localize_script('bpafb-editor-brand', 'bpafbBrand', [
 			'logo' => BPAFB_URL . 'assets/icons/mveous-mark.png',
 		]);
+
+		// Turns blocks saved under an old plugin prefix back into the current
+		// block when the editor opens (see editor-migrate-legacy-blocks.js).
+		wp_enqueue_script(
+			'bpafb-editor-migrate-legacy-blocks',
+			BPAFB_URL . 'assets/js/editor-migrate-legacy-blocks.js',
+			['wp-data', 'wp-blocks', 'wp-block-editor'],
+			BPAFB_VERSION,
+			true
+		);
+		wp_localize_script('bpafb-editor-migrate-legacy-blocks', 'bpafbLegacyBlocks', [
+			'prefixes' => self::bpafb_legacy_block_prefixes(),
+		]);
 		add_action('admin_print_scripts', [$this, 'bpafb_brand_script_first'], 1);
 
 		// Tells the Advanced tab, in the editor, whether the current user
@@ -355,12 +409,20 @@ class Blockive_Premium_Addon_For_Block
 		// Height/Border-width/Border-radius/Translate units, same idea as the above.
 		$allowed_height_units = ['px', '%', 'vh', 'em', 'rem'];
 		$height_unit = isset($attrs['bpafbContainerHeightUnit']) && in_array($attrs['bpafbContainerHeightUnit'], $allowed_height_units, true) ? $attrs['bpafbContainerHeightUnit'] : 'px';
+		$min_height_unit = isset($attrs['bpafbContainerMinHeightUnit']) && in_array($attrs['bpafbContainerMinHeightUnit'], $allowed_height_units, true) ? $attrs['bpafbContainerMinHeightUnit'] : $height_unit;
+		$max_height_unit = isset($attrs['bpafbContainerMaxHeightUnit']) && in_array($attrs['bpafbContainerMaxHeightUnit'], $allowed_height_units, true) ? $attrs['bpafbContainerMaxHeightUnit'] : $height_unit;
 		$allowed_border_width_units = ['px', 'em', 'rem'];
 		$border_width_unit = isset($attrs['bpafbContainerBorderWidthUnit']) && in_array($attrs['bpafbContainerBorderWidthUnit'], $allowed_border_width_units, true) ? $attrs['bpafbContainerBorderWidthUnit'] : 'px';
 		$allowed_border_radius_units = ['px', '%', 'em', 'rem'];
 		$border_radius_unit = isset($attrs['bpafbContainerBorderRadiusUnit']) && in_array($attrs['bpafbContainerBorderRadiusUnit'], $allowed_border_radius_units, true) ? $attrs['bpafbContainerBorderRadiusUnit'] : 'px';
 		$allowed_translate_units = ['px', '%', 'em', 'rem'];
 		$translate_unit = isset($attrs['bpafbTransformTranslateUnit']) && in_array($attrs['bpafbTransformTranslateUnit'], $allowed_translate_units, true) ? $attrs['bpafbTransformTranslateUnit'] : 'px';
+
+		if (isset($attrs['bpafbContainerMinWidth'])) {
+			$allowed_min_width_units = ['px', '%', 'rem', 'em', 'vw'];
+			$min_width_unit = isset($attrs['bpafbContainerMinWidthUnit']) && in_array($attrs['bpafbContainerMinWidthUnit'], $allowed_min_width_units, true) ? $attrs['bpafbContainerMinWidthUnit'] : 'px';
+			$styles[] = 'min-width: ' . floatval($attrs['bpafbContainerMinWidth']) . esc_attr($min_width_unit) . ';';
+		}
 
 		// Width and Alignment logic
 		if (isset($attrs['bpafbContainerWidth'])) {
@@ -495,12 +557,20 @@ class Blockive_Premium_Addon_For_Block
 		$allowed_positions = ['static', 'relative', 'absolute', 'fixed', 'sticky'];
 		if (!empty($attrs['bpafbPosition']) && in_array($attrs['bpafbPosition'], $allowed_positions, true)) {
 			$styles[] = 'position: ' . esc_attr($attrs['bpafbPosition']) . ';';
+			if ($attrs['bpafbPosition'] !== 'static') {
+				$pos_unit = isset($attrs['bpafbPositionUnit']) && in_array($attrs['bpafbPositionUnit'], $allowed_spacing_units, true) ? $attrs['bpafbPositionUnit'] : 'px';
+				foreach (['Top', 'Right', 'Bottom', 'Left'] as $side) {
+					if (isset($attrs['bpafbPosition' . $side]) && is_numeric($attrs['bpafbPosition' . $side])) {
+						$styles[] = strtolower($side) . ': ' . floatval($attrs['bpafbPosition' . $side]) . esc_attr($pos_unit) . ';';
+					}
+				}
+			}
 		}
 		if (isset($attrs['bpafbContainerMinHeight'])) {
-			$styles[] = 'min-height: ' . floatval($attrs['bpafbContainerMinHeight']) . esc_attr($height_unit) . ';';
+			$styles[] = 'min-height: ' . floatval($attrs['bpafbContainerMinHeight']) . esc_attr($min_height_unit) . ';';
 		}
 		if (isset($attrs['bpafbContainerMaxHeight'])) {
-			$styles[] = 'max-height: ' . floatval($attrs['bpafbContainerMaxHeight']) . esc_attr($height_unit) . ';';
+			$styles[] = 'max-height: ' . floatval($attrs['bpafbContainerMaxHeight']) . esc_attr($max_height_unit) . ';';
 		}
 		if (isset($attrs['bpafbZIndex'])) {
 			$styles[] = 'z-index: ' . intval($attrs['bpafbZIndex']) . ';';

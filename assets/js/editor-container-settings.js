@@ -35,9 +35,18 @@
 		bpafbDisplay: { type: 'string', default: '' },
 		bpafbOverflow: { type: 'string', default: '' },
 		bpafbPosition: { type: 'string', default: '' },
+		bpafbPositionTop: { type: 'number', default: undefined },
+		bpafbPositionRight: { type: 'number', default: undefined },
+		bpafbPositionBottom: { type: 'number', default: undefined },
+		bpafbPositionLeft: { type: 'number', default: undefined },
+		bpafbPositionUnit: { type: 'string', default: 'px' },
 		bpafbContainerWidth: { type: 'number', default: undefined },
 		bpafbContainerWidthUnit: { type: 'string', default: 'px' },
+		bpafbContainerMinWidth: { type: 'number', default: undefined },
+		bpafbContainerMinWidthUnit: { type: 'string', default: 'px' },
 		bpafbContainerMinHeight: { type: 'number', default: undefined },
+		bpafbContainerMinHeightUnit: { type: 'string', default: '' },
+		bpafbContainerMaxHeightUnit: { type: 'string', default: '' },
 		bpafbContainerMaxHeight: { type: 'number', default: undefined },
 		bpafbContainerAlign: { type: 'string', default: '' },
 
@@ -159,6 +168,10 @@
 				styles.maxWidth = attributes.bpafbContainerWidth + unit;
 			}
 
+			if ( attributes.bpafbContainerMinWidth !== undefined ) {
+				styles.minWidth = attributes.bpafbContainerMinWidth + ( attributes.bpafbContainerMinWidthUnit || 'px' );
+			}
+
 			[ 'MarginLeft', 'MarginRight', 'MarginTop', 'MarginBottom', 'PaddingTop', 'PaddingRight', 'PaddingBottom', 'PaddingLeft' ].forEach( ( suffix ) => {
 				const attrKey = 'bpafbContainer' + suffix;
 				if ( attributes[ attrKey ] !== undefined ) {
@@ -205,12 +218,20 @@
 			}
 			if ( attributes.bpafbPosition ) {
 				styles.position = attributes.bpafbPosition;
+				if ( attributes.bpafbPosition !== 'static' ) {
+					[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( ( side ) => {
+						const v = attributes[ 'bpafbPosition' + side ];
+						if ( v !== undefined ) {
+							styles[ side.toLowerCase() ] = v + ( attributes.bpafbPositionUnit || 'px' );
+						}
+					} );
+				}
 			}
 			if ( attributes.bpafbContainerMinHeight !== undefined ) {
-				styles.minHeight = attributes.bpafbContainerMinHeight + ( attributes.bpafbContainerHeightUnit || 'px' );
+				styles.minHeight = attributes.bpafbContainerMinHeight + ( attributes.bpafbContainerMinHeightUnit || attributes.bpafbContainerHeightUnit || 'px' );
 			}
 			if ( attributes.bpafbContainerMaxHeight !== undefined ) {
-				styles.maxHeight = attributes.bpafbContainerMaxHeight + ( attributes.bpafbContainerHeightUnit || 'px' );
+				styles.maxHeight = attributes.bpafbContainerMaxHeight + ( attributes.bpafbContainerMaxHeightUnit || attributes.bpafbContainerHeightUnit || 'px' );
 			}
 			if ( attributes.bpafbZIndex !== undefined ) {
 				styles.zIndex = attributes.bpafbZIndex;
