@@ -373,48 +373,27 @@ class Bpafb_Site_Tools
 	private static function comparison_rows()
 	{
 		return [
-			__('Blocks', 'blockive-premium-addon-for-block') => [
-				[__('Total blocks', 'blockive-premium-addon-for-block'), '25', '60'],
-				[__('Accordion, Tabs, FAQ, Button, Heading, Icon Box, Image Box, Team, Testimonial, Video', 'blockive-premium-addon-for-block'), true, true],
-				[__('Pricing Table, Countdown Timer, Fun Fact, Progress Bar, Pie Chart, Business Hours', 'blockive-premium-addon-for-block'), true, true],
-				[__('Post Grid, Category List, Contact Form 7, Mailchimp, Lottie, Image Comparison', 'blockive-premium-addon-for-block'), true, true],
-				[__('Native Form block (12 field types, submissions, email notifications, webhooks)', 'blockive-premium-addon-for-block'), false, true],
-				[__('Mega Menu, Menu & Table of Contents', 'blockive-premium-addon-for-block'), false, true],
-				[__('Loop Grid, Loop Carousel, Loop Filter & Nested Carousel', 'blockive-premium-addon-for-block'), false, true],
-				[__('Slides, Media Carousel, Gallery, Portfolio & Video Playlist', 'blockive-premium-addon-for-block'), false, true],
-				[__('Hotspot, Flip Box, Animated Headline, Code Highlight & Off-Canvas', 'blockive-premium-addon-for-block'), false, true],
-				[__('Call to Action, Price List, Reviews, Testimonial Carousel & Blockquote', 'blockive-premium-addon-for-block'), false, true],
-				[__('Floating Buttons, Link in Bio, Share Buttons, Google Maps & Progress Tracker', 'blockive-premium-addon-for-block'), false, true],
-				[__('WooCommerce blocks (Products, Product Categories, Add to Cart)', 'blockive-premium-addon-for-block'), false, true],
+			__('General', 'blockive-premium-addon-for-block') => [
+				[__('Total Gutenberg blocks', 'blockive-premium-addon-for-block'), '25', '60'],
+				[__('Element Manager (disable unused blocks)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Advanced styling (margins, padding, borders & animations)', 'blockive-premium-addon-for-block'), true, true],
 			],
 			__('Template Builder', 'blockive-premium-addon-for-block') => [
-				[__('Single Post / Page templates', 'blockive-premium-addon-for-block'), true, true],
+				[__('Single Post & Page templates', 'blockive-premium-addon-for-block'), true, true],
 				[__('Display Conditions (include / exclude rules)', 'blockive-premium-addon-for-block'), true, true],
-				[__('Single post template blocks', 'blockive-premium-addon-for-block'), '16', '19'],
 				[__('Header & Footer templates with Sticky Header', 'blockive-premium-addon-for-block'), false, true],
-				[__('Archive, Search Results & 404 templates', 'blockive-premium-addon-for-block'), false, true],
-				[__('Popup Builder (exit intent, scroll, click & delay triggers)', 'blockive-premium-addon-for-block'), false, true],
-				[__('Loop Item, Mega Menu Item & Section templates', 'blockive-premium-addon-for-block'), false, true],
-				[__('Header & Footer blocks (Site Logo, Live Search, Menu Cart, Login and more)', 'blockive-premium-addon-for-block'), false, '9'],
-				[__('WooCommerce template blocks', 'blockive-premium-addon-for-block'), false, '22'],
-				[__('Events template blocks', 'blockive-premium-addon-for-block'), false, '9'],
+				[__('Archive, Search & 404 templates', 'blockive-premium-addon-for-block'), false, true],
+				[__('Popup Builder (exit intent, scroll & delay triggers)', 'blockive-premium-addon-for-block'), false, true],
 			],
-			__('Design & Dynamic Content', 'blockive-premium-addon-for-block') => [
-				[__('Responsive controls (desktop, tablet, mobile)', 'blockive-premium-addon-for-block'), true, true],
-				[__('Typography, spacing, borders, backgrounds & shadows', 'blockive-premium-addon-for-block'), true, true],
-				[__('Entrance & hover animations', 'blockive-premium-addon-for-block'), true, true],
+			__('Advanced Features', 'blockive-premium-addon-for-block') => [
+				[__('Native Form Builder (submissions, email & webhooks)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Loop Builder (Loop Grid, Carousel & Filters)', 'blockive-premium-addon-for-block'), false, true],
+				[__('WooCommerce & Events template blocks', 'blockive-premium-addon-for-block'), false, __('31 Blocks', 'blockive-premium-addon-for-block')],
+				[__('Mega Menu & Navigation Menu blocks', 'blockive-premium-addon-for-block'), false, true],
 				[__('Dynamic Tags in any text or URL field', 'blockive-premium-addon-for-block'), false, true],
-			],
-			__('Site Tools', 'blockive-premium-addon-for-block') => [
-				[__('Element Manager (turn off unused blocks)', 'blockive-premium-addon-for-block'), true, true],
-				[__('Custom Code snippets (head / body)', 'blockive-premium-addon-for-block'), false, true],
-				[__('Custom Fonts manager (WOFF2 / TTF / OTF)', 'blockive-premium-addon-for-block'), false, true],
-				[__('Page Transitions & Scroll Snap', 'blockive-premium-addon-for-block'), false, true],
-				[__('Template Role Manager', 'blockive-premium-addon-for-block'), false, true],
-				[__('Admin Bar "Edit Template" quick access', 'blockive-premium-addon-for-block'), false, true],
+				[__('Custom Fonts & Custom Code Snippets', 'blockive-premium-addon-for-block'), false, true],
 			],
 			__('Support', 'blockive-premium-addon-for-block') => [
-				[__('Community support (WordPress.org forum)', 'blockive-premium-addon-for-block'), true, true],
 				[__('Premium support & continuous updates', 'blockive-premium-addon-for-block'), false, true],
 			],
 		];
@@ -442,7 +421,7 @@ class Bpafb_Site_Tools
 				<div class="bpafb-card-header">
 					<div class="bpafb-card-header-left">
 						<h2><?php esc_html_e('Blockive Free vs Pro', 'blockive-premium-addon-for-block'); ?></h2>
-						<p><?php esc_html_e('Blockive Pro is a standalone plugin that includes every free block and setting, so your existing content keeps working after you upgrade.', 'blockive-premium-addon-for-block'); ?></p>
+						<p><?php esc_html_e('Compare features between Free and Pro. Upgrading to Pro unlocks full-site editing, popups, and advanced blocks while keeping all your existing work intact.', 'blockive-premium-addon-for-block'); ?></p>
 					</div>
 					<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
 						<?php esc_html_e('View Pro Pricing', 'blockive-premium-addon-for-block'); ?>
@@ -478,8 +457,8 @@ class Bpafb_Site_Tools
 
 					<div class="bpafb-compare-cta">
 						<div>
-							<h3><?php esc_html_e('Build your whole site with Blockive Pro', 'blockive-premium-addon-for-block'); ?></h3>
-							<p><?php esc_html_e('Get 35 more blocks, the full Template Builder, the Popup Builder, Dynamic Tags and premium support.', 'blockive-premium-addon-for-block'); ?></p>
+							<h3><?php esc_html_e('Unlock the full power of Blockive Pro', 'blockive-premium-addon-for-block'); ?></h3>
+							<p><?php esc_html_e('Get 35+ extra blocks, Header & Footer builder, Popup builder, WooCommerce blocks, and priority support.', 'blockive-premium-addon-for-block'); ?></p>
 						</div>
 						<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
 							<span class="dashicons dashicons-star-filled" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;" aria-hidden="true"></span>

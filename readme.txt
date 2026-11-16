@@ -92,84 +92,39 @@ Build custom WordPress single post and page templates using dynamic blocks:
 
 ---
 
-### Free vs Pro Comparison
+### FREE v/s Pro Comparison
 
-Blockive Pro is a standalone plugin. It includes everything in the free version, so your existing pages and templates keep working when you upgrade. You can also see this comparison in your dashboard under **Blockive Templates > Site Tools > Free vs Pro**.
+Blockive Pro is a standalone plugin that unlocks full-site editing, popups, and advanced blocks. All your existing free blocks and templates continue to work seamlessly when you upgrade.
 
-#### Free Version
+#### Free License
+✅ **25 Essential Gutenberg blocks**: Available
+✅ **Single Post & Page Template Builder**: Available
+✅ **Display Conditions (include / exclude rules)**: Available
+✅ **Advanced styling (margins, padding, borders & animations)**: Available
+✅ **Element Manager (turn off unused blocks)**: Available
+✅ **Community support on WordPress.org**: Available
+❌ **Header & Footer Builder with Sticky Header**: Pro Only
+❌ **Popup Builder (exit-intent, scroll & delay triggers)**: Pro Only
+❌ **WooCommerce & Events Template Blocks**: Pro Only
+❌ **Native Form Builder (submissions & webhooks)**: Pro Only
+❌ **Loop Builder (Loop Grid, Carousel & Filters)**: Pro Only
+❌ **Mega Menu & Navigation Menu blocks**: Pro Only
+❌ **Dynamic Tags in text & URL fields**: Pro Only
+❌ **Custom Fonts & Code Snippets**: Pro Only
 
-✅ **Blocks**: 25 blocks
-✅ **Single Post / Page Templates**: Available
-✅ **Display Conditions**: Available
-✅ **Single Post Template Blocks**: 16 blocks
-✅ **Responsive, Typography, Spacing, Border, Background & Shadow Controls**: Available
-✅ **Entrance & Hover Animations**: Available
-✅ **Element Manager**: Available
-❌ **Native Form Block (submissions, email notifications, webhooks)**: Pro Only
-❌ **Mega Menu, Menu & Table of Contents**: Pro Only
-❌ **Loop Grid, Loop Carousel, Loop Filter & Nested Carousel**: Pro Only
-❌ **Slides, Media Carousel, Gallery, Portfolio & Video Playlist**: Pro Only
-❌ **Header & Footer Templates with Sticky Header**: Pro Only
-❌ **Archive, Search Results & 404 Templates**: Pro Only
-❌ **Popup Builder**: Pro Only
-❌ **Loop Item, Mega Menu Item & Section Templates**: Pro Only
-❌ **WooCommerce Template Blocks (22)**: Pro Only
-❌ **Events Template Blocks (9)**: Pro Only
-❌ **Dynamic Tags**: Pro Only
-❌ **Custom Code, Custom Fonts, Page Transitions, Scroll Snap & Role Manager**: Pro Only
-❌ **Admin Bar Quick Access**: Pro Only
-❌ **Premium Support**: Pro Only
-
-#### Pro Version
-
-✅ **Blocks**: 60 blocks (35 more than free)
-✅ **Single Post / Page Templates**: Available
-✅ **Display Conditions**: Available
-✅ **Single Post Template Blocks**: 19 blocks (adds Author Box, Post Comments & Post Excerpt)
-✅ **Responsive, Typography, Spacing, Border, Background & Shadow Controls**: Available
-✅ **Entrance & Hover Animations**: Available
-✅ **Element Manager**: Available
-✅ **Native Form Block (submissions, email notifications, webhooks)**: Available
-✅ **Mega Menu, Menu & Table of Contents**: Available
-✅ **Loop Grid, Loop Carousel, Loop Filter & Nested Carousel**: Available
-✅ **Slides, Media Carousel, Gallery, Portfolio & Video Playlist**: Available
-✅ **Header & Footer Templates with Sticky Header**: Available
-✅ **Archive, Search Results & 404 Templates**: Available
-✅ **Popup Builder**: Available
-✅ **Loop Item, Mega Menu Item & Section Templates**: Available
-✅ **WooCommerce Template Blocks (22)**: Available
-✅ **Events Template Blocks (9)**: Available
-✅ **Dynamic Tags**: Available
-✅ **Custom Code, Custom Fonts, Page Transitions, Scroll Snap & Role Manager**: Available
-✅ **Admin Bar Quick Access**: Available
-✅ **Premium Support**: Available
-
-**[Upgrade to Pro!](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing)**
-
----
-
-### Blockive Pro
-
-Need more than the 25 free blocks and Single-template builder? **[Blockive Pro](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing)** is a standalone, full-featured site builder plugin (the free plugin is not required alongside it) that unlocks:
-
-* **60 Total Blocks (35 additional Pro blocks)**:
-  * **Interactive & Media**: Form (native contact/lead form with 12 field types, email notifications, submissions storage, webhooks & spam protection), Media Carousel (with lightbox), Video Playlist, Slides (Ken Burns, touch/swipe), Hotspot (image pins with tooltips), Gallery (with category filters & lightbox), Portfolio, Facebook Embed, Animated Headline, Code Highlight (Prism.js with 19 languages), Off-Canvas panel.
-  * **Navigation & Menus**: Mega Menu (template-driven dropdowns), Menu, Table of Contents (auto-generated with smooth scroll).
-  * **Query & Dynamic Loops**: Loop Grid (custom card template per item), Loop Carousel, Loop Filter (instant AJAX filter buttons), Nested Carousel (slides containing any blocks).
-  * **Commerce & Conversion**: Products, Product Categories, Add to Cart Button, Call to Action, Flip Box (3D flip effects), Price List, Floating Buttons (WhatsApp, Phone, Telegram, Messenger), Link in Bio (mobile-first profile card), Share Buttons, Reviews (half-stars with brand icons), Testimonial Carousel, Google Maps (keyless embed), Progress Tracker, Blockquote.
-* **Full Template Builder (10 Template Kinds)**:
-  * Design Header, Footer, Single Post/Page, Archive, Search Results, 404, Popup, Loop Item, Mega Menu Item, and Section templates with granular Display Conditions (include/exclude rules).
-* **Header & Footer Template Blocks (9)**: Site Logo, Site Title, Site Tagline, Page Title, Search Form (with live instant AJAX search), Menu Cart, Login/Logout, Sitemap, and dynamic Copyright.
-* **Sticky Header**: Responsive sticky navigation with scroll-up reveal, scroll-distance offset, and transition styles.
-* **Archive Template Blocks (2)**: Archive Posts and Archive Products (with native WooCommerce loop or custom Loop Item templates).
-* **Single Post Template Blocks (3 Pro Additions)**: Author Box, Post Comments (threaded native comments & form), and Post Excerpt.
-* **22 WooCommerce Template Blocks**: Product Title, Gallery, Images, Price, Sale Badge, Rating, Add To Cart, SKU, Stock, Short Description, Description, Attributes, Meta, Tabs, Variations, Related Products, Upsells, Cross Sells, WooCommerce Breadcrumb, Store Notices, Category Image, Shop Archive Description.
-* **9 Events Template Blocks**: Event Title, Image, Date, Time, Venue, Organizer, Cost, Map, Register Button.
-* **Popup Builder**: Advanced popups with triggers (page load delay, scroll %, click, exit intent, element scroll, inactivity), frequency rules (once per session, every N days), and advanced device/referrer targeting.
-* **Dynamic Tags**: Inject live `{{post_title}}`, `{{post_custom_field:key}}`, `{{author_name}}`, `{{site_logo}}`, `{{user_name}}`, `{{current_date}}`, etc. into any text or URL field across all blocks.
-* **Site Tools**: Custom Code snippets (`<head>`, `<body>`, `</body>`), Page Transitions (View Transitions API), Custom Fonts manager (upload WOFF2/TTF/OTF), Template Role Manager, Scroll Snap, and Element Manager (toggle unused blocks).
-* **Admin Bar Quick Access**: "Edit Template" dropdown on the live site listing every template active on the current page.
-* **Premium Support & Continuous Updates**.
+#### Pro License
+✅ **Everything in Free**: Included
+✅ **60 Total Blocks (35 additional Pro blocks)**: Available
+✅ **Full-Site Builder: Header, Footer, Archive, Search & 404**: Available
+✅ **Sticky Header with scroll-up reveal**: Available
+✅ **Popup Builder (exit-intent, scroll & delay triggers)**: Available
+✅ **22 WooCommerce & 9 Events template blocks**: Available
+✅ **Native Form Builder (submissions, email & webhooks)**: Available
+✅ **Loop Builder (Loop Grid, Carousel & Filters)**: Available
+✅ **Mega Menu & Navigation Menu blocks**: Available
+✅ **Dynamic Tags for text & URL fields**: Available
+✅ **Site Tools: Custom Fonts, Code Snippets & Role Manager**: Available
+✅ **Priority updates & dedicated 1-on-1 support**: Available
 
 **[Upgrade to Blockive Pro](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing)**
 
@@ -194,7 +149,7 @@ Yes. Blockive works with all standard block themes (Full Site Editing) and class
 Go to Blockive > Templates in your WordPress admin dashboard, create a new template, set your display conditions, and build the layout using the Template Blocks.
 
 = What does Blockive Pro add over this free version? =
-Blockive Pro unlocks 60 total blocks (including native Form with submissions, Mega Menu, Menu, Loop Grid, Loop Carousel, Loop Filter, Nested Carousel, Hotspot, Slides, Media Carousel, Gallery, Code Highlight, and more); a complete full-site Template Builder (Header with Sticky Header, Footer, Archive, Search Results, 404, and Popup Builder with exit-intent/scroll triggers); 22 WooCommerce template blocks; 9 Events template blocks; Dynamic Tags (`{{tag}}`) for every block field; Site Tools (Custom Code, Custom Fonts, View Transitions, Role Manager); and live Admin Bar quick access. Blockive Pro is completely standalone and does not require this free plugin. See the full comparison in the Free vs Pro section above, or [view Blockive Pro pricing](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing).
+Blockive Pro adds 35 additional blocks (including native Form builder, Mega Menu, and Carousels), full-site template building (Header, Footer, Archive, 404, Search), a Popup Builder, WooCommerce and Events blocks, Dynamic Tags, and priority support. See the comparison section above, or [view Blockive Pro pricing](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing).
 
 == Screenshots ==
 
