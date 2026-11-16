@@ -15,7 +15,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import { getSafeSocialIconsUrl } from './utils';
 
 const PREDEFINED_NETWORKS = [
@@ -62,17 +63,16 @@ export default function Edit({ attributes, setAttributes }) {
 	// Handle Repeater Item Update
 	const updateItem = (index, key, value) => {
 		const newItems = [...items];
-		newItems[index][key] = value;
-		
+		newItems[index] = { ...newItems[index], [key]: value };
+
 		// Auto-update icon and color if network changes
 		if (key === 'network') {
 			const preset = PREDEFINED_NETWORKS.find(n => n.value === value);
 			if (preset) {
-				newItems[index].icon = preset.icon;
-				newItems[index].color = preset.color;
+				newItems[index] = { ...newItems[index], icon: preset.icon, color: preset.color };
 			}
 		}
-		
+
 		setAttributes({ items: newItems });
 	};
 
@@ -145,7 +145,7 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 
 			<PanelBody title={__('Settings', 'blockive-premium-addon-for-block')} initialOpen={false}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Shape', 'blockive-premium-addon-for-block')}
 					value={shape}
 					options={[
@@ -155,7 +155,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ shape: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Hover Animation', 'blockive-premium-addon-for-block')}
 					value={hoverAnimation}
 					options={[
@@ -192,7 +192,7 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 				style={(
 			<PanelBody title={__('Colors', 'blockive-premium-addon-for-block')} initialOpen={true}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Color Type', 'blockive-premium-addon-for-block')}
 					value={colorType}
 					options={[
@@ -219,7 +219,8 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 			</PanelBody>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

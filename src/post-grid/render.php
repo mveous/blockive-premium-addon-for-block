@@ -9,8 +9,18 @@ if (!defined('ABSPATH')) {
 $bpafb_columns = isset($attributes['columns']) ? absint($attributes['columns']) : 3;
 $bpafb_posts_per_page = isset($attributes['postsPerPage']) ? absint($attributes['postsPerPage']) : 9;
 $bpafb_posts_per_page = max(1, min(50, $bpafb_posts_per_page));
-$bpafb_orderby = isset($attributes['orderBy']) ? $attributes['orderBy'] : 'date';
-$bpafb_order = isset($attributes['order']) ? $attributes['order'] : 'desc';
+// Allowlisted against exactly what the block's own Order By/Order
+// SelectControls offer (plus 'id', an older value still handled a few
+// lines below for posts saved before this attribute's options changed) -
+// defense in depth alongside WP_Query's own orderby/order validation,
+// so an unexpected value here can't reach the query args at all.
+$bpafb_allowed_orderby = ['date', 'title', 'rand', 'id'];
+$bpafb_orderby = isset($attributes['orderBy']) && in_array($attributes['orderBy'], $bpafb_allowed_orderby, true)
+	? $attributes['orderBy']
+	: 'date';
+$bpafb_order = isset($attributes['order']) && in_array($attributes['order'], ['asc', 'desc'], true)
+	? $attributes['order']
+	: 'desc';
 $bpafb_show_image = isset($attributes['showImage']) ? $attributes['showImage'] : true;
 $bpafb_show_excerpt = isset($attributes['showExcerpt']) ? $attributes['showExcerpt'] : true;
 $bpafb_show_date = isset($attributes['showDate']) ? $attributes['showDate'] : true;

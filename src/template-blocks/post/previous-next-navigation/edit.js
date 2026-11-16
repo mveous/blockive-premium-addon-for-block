@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, TextControl, SelectControl, ToggleControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
 
 const HOVER_STYLE_OPTIONS = [
 	{ label: __( 'None', 'blockive-premium-addon-for-block' ), value: 'none' },
@@ -12,7 +11,7 @@ const HOVER_STYLE_OPTIONS = [
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { prevLabel, nextLabel, prevIcon, nextIcon, hoverStyle, inSameTerm } = attributes;
+	const { prevLabel, nextLabel, prevIcon, nextIcon, hoverStyle, inSameTerm, linkHoverColor } = attributes;
 
 	const blockProps = useBlockProps( {
 		className: `bpafb-tb-prev-next-nav bpafb-hover-${ hoverStyle || 'none' }`,
@@ -59,12 +58,19 @@ export default function Edit( { attributes, setAttributes } ) {
 							options={ HOVER_STYLE_OPTIONS }
 							onChange={ ( value ) => setAttributes( { hoverStyle: value } ) }
 						/>
+						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
+							<ColorPalette
+								value={ linkHoverColor }
+								onChange={ ( value ) => setAttributes( { linkHoverColor: value } ) }
+							/>
+						</BaseControl>
 						<p className="bpafb-help-text">
 							{ __( 'Text and typography options are available in the native Styles panel above.', 'blockive-premium-addon-for-block' ) }
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

@@ -3,7 +3,7 @@
  * Plugin Name:       Blockive - Premium Addon For Block
  * Description: A powerful Blockive addon plugin that offers a wide range of Blocks
  * Plugin URI: https://mveous.com
- * Version:           1.0.1
+ * Version:           1.1.0
  * Requires at least: 6.8
  * Requires PHP:      7.4
  * Author:            Mveous
@@ -18,677 +18,114 @@ if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-define('BPAFB_PATH', plugin_dir_path(__FILE__));
-define('BPAFB_URL', plugin_dir_url(__FILE__));
-define('BPAFB_VERSION', '1.0.1');
-
-require_once BPAFB_PATH . 'includes/class-bpafb-template-post-type.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-screen-helper.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-template-builder.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-template-blocks.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-dynamic-field-providers.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-events-adapter.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-template-block-render.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-post-meta-items.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-dynamic-field-output.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-product-meta-items.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-product-card-list.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-product-template-render.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-template-display-conditions.php';
-require_once BPAFB_PATH . 'includes/class-bpafb-template-frontend-render.php';
-
 /**
- * Main Class for Blockive Premium Addon For Block.
+ * Sets up and starts the free plugin. There is only ever one of these.
+ *
+ * Sets the plugin's constants, loads every class file, and starts the core
+ * class. This all happens on `plugins_loaded`, not right away, so that
+ * BPAFB_PRO_ACTIVE - always set at the very top of Pro's main file - is
+ * already set by the time we check for it, no matter which plugin loads first.
+ *
+ * When Pro is active, bootstrap() does nothing at all: no constants, no
+ * classes, no hooks. Pro has its own copy of everything below. Skipping
+ * all of it, not just the class instance, stops "already defined" and
+ * "cannot redeclare" errors between the two plugins' copies.
  */
-class Blockive_Premium_Addon_For_Block
+final class Blockive_Premium_Addon_For_Block_Loader
 {
 
 	/**
-	 * Constructor.
-	 */
-	public function __construct()
-	{
-		$this->bpafb_setup_hooks();
-		new Bpafb_Template_Post_Type();
-		new Bpafb_Template_Builder();
-		new Bpafb_Template_Blocks();
-		new Bpafb_Template_Display_Conditions();
-		new Bpafb_Template_Frontend_Render();
-	}
-
-	/**
-	 * Setup WordPress hooks.
-	 */
-	public function bpafb_setup_hooks()
-	{
-		add_filter('block_categories_all', [$this, 'bpafb_register_block_categories'], 10, 2);
-		add_action('init', [$this, 'bpafb_register_blocks']);
-		add_action('enqueue_block_assets', [$this, 'bpafb_enqueue_global_assets']);
-		add_action('enqueue_block_editor_assets', [$this, 'bpafb_enqueue_editor_assets']);
-		add_filter('render_block', [$this, 'bpafb_render_block_container'], 10, 2);
-		add_filter('render_block', [$this, 'bpafb_inject_faq_schema'], 10, 3);
-		add_filter('content_save_pre', [$this, 'bpafb_strip_unauthorized_custom_css']);
-	}
-
-	/**
-	 * Registers the block categories.
+	 * The one and only instance of this class.
 	 *
-	 * @param array $categories Array of categories for blocks.
-	 * @return array
+	 * @var Blockive_Premium_Addon_For_Block_Loader|null
 	 */
-	public function bpafb_register_block_categories($categories)
+	private static $instance = null;
+
+	/**
+	 * Gives back the one instance of this class, making it first if needed.
+	 *
+	 * @return Blockive_Premium_Addon_For_Block_Loader
+	 */
+	public static function get_instance()
 	{
-		return array_merge(
-			[
-				[
-					'slug' => 'bpafb-widgets',
-					'title' => esc_html__('Blockive', 'blockive-premium-addon-for-block'),
-				],
-			],
-			$categories
-		);
+		if (null === self::$instance) {
+			self::$instance = new self();
+		}
+		return self::$instance;
 	}
 
 	/**
-	 * Registers the blocks based on the manifest.
+	 * Constructor. Waits until `plugins_loaded` to start the plugin.
 	 */
-	public function bpafb_register_blocks()
+	private function __construct()
 	{
-		Bpafb_Dynamic_Field_Providers::register_builtin_providers();
-
-		if (function_exists('wp_register_block_types_from_metadata_collection')) {
-			wp_register_block_types_from_metadata_collection(__DIR__ . '/build', __DIR__ . '/build/blocks-manifest.php');
-		} else {
-			$block_json_files = glob(__DIR__ . '/build/*/block.json');
-			foreach ($block_json_files as $file) {
-				register_block_type(dirname($file));
-			}
-		}
-
-		$registry = WP_Block_Type_Registry::get_instance();
-
-		// The `wp-scripts build --blocks-manifest` generator keys every block by its
-		// immediate folder name only, which is what WP_Block_Metadata_Registry expects
-		// to find one level under the collection root. All Template Builder blocks live
-		// two levels down (build/template-blocks/<category>/<block>/), so the manifest
-		// path above resolves to a non-existent block.json for them; WP core then leaves
-		// `$metadata['file']` null and silently skips wiring up their `render` callback.
-		// Re-register those specific blocks from their real block.json location so
-		// render.php actually runs.
-		foreach (glob(__DIR__ . '/build/template-blocks/*/*/block.json') as $bpafb_tb_json) {
-			$bpafb_tb_data = json_decode(file_get_contents($bpafb_tb_json), true);
-			if (empty($bpafb_tb_data['name'])) {
-				continue;
-			}
-			if ($registry->is_registered($bpafb_tb_data['name'])) {
-				unregister_block_type($bpafb_tb_data['name']);
-			}
-			register_block_type(dirname($bpafb_tb_json));
-		}
-
-		// Unregister blocks that require third-party plugins if those plugins are not active.
-		// Contact Form 7
-		if (!function_exists('wpcf7') && !defined('WPCF7_PLUGIN')) {
-			if ($registry->is_registered('blockive-premium-addon-for-block/contact-form-7')) {
-				unregister_block_type('blockive-premium-addon-for-block/contact-form-7');
-			}
-		}
-
-		// WooCommerce Template Blocks require WooCommerce.
-		if (!class_exists('WooCommerce')) {
-			foreach ($registry->get_all_registered() as $bpafb_block_name => $bpafb_block_type) {
-				if (strpos($bpafb_block_name, Bpafb_Template_Blocks::NAME_PREFIX . 'product-') === 0) {
-					unregister_block_type($bpafb_block_name);
-				}
-			}
-		}
-
-
+		add_action('plugins_loaded', [$this, 'bootstrap']);
 	}
 
 	/**
-	 * Enqueue global assets for blocks.
+	 * Stops this class from being copied.
 	 */
-	public function bpafb_enqueue_global_assets()
+	private function __clone()
 	{
-		wp_enqueue_style('bpafb-font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], '6.5.1'); // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-		wp_enqueue_style('bpafb-container-settings', BPAFB_URL . 'assets/css/container-settings.css', [], BPAFB_VERSION);
-		wp_enqueue_script(
-			'bpafb-frontend-animations',
-			BPAFB_URL . 'assets/js/frontend-animations.js',
-			[],
-			BPAFB_VERSION,
-			true
-		);
 	}
 
 	/**
-	 * Enqueue script for block editor container settings.
+	 * Stops this class from being restored from stored data.
 	 */
-	public function bpafb_enqueue_editor_assets()
+	public function __wakeup()
 	{
-		wp_enqueue_style(
-			'bpafb-editor-shared-controls',
-			BPAFB_URL . 'assets/css/editor-shared-controls.css',
-			[ 'wp-components' ],
-			BPAFB_VERSION
-		);
-		wp_enqueue_script(
-			'bpafb-editor-container-settings',
-			BPAFB_URL . 'assets/js/editor-container-settings.js',
-			[
-				'wp-element',
-				'wp-compose',
-				'wp-hooks',
-			],
-			BPAFB_VERSION,
-			true
-		);
-
-		// Lets AdvancedTab (bundled separately per block) know whether the
-		// current user may use the Custom CSS field. This only controls the
-		// editor UI; the actual security boundary is enforced server-side at
-		// save time, see bpafb_strip_unauthorized_custom_css().
-		wp_localize_script(
-			'bpafb-editor-container-settings',
-			'bpafbEditorSettings',
-			[
-				'canUseCustomCss' => current_user_can('unfiltered_html'),
-			]
-		);
+		throw new \Exception('Cannot unserialize a singleton.');
 	}
 
 	/**
-	 * Filter block rendering on frontend to apply container styles.
-	 *
-	 * @param string $block_content The block content.
-	 * @param array  $block         The block record.
-	 * @return string
+	 * Starts the plugin. See the note above the class for why this waits.
 	 */
-	public function bpafb_render_block_container($block_content, $block)
+	public function bootstrap()
 	{
-		// Only target blocks from blockive-premium-addon-for-block namespace
-		if (empty($block['blockName']) || strpos($block['blockName'], 'blockive-premium-addon-for-block/') !== 0) {
-			return $block_content;
+		if (defined('BPAFB_PRO_ACTIVE')) {
+			add_action('admin_notices', [$this, 'render_pro_active_notice']);
+			return;
 		}
 
-		$attrs = isset($block['attrs']) ? $block['attrs'] : [];
+		define('BPAFB_PATH', plugin_dir_path(__FILE__));
+		define('BPAFB_URL', plugin_dir_url(__FILE__));
+		define('BPAFB_VERSION', '1.1.0');
 
-		// Check if any Advanced-tab attributes are set at all (see src/components/advanced-tab).
-		$has_container_settings = false;
-		foreach ($attrs as $key => $value) {
-			if (strpos($key, 'bpafb') === 0 && $value !== null && $value !== '' && $value !== false) {
-				$has_container_settings = true;
-				break;
-			}
-		}
+		require_once BPAFB_PATH . 'includes/class-bpafb-core.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-post-type.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-screen-helper.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-builder.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-blocks.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-block-render.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-post-meta-items.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-display-conditions.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-frontend-render.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-kinds.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-template-theme-locations.php';
+		require_once BPAFB_PATH . 'includes/class-bpafb-site-tools.php';
 
-		if (!$has_container_settings) {
-			return $block_content;
-		}
-
-		// Build style array
-		$styles = [];
-		$classes = ['bpafb-has-container-settings'];
-
-		// Width and Alignment logic
-		if (isset($attrs['bpafbContainerWidth'])) {
-			$unit = isset($attrs['bpafbContainerWidthUnit']) ? $attrs['bpafbContainerWidthUnit'] : 'px';
-			$styles[] = 'width: 100%;';
-			$styles[] = 'max-width: ' . floatval($attrs['bpafbContainerWidth']) . esc_attr($unit) . ';';
-
-			$align = isset($attrs['bpafbContainerAlign']) ? $attrs['bpafbContainerAlign'] : 'center';
-			if ($align === 'left' || $align === 'center' || $align === 'right') {
-				$classes[] = 'bpafb-align-' . $align;
-			}
-		} else {
-			// Apply alignment even without custom width if explicitly set
-			if (isset($attrs['bpafbContainerAlign'])) {
-				$align = $attrs['bpafbContainerAlign'];
-				if ($align === 'left' || $align === 'center' || $align === 'right') {
-					$classes[] = 'bpafb-align-' . $align;
-				}
-			} else {
-				// Fallback to custom margins left/right
-				if (isset($attrs['bpafbContainerMarginLeft'])) {
-					$styles[] = 'margin-left: ' . intval($attrs['bpafbContainerMarginLeft']) . 'px;';
-				}
-				if (isset($attrs['bpafbContainerMarginRight'])) {
-					$styles[] = 'margin-right: ' . intval($attrs['bpafbContainerMarginRight']) . 'px;';
-				}
-			}
-		}
-
-		// Margins
-		if (isset($attrs['bpafbContainerMarginTop'])) {
-			$styles[] = 'margin-top: ' . intval($attrs['bpafbContainerMarginTop']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerMarginRight'])) {
-			$styles[] = 'margin-right: ' . intval($attrs['bpafbContainerMarginRight']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerMarginBottom'])) {
-			$styles[] = 'margin-bottom: ' . intval($attrs['bpafbContainerMarginBottom']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerMarginLeft'])) {
-			$styles[] = 'margin-left: ' . intval($attrs['bpafbContainerMarginLeft']) . 'px;';
-		}
-
-		// Background
-		$bg_type = isset($attrs['bpafbContainerBgType']) ? $attrs['bpafbContainerBgType'] : 'color';
-		if ($bg_type === 'gradient' && !empty($attrs['bpafbContainerBgGradient'])) {
-			$styles[] = 'background-image: ' . esc_attr($attrs['bpafbContainerBgGradient']) . ';';
-		} elseif ($bg_type === 'image' && !empty($attrs['bpafbContainerBgImageUrl'])) {
-			$styles[] = 'background-image: url(' . esc_url($attrs['bpafbContainerBgImageUrl']) . ');';
-			$size = isset($attrs['bpafbContainerBgImageSize']) ? $attrs['bpafbContainerBgImageSize'] : 'cover';
-			$styles[] = 'background-size: ' . esc_attr($size) . ';';
-			$styles[] = 'background-position: center center;';
-			if (!empty($attrs['bpafbContainerOverlayColor'])) {
-				$classes[] = 'bpafb-has-bg-overlay';
-			}
-		} elseif (!empty($attrs['bpafbContainerBgColor'])) {
-			$styles[] = 'background-color: ' . esc_attr($attrs['bpafbContainerBgColor']) . ';';
-		}
-
-		// Padding
-		if (isset($attrs['bpafbContainerPaddingTop'])) {
-			$styles[] = 'padding-top: ' . intval($attrs['bpafbContainerPaddingTop']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerPaddingRight'])) {
-			$styles[] = 'padding-right: ' . intval($attrs['bpafbContainerPaddingRight']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerPaddingBottom'])) {
-			$styles[] = 'padding-bottom: ' . intval($attrs['bpafbContainerPaddingBottom']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerPaddingLeft'])) {
-			$styles[] = 'padding-left: ' . intval($attrs['bpafbContainerPaddingLeft']) . 'px;';
-		}
-
-		// Border
-		if (!empty($attrs['bpafbContainerBorderStyle']) && $attrs['bpafbContainerBorderStyle'] !== 'none') {
-			$styles[] = 'border-style: ' . esc_attr($attrs['bpafbContainerBorderStyle']) . ';';
-			if (!empty($attrs['bpafbContainerBorderColor'])) {
-				$styles[] = 'border-color: ' . esc_attr($attrs['bpafbContainerBorderColor']) . ';';
-			}
-			if (isset($attrs['bpafbContainerBorderWidth'])) {
-				$styles[] = 'border-width: ' . intval($attrs['bpafbContainerBorderWidth']) . 'px;';
-			}
-		}
-		if (isset($attrs['bpafbContainerBorderRadius'])) {
-			$styles[] = 'border-radius: ' . intval($attrs['bpafbContainerBorderRadius']) . 'px;';
-		}
-
-		// Shadow (normal + hover, hover applied via CSS class since PHP can't do :hover)
-		if (!empty($attrs['bpafbContainerBoxShadow'])) {
-			$color = !empty($attrs['bpafbContainerShadowColor']) ? $attrs['bpafbContainerShadowColor'] : 'rgba(0,0,0,0.1)';
-			$blur = isset($attrs['bpafbContainerShadowBlur']) ? intval($attrs['bpafbContainerShadowBlur']) : 10;
-			$spread = isset($attrs['bpafbContainerShadowSpread']) ? intval($attrs['bpafbContainerShadowSpread']) : 0;
-			$styles[] = 'box-shadow: 0 4px ' . $blur . 'px ' . $spread . 'px ' . esc_attr($color) . ';';
-		}
-		if (!empty($attrs['bpafbContainerHoverBoxShadow'])) {
-			$hcolor = !empty($attrs['bpafbContainerHoverShadowColor']) ? $attrs['bpafbContainerHoverShadowColor'] : 'rgba(0,0,0,0.15)';
-			$hblur = isset($attrs['bpafbContainerHoverShadowBlur']) ? intval($attrs['bpafbContainerHoverShadowBlur']) : 15;
-			$hspread = isset($attrs['bpafbContainerHoverShadowSpread']) ? intval($attrs['bpafbContainerHoverShadowSpread']) : 0;
-			$styles[] = '--bpafb-hover-shadow: 0 4px ' . $hblur . 'px ' . $hspread . 'px ' . esc_attr($hcolor) . ';';
-			$classes[] = 'bpafb-has-hover-shadow';
-		}
-
-		// Layout
-		$uid = !empty($attrs['bpafbUid']) ? sanitize_html_class($attrs['bpafbUid']) : '';
-
-		if (!empty($attrs['bpafbDisplay'])) {
-			$styles[] = 'display: ' . esc_attr($attrs['bpafbDisplay']) . ';';
-		}
-		if (!empty($attrs['bpafbOverflow'])) {
-			$styles[] = 'overflow: ' . esc_attr($attrs['bpafbOverflow']) . ';';
-		}
-		if (!empty($attrs['bpafbPosition'])) {
-			$styles[] = 'position: ' . esc_attr($attrs['bpafbPosition']) . ';';
-		}
-		if (isset($attrs['bpafbContainerMinHeight'])) {
-			$styles[] = 'min-height: ' . intval($attrs['bpafbContainerMinHeight']) . 'px;';
-		}
-		if (isset($attrs['bpafbContainerMaxHeight'])) {
-			$styles[] = 'max-height: ' . intval($attrs['bpafbContainerMaxHeight']) . 'px;';
-		}
-		if (isset($attrs['bpafbZIndex'])) {
-			$styles[] = 'z-index: ' . intval($attrs['bpafbZIndex']) . ';';
-			if (empty($attrs['bpafbPosition'])) {
-				$styles[] = 'position: relative;';
-			}
-		}
-
-		// Transform
-		$has_transform = false;
-		if (!empty($attrs['bpafbTransformRotate'])) {
-			$styles[] = 'rotate: ' . floatval($attrs['bpafbTransformRotate']) . 'deg;';
-			$has_transform = true;
-		}
-		if (isset($attrs['bpafbTransformScale']) && floatval($attrs['bpafbTransformScale']) !== 100.0) {
-			$styles[] = 'scale: ' . (floatval($attrs['bpafbTransformScale']) / 100) . ';';
-			$has_transform = true;
-		}
-		if (!empty($attrs['bpafbTransformTranslateX']) || !empty($attrs['bpafbTransformTranslateY'])) {
-			$tx = !empty($attrs['bpafbTransformTranslateX']) ? intval($attrs['bpafbTransformTranslateX']) : 0;
-			$ty = !empty($attrs['bpafbTransformTranslateY']) ? intval($attrs['bpafbTransformTranslateY']) : 0;
-			$styles[] = 'translate: ' . $tx . 'px ' . $ty . 'px;';
-			$has_transform = true;
-		}
-		
-		if ($has_transform && empty($attrs['bpafbDisplay'])) {
-			// Transforms require a non-inline display type to work on the frontend
-			$styles[] = 'display: block;';
-		}
-
-		// Visibility
-		if (!empty($attrs['bpafbHideDesktop'])) {
-			$classes[] = 'bpafb-hide-desktop';
-		}
-		if (!empty($attrs['bpafbHideTablet'])) {
-			$classes[] = 'bpafb-hide-tablet';
-		}
-		if (!empty($attrs['bpafbHideMobile'])) {
-			$classes[] = 'bpafb-hide-mobile';
-		}
-
-		// Motion effects
-		if (!empty($attrs['bpafbHoverAnimation']) && $attrs['bpafbHoverAnimation'] !== 'none') {
-			$classes[] = 'bpafb-hover-' . sanitize_html_class($attrs['bpafbHoverAnimation']);
-		}
-		if (!empty($attrs['bpafbFloatingEffect'])) {
-			$classes[] = 'bpafb-floating';
-		}
-
-		// Scroll-triggered entrance animation
-		$data_attrs = [];
-		if (!empty($attrs['bpafbAnimationType']) && $attrs['bpafbAnimationType'] !== 'none') {
-			$duration = isset($attrs['bpafbAnimationDuration']) ? intval($attrs['bpafbAnimationDuration']) : 800;
-			$delay = isset($attrs['bpafbAnimationDelay']) ? intval($attrs['bpafbAnimationDelay']) : 0;
-			$easing = !empty($attrs['bpafbAnimationEasing']) ? $attrs['bpafbAnimationEasing'] : 'ease';
-			$classes[] = 'bpafb-animate';
-			$data_attrs['data-bpafb-animation'] = sanitize_html_class($attrs['bpafbAnimationType']);
-			$styles[] = '--bpafb-anim-duration: ' . $duration . 'ms;';
-			$styles[] = '--bpafb-anim-delay: ' . $delay . 'ms;';
-			$styles[] = '--bpafb-anim-easing: ' . esc_attr($easing) . ';';
-		}
-
-		// Unique id used to scope custom CSS / responsive overrides to this block instance.
-		$extra_style_tag = '';
-		if ($uid) {
-			$classes[] = 'bpafb-uid-' . $uid;
-			$extra_style_tag .= $this->bpafb_build_responsive_css($attrs, $uid);
-			$extra_style_tag .= $this->bpafb_build_custom_css($attrs, $uid);
-		}
-
-		// HTML attributes
-		$html_id = !empty($attrs['bpafbHtmlId']) ? $attrs['bpafbHtmlId'] : '';
-		if (!empty($attrs['bpafbHtmlClasses'])) {
-			$classes[] = $attrs['bpafbHtmlClasses'];
-		}
-		if (!empty($attrs['bpafbContainerOverlayColor']) && $bg_type === 'image') {
-			$styles[] = '--bpafb-overlay-color: ' . esc_attr($attrs['bpafbContainerOverlayColor']) . ';';
-		}
-
-		if (empty($styles) && count($classes) === 1 && empty($extra_style_tag) && empty($html_id)) {
-			return $block_content;
-		}
-
-		$style_attr_value = implode(' ', $styles);
-
-		$output = $this->bpafb_inject_styles($block_content, $style_attr_value, implode(' ', $classes), $html_id, $data_attrs);
-
-		return $extra_style_tag . $output;
+		Blockive_Premium_Addon_For_Block::get_instance();
+		// Free plugin only (not in the shared core): Pro has its own,
+		// richer Template Kind system (Header/Footer plus Archive/Search/
+		// 404/Popup/etc.) in Bpafb_Pro_Template_Kinds / Bpafb_Pro_Theme_Locations.
+		Bpafb_Template_Kinds::get_instance();
+		Bpafb_Template_Theme_Locations::get_instance();
+		Bpafb_Site_Tools::get_instance();
 	}
 
 	/**
-	 * Injects FAQPage JSON-LD schema for the Blockive FAQ block at render time.
-	 *
-	 * The FAQ block is static (its visible markup is generated client-side in
-	 * save.js), but the schema is generated here instead, so it is never part
-	 * of the saved post_content and is therefore never subject to the
-	 * save-time wp_kses_post() filter, which strips <script> tags for any
-	 * user without the unfiltered_html capability.
-	 *
-	 * @param string   $block_content The block content.
-	 * @param array    $block         The block record.
-	 * @param WP_Block $instance      The block instance (provides fully-resolved
-	 *                                attributes, including registered defaults
-	 *                                that are omitted from $block['attrs'] when
-	 *                                a block instance hasn't changed them).
-	 * @return string
+	 * Shows an admin notice that explains why the free plugin turned itself off.
 	 */
-	public function bpafb_inject_faq_schema($block_content, $block, $instance = null)
+	public function render_pro_active_notice()
 	{
-		if (empty($block['blockName']) || $block['blockName'] !== 'blockive-premium-addon-for-block/faq') {
-			return $block_content;
+		if (!current_user_can('activate_plugins')) {
+			return;
 		}
-
-		// Note: WP_Block only defines __get() (not __isset()), so isset($instance->attributes)
-		// would always evaluate false regardless of the real value. Access it directly instead.
-		$attrs = $instance instanceof WP_Block ? $instance->attributes : (isset($block['attrs']) ? $block['attrs'] : []);
-		$items = isset($attrs['items']) && is_array($attrs['items']) ? $attrs['items'] : [];
-
-		if (empty($items)) {
-			return $block_content;
-		}
-
-		$main_entity = [];
-		foreach ($items as $item) {
-			$title = isset($item['title']) ? wp_strip_all_tags($item['title']) : '';
-			$content = isset($item['content']) ? $item['content'] : '';
-
-			$main_entity[] = [
-				'@type' => 'Question',
-				'name' => $title,
-				'acceptedAnswer' => [
-					'@type' => 'Answer',
-					'text' => $content,
-				],
-			];
-		}
-
-		$schema = [
-			'@context' => 'https://schema.org',
-			'@type' => 'FAQPage',
-			'mainEntity' => $main_entity,
-		];
-
-		$schema_json = wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-		$schema_json = str_replace('<', '\\u003c', $schema_json);
-
-		return $block_content . '<script type="application/ld+json">' . $schema_json . '</script>';
-	}
-
-	/**
-	 * Builds a <style> block for tablet/mobile responsive padding & margin overrides.
-	 *
-	 * @param array  $attrs Block attributes.
-	 * @param string $uid   Unique id used to scope the selector.
-	 * @return string
-	 */
-	private function bpafb_build_responsive_css($attrs, $uid)
-	{
-		$selector = '.bpafb-uid-' . $uid;
-		$breakpoints = [
-			'Tablet' => '(max-width: 1024px)',
-			'Mobile' => '(max-width: 767px)',
-		];
-		$sides = ['Top', 'Right', 'Bottom', 'Left'];
-		$css = '';
-
-		foreach ($breakpoints as $suffix => $media) {
-			$rules = '';
-			foreach (['Padding', 'Margin'] as $box) {
-				foreach ($sides as $side) {
-					$key = 'bpafbContainer' . $box . $side . $suffix;
-					if (isset($attrs[$key])) {
-						$rules .= strtolower($box) . '-' . strtolower($side) . ': ' . intval($attrs[$key]) . 'px !important;';
-					}
-				}
-			}
-			if ($rules) {
-				$css .= '@media ' . $media . ' { ' . $selector . ' { ' . $rules . ' } }';
-			}
-		}
-
-		return $css ? '<style>' . $css . '</style>' : '';
-	}
-
-	/**
-	 * Strips Blockive's per-block Custom CSS attribute (bpafbCustomCss) from
-	 * post content on save for users who lack the capability WordPress uses
-	 * to gate unfiltered/raw content in post bodies.
-	 *
-	 * This runs at save time, not render time: the capability that matters
-	 * is the *saving* author's, not the frontend visitor's. render_block
-	 * runs for every visitor on every page view, and anonymous visitors
-	 * never have unfiltered_html, so gating there would silently break
-	 * Custom CSS for every authorized author's content on the frontend.
-	 *
-	 * Block attributes stored in the `<!-- wp:... {...} -->` comment
-	 * delimiter are not passed through wp_kses_post() the way visible post
-	 * content is (WordPress core allows block comments through kses so
-	 * blocks keep working for users without unfiltered_html), so
-	 * bpafbCustomCss needs its own gate here -- otherwise a user with only
-	 * edit_posts could set it directly via the REST API content field,
-	 * bypassing the editor UI entirely.
-	 *
-	 * @param string $content Raw post content about to be saved.
-	 * @return string
-	 */
-	public function bpafb_strip_unauthorized_custom_css($content)
-	{
-		if (current_user_can('unfiltered_html')) {
-			return $content;
-		}
-
-		// Cheap guard so this only does block-parsing work on content that
-		// could actually contain the attribute (serialize_block omits
-		// attributes matching their block.json default, and the default is
-		// an empty string, so a non-empty value is the only way this
-		// substring appears).
-		if (strpos($content, 'bpafbCustomCss') === false) {
-			return $content;
-		}
-
-		if (!function_exists('parse_blocks') || !function_exists('serialize_blocks')) {
-			return $content;
-		}
-
-		$blocks = $this->bpafb_strip_custom_css_from_blocks(parse_blocks($content));
-
-		return serialize_blocks($blocks);
-	}
-
-	/**
-	 * Recursively clears bpafbCustomCss from every Blockive block in a
-	 * parsed block tree, including nested innerBlocks.
-	 *
-	 * @param array $blocks Parsed block tree (as returned by parse_blocks()).
-	 * @return array
-	 */
-	private function bpafb_strip_custom_css_from_blocks($blocks)
-	{
-		foreach ($blocks as $index => $block) {
-			if (!empty($block['blockName']) && strpos($block['blockName'], 'blockive-premium-addon-for-block/') === 0) {
-				if (!empty($block['attrs']['bpafbCustomCss'])) {
-					$blocks[$index]['attrs']['bpafbCustomCss'] = '';
-				}
-			}
-			if (!empty($block['innerBlocks'])) {
-				$blocks[$index]['innerBlocks'] = $this->bpafb_strip_custom_css_from_blocks($block['innerBlocks']);
-			}
-		}
-
-		return $blocks;
-	}
-
-	/**
-	 * Builds the scoped Custom CSS <style> block for a block instance.
-	 * Users write CSS using the literal word "selector" to target the block wrapper.
-	 *
-	 * @param array  $attrs Block attributes.
-	 * @param string $uid   Unique id used to scope the selector.
-	 * @return string
-	 */
-	private function bpafb_build_custom_css($attrs, $uid)
-	{
-		if (empty($attrs['bpafbCustomCss'])) {
-			return '';
-		}
-
-		$css = wp_strip_all_tags($attrs['bpafbCustomCss']);
-		$css = str_replace('</style', '', $css);
-		$css = str_replace('selector', '.bpafb-uid-' . $uid, $css);
-
-		return '<style>' . $css . '</style>';
-	}
-
-	/**
-	 * Helper function to inject style, class, id and data-* attributes into the first tag of HTML content.
-	 *
-	 * @param string $html             The original HTML content.
-	 * @param string $new_styles_str   The new inline styles to inject.
-	 * @param string $classes_to_add   The custom classes to add to the wrapper.
-	 * @param string $id               Optional HTML id to set on the wrapper (does not overwrite an existing id).
-	 * @param array  $data_attrs       Optional map of data-* attribute name => value.
-	 * @return string
-	 */
-	private function bpafb_inject_styles($html, $new_styles_str, $classes_to_add = '', $id = '', $data_attrs = [])
-	{
-		// Some render.php templates emit a local <style> tag (e.g. hover-color
-		// rules) before their actual wrapper element. Skip past any such
-		// leading <style>...</style> blocks so the match below targets the
-		// block's real root element instead of the style tag.
-		$search_html = $html;
-		$prefix_len = 0;
-		while (preg_match('/^\s*<style\b[^>]*>.*?<\/style>/is', $search_html, $style_match)) {
-			$prefix_len += strlen($style_match[0]);
-			$search_html = substr($search_html, strlen($style_match[0]));
-		}
-
-		if (preg_match('/^\s*<([a-z0-9-]+)([^>]*)>/i', $search_html, $matches)) {
-			$tag = $matches[1];
-			$attributes_str = $matches[2];
-
-			// Check if style attribute already exists.
-			// Note: $existing_styles is extracted from already-rendered HTML (already
-			// attribute-safe), and $new_styles_str's individual values were already
-			// esc_attr()'d when built in bpafb_render_block_container(); re-escaping
-			// the combined string here would double-encode entities like `&`.
-			if ($new_styles_str && preg_match('/style=["\']([^"\']*)["\']/i', $attributes_str, $style_matches)) {
-				$existing_styles = rtrim(trim($style_matches[1]), ';') . ';';
-				$updated_styles = $existing_styles . ' ' . $new_styles_str;
-				$new_attributes_str = preg_replace('/style=["\']([^"\']*)["\']/i', 'style="' . $updated_styles . '"', $attributes_str);
-			} elseif ($new_styles_str) {
-				$new_attributes_str = $attributes_str . ' style="' . $new_styles_str . '"';
-			} else {
-				$new_attributes_str = $attributes_str;
-			}
-
-			// Also add a custom container class
-			if ($classes_to_add && preg_match('/class=["\']([^"\']*)["\']/i', $new_attributes_str, $class_matches)) {
-				$updated_classes = trim($class_matches[1]) . ' ' . $classes_to_add;
-				$new_attributes_str = preg_replace('/class=["\']([^"\']*)["\']/i', 'class="' . esc_attr($updated_classes) . '"', $new_attributes_str);
-			} elseif ($classes_to_add) {
-				$new_attributes_str = $new_attributes_str . ' class="' . esc_attr($classes_to_add) . '"';
-			}
-
-			// Add an id only if the wrapper doesn't already have one.
-			if ($id && !preg_match('/\sid=["\']/i', $new_attributes_str)) {
-				$new_attributes_str .= ' id="' . esc_attr($id) . '"';
-			}
-
-			foreach ($data_attrs as $attr_name => $attr_value) {
-				$new_attributes_str .= ' ' . esc_attr($attr_name) . '="' . esc_attr($attr_value) . '"';
-			}
-
-			$pos = $prefix_len + strpos($search_html, $matches[0]);
-			$replaced = '<' . $tag . $new_attributes_str . '>';
-			return substr($html, 0, $pos) . $replaced . substr($html, $pos + strlen($matches[0]));
-		}
-		return $html;
+		echo '<div class="notice notice-info"><p>' .
+			esc_html__('Blockive - Premium Addon For Block is inactive because Blockive Pro is active and already includes all of its features. Your existing blocks and templates are unaffected.', 'blockive-premium-addon-for-block') .
+			'</p></div>';
 	}
 }
 
-// Initialize the plugin class.
-new Blockive_Premium_Addon_For_Block();
+// Start the plugin (see Blockive_Premium_Addon_For_Block_Loader::bootstrap() for why this waits).
+Blockive_Premium_Addon_For_Block_Loader::get_instance();

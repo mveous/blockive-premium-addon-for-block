@@ -5,39 +5,36 @@ import {
 	BlockControls,
 	AlignmentControl,
 } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, ToggleControl, TextControl } from '@wordpress/components';
+import { PanelBody, SelectControl, RangeControl, ToggleControl, BaseControl, ColorPalette } from '@wordpress/components';
 import { RawHTML } from '@wordpress/element';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import SegmentedControl from '../../../components/segmented-control';
 import usePreviewContext from '../../shared/use-preview-context';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { wordLimit, showReadMore, readMoreText, maxWidth, dropCap, textAlign } = attributes;
+	const { displayMode, maxWidth, dropCap, textAlign, linkHoverColor } = attributes;
 
 	const { record, isResolving } = usePreviewContext();
 
-	const rawHtml = record?.content?.rendered || '';
-	const placeholderHtml = `<p>${ __(
-		'This is sample post content. The full post content will be displayed here dynamically when this template is used on a real post.',
-		'blockive-premium-addon-for-block'
-	) }</p>`;
+	let previewHtml;
 
-	let previewHtml = rawHtml || ( ! isResolving ? placeholderHtml : '' );
-	let isTruncated = false;
-
-	if ( wordLimit > 0 && previewHtml ) {
-		const plain = previewHtml
-			.replace( /<[^>]+>/g, ' ' )
-			.replace( /\s+/g, ' ' )
-			.trim();
-		const words = plain.split( ' ' ).filter( Boolean );
-		if ( words.length > wordLimit ) {
-			isTruncated = true;
-			previewHtml = `<p>${ words.slice( 0, wordLimit ).join( ' ' ) }…</p>`;
-		} else {
-			previewHtml = `<p>${ plain }</p>`;
-		}
+	if ( displayMode === 'excerpt' ) {
+		const rawExcerpt = record?.excerpt?.rendered
+			? record.excerpt.rendered.replace( /<[^>]+>/g, ' ' ).replace( /\s+/g, ' ' ).trim()
+			: '';
+		const placeholder = __(
+			'This is a sample excerpt. A short summary of the post content will be displayed here.',
+			'blockive-premium-addon-for-block'
+		);
+		previewHtml = `<p>${ rawExcerpt || ( ! isResolving ? placeholder : '' ) }</p>`;
+	} else {
+		const rawHtml = record?.content?.rendered || '';
+		const placeholderHtml = `<p>${ __(
+			'This is sample post content. The full post content will be displayed here dynamically when this template is used on a real post.',
+			'blockive-premium-addon-for-block'
+		) }</p>`;
+		previewHtml = rawHtml || ( ! isResolving ? placeholderHtml : '' );
 	}
 
 	const blockProps = useBlockProps( {
@@ -60,29 +57,15 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={
 					<PanelBody title={ __( 'Content', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-						<RangeControl
-							label={ __( 'Truncate to Words (0 = full content)', 'blockive-premium-addon-for-block' ) }
-							value={ wordLimit }
-							onChange={ ( value ) => setAttributes( { wordLimit: value } ) }
-							min={ 0 }
-							max={ 500 }
+						<SegmentedControl
+							label={ __( 'Display', 'blockive-premium-addon-for-block' ) }
+							value={ displayMode }
+							options={ [
+								{ label: __( 'Full Content', 'blockive-premium-addon-for-block' ), value: 'full' },
+								{ label: __( 'Excerpt', 'blockive-premium-addon-for-block' ), value: 'excerpt' },
+							] }
+							onChange={ ( value ) => setAttributes( { displayMode: value } ) }
 						/>
-						{ wordLimit > 0 && (
-							<>
-								<ToggleControl
-									label={ __( 'Show Read More Link', 'blockive-premium-addon-for-block' ) }
-									checked={ !! showReadMore }
-									onChange={ ( value ) => setAttributes( { showReadMore: value } ) }
-								/>
-								{ showReadMore && (
-									<TextControl
-										label={ __( 'Read More Text', 'blockive-premium-addon-for-block' ) }
-										value={ readMoreText }
-										onChange={ ( value ) => setAttributes( { readMoreText: value } ) }
-									/>
-								) }
-							</>
-						) }
 					</PanelBody>
 				}
 				style={
@@ -99,23 +82,23 @@ export default function Edit( { attributes, setAttributes } ) {
 							checked={ !! dropCap }
 							onChange={ ( value ) => setAttributes( { dropCap: value } ) }
 						/>
+						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
+							<ColorPalette
+								value={ linkHoverColor }
+								onChange={ ( value ) => setAttributes( { linkHoverColor: value } ) }
+							/>
+						</BaseControl>
 						<p className="bpafb-help-text">
 							{ __( 'Font, size, weight, color and other typography options are available in the native Styles panel above.', 'blockive-premium-addon-for-block' ) }
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>
 				<RawHTML>{ previewHtml }</RawHTML>
-				{ isTruncated && showReadMore && (
-					<p className="bpafb-tb-post-content-readmore">
-						<span className="bpafb-tb-post-content-readmore-link">
-							{ readMoreText || __( 'Read More', 'blockive-premium-addon-for-block' ) }
-						</span>
-					</p>
-				) }
 			</div>
 		</>
 	);

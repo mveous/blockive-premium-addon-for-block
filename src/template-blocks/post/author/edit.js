@@ -5,10 +5,9 @@ import {
 	BlockControls,
 	AlignmentControl,
 } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, SelectControl, ToggleControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
 import usePreviewContext, { getEmbeddedAuthorName } from '../../shared/use-preview-context';
 
 const DISPLAY_FORMAT_OPTIONS = [
@@ -19,7 +18,7 @@ const DISPLAY_FORMAT_OPTIONS = [
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { displayFormat, isLink, linkTarget, textAlign } = attributes;
+	const { displayFormat, isLink, linkTarget, textAlign, textHoverColor } = attributes;
 
 	const { record, isResolving } = usePreviewContext();
 	const previewName = getEmbeddedAuthorName( record );
@@ -63,12 +62,19 @@ export default function Edit( { attributes, setAttributes } ) {
 				}
 				style={
 					<PanelBody title={ __( 'Style', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
+						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
+							<ColorPalette
+								value={ textHoverColor }
+								onChange={ ( value ) => setAttributes( { textHoverColor: value } ) }
+							/>
+						</BaseControl>
 						<p className="bpafb-help-text">
 							{ __( 'Font, size, weight, color and other typography options are available in the native Styles panel above.', 'blockive-premium-addon-for-block' ) }
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<span { ...blockProps }>

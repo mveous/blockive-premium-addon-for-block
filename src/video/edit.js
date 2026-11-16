@@ -9,7 +9,6 @@ import {
 
 import InspectorTabs from '../components/inspector-tabs';
 import { getSafeVideoUrl } from './utils';
-import AdvancedTab from '../components/advanced-tab';
 
 export default function Edit({ attributes, setAttributes }) {
 	const { videoUrl, width, height, autoplay, controls, loop } = attributes;
@@ -83,7 +82,8 @@ export default function Edit({ attributes, setAttributes }) {
 			<InspectorTabs
 				general={generalTab}
 				style={styleTab}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

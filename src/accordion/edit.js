@@ -6,14 +6,13 @@ import {
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
-	SelectControl,
 	TextControl,
 	Button,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls, { getBorderStyles } from '../components/border-controls';
@@ -31,13 +30,17 @@ export default function Edit( { attributes, setAttributes } ) {
 		contentBgColor,
 		borderColor,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderType,
 		borderRadius,
+		borderRadiusUnit = 'px',
 		titleFontFamily,
 		titleFontSize,
+		titleFontSizeUnit = 'px',
 		titleFontWeight,
 		titleLineHeight,
 		titleLetterSpacing,
+		titleLetterSpacingUnit = 'px',
 		titleTextTransform,
 		titleTextDecoration,
 		boxShadow,
@@ -64,8 +67,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-accordion-title-bg': titleBgColor,
 		'--bpafb-accordion-content-color': contentColor,
 		'--bpafb-accordion-content-bg': contentBgColor,
-		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-accordion-title' ),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-accordion' ),
+		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontSizeUnit: titleFontSizeUnit, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, letterSpacingUnit: titleLetterSpacingUnit, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-accordion-title' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-accordion' ),
 	};
 
 	// Only emit the shadow custom properties when a custom shadow is actually
@@ -135,7 +138,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			</PanelBody>
 
 			<PanelBody title={ __( 'Settings', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Icon', 'blockive-premium-addon-for-block' ) }
 					value={ icon }
 					options={ [
@@ -146,7 +149,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					] }
 					onChange={ ( val ) => setAttributes( { icon: val } ) }
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Icon Alignment', 'blockive-premium-addon-for-block' ) }
 					value={ iconAlign }
 					options={ [
@@ -165,6 +168,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily: titleFontFamily, fontSize: titleFontSize, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, textTransform: titleTextTransform, textDecoration: titleTextDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ `title${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ titleFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { titleFontSizeUnit: val } ) }
+					letterSpacingUnit={ titleLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { titleLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -186,6 +193,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<BorderControls
 					values={ { borderType, borderWidth, borderRadius, borderColor } }
 					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					widthUnit={ borderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { borderWidthUnit: val } ) }
+					radiusUnit={ borderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { borderRadiusUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -211,7 +222,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

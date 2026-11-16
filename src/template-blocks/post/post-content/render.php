@@ -12,34 +12,34 @@ if (!defined('ABSPATH')) {
 
 $bpafb_post_id = Bpafb_Template_Block_Render::get_post_id($block);
 
-$bpafb_word_limit = isset($attributes['wordLimit']) ? (int) $attributes['wordLimit'] : 0;
-$bpafb_show_read_more = !isset($attributes['showReadMore']) || !empty($attributes['showReadMore']);
-$bpafb_read_more_text = isset($attributes['readMoreText']) && $attributes['readMoreText'] !== ''
-	? $attributes['readMoreText']
-	: __('Read More', 'blockive-premium-addon-for-block');
+$bpafb_display_mode = isset($attributes['displayMode']) && $attributes['displayMode'] === 'excerpt' ? 'excerpt' : 'full';
 $bpafb_max_width = isset($attributes['maxWidth']) ? (int) $attributes['maxWidth'] : 0;
 $bpafb_drop_cap = !empty($attributes['dropCap']);
 $bpafb_text_align = isset($attributes['textAlign']) ? $attributes['textAlign'] : '';
+$bpafb_link_hover_color = Bpafb_Template_Block_Render::sanitize_css_color(
+	isset($attributes['linkHoverColor']) ? $attributes['linkHoverColor'] : ''
+);
+$bpafb_uid = !empty($attributes['bpafbUid']) ? sanitize_html_class($attributes['bpafbUid']) : '';
 
-$bpafb_is_truncated = false;
+$bpafb_is_empty = true;
 
-if ($bpafb_post_id && post_password_required($bpafb_post_id)) {
+if ($bpafb_display_mode === 'excerpt') {
+	$bpafb_excerpt_text = $bpafb_post_id ? trim(wp_strip_all_tags(get_the_excerpt($bpafb_post_id))) : '';
+	$bpafb_is_empty = $bpafb_excerpt_text === '';
+	$bpafb_content_html = $bpafb_is_empty ? '' : '<p>' . esc_html($bpafb_excerpt_text) . '</p>';
+} elseif ($bpafb_post_id && post_password_required($bpafb_post_id)) {
 	$bpafb_content_html = get_the_password_form($bpafb_post_id);
+	$bpafb_is_empty = false;
 } else {
 	$bpafb_raw_content = $bpafb_post_id ? get_post_field('post_content', $bpafb_post_id) : '';
+	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+	$bpafb_content_html = $bpafb_post_id ? apply_filters('the_content', $bpafb_raw_content) : '';
+	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+	$bpafb_is_empty = trim($bpafb_content_html) === '';
+}
 
-	if ($bpafb_word_limit > 0 && $bpafb_raw_content !== '') {
-		$bpafb_plain = wp_strip_all_tags(strip_shortcodes($bpafb_raw_content));
-		$bpafb_word_count = str_word_count($bpafb_plain);
-		if ($bpafb_word_count > $bpafb_word_limit) {
-			$bpafb_is_truncated = true;
-		}
-		$bpafb_content_html = '<p>' . esc_html(wp_trim_words($bpafb_plain, $bpafb_word_limit, '…')) . '</p>';
-	} else {
-		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$bpafb_content_html = $bpafb_post_id ? apply_filters('the_content', $bpafb_raw_content) : '';
-		// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-	}
+if ($bpafb_is_empty) {
+	return;
 }
 
 $bpafb_style = '';
@@ -54,22 +54,21 @@ $bpafb_classes = ['bpafb-tb-post-content'];
 if ($bpafb_drop_cap) {
 	$bpafb_classes[] = 'bpafb-has-drop-cap';
 }
+if ($bpafb_uid) {
+	$bpafb_classes[] = 'bpafb-uid-' . $bpafb_uid;
+}
 
 $bpafb_wrapper_attributes = get_block_wrapper_attributes([
 	'class' => implode(' ', $bpafb_classes),
 	'style' => $bpafb_style,
 ]);
 
+if ($bpafb_link_hover_color && $bpafb_uid) {
+	echo '<style>.bpafb-uid-' . esc_attr($bpafb_uid) . ' a:hover { color:' . esc_attr($bpafb_link_hover_color) . ' !important; }</style>';
+}
+
 printf('<div %s>', $bpafb_wrapper_attributes); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 echo $bpafb_content_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
-if ($bpafb_is_truncated && $bpafb_show_read_more && $bpafb_post_id) {
-	printf(
-		'<p class="bpafb-tb-post-content-readmore"><a href="%s">%s</a></p>',
-		esc_url(get_permalink($bpafb_post_id)),
-		esc_html($bpafb_read_more_text)
-	);
-}
 
 echo '</div>';

@@ -1,93 +1,234 @@
 .bpafb-tb-related-posts {
 	display: block;
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
 }
 
-.bpafb-tb-related-posts-empty {
-	color: #757575;
-	font-size: 13px;
-}
-
-/* Grid layout */
+/* ==========================================================================
+   Grid Layout
+   ========================================================================== */
 .bpafb-tb-related-posts-grid {
 	display: grid;
-	gap: 20px;
+	gap: var( --bpafb-rp-gap, 24px );
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	align-items: stretch;
 }
 
-/* Card, shared by Grid and Slider */
+@media ( max-width: 768px ) {
+	.bpafb-tb-related-posts:not(.bpafb-tb-related-posts-slider) .bpafb-tb-related-posts-grid {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) ) !important;
+		gap: 16px !important;
+	}
+}
+
+@media ( max-width: 480px ) {
+	.bpafb-tb-related-posts:not(.bpafb-tb-related-posts-slider) .bpafb-tb-related-posts-grid {
+		grid-template-columns: 1fr !important;
+		gap: 16px !important;
+	}
+}
+
+/* ==========================================================================
+   Modern Post Card Design
+   ========================================================================== */
 .bpafb-tb-related-post-card {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	width: 100%;
+	min-width: 0;
+	background-color: var( --bpafb-rp-card-bg, #ffffff );
+	border-radius: var( --bpafb-rp-card-radius, 16px );
+	padding: var( --bpafb-rp-card-padding, 18px );
+	box-sizing: border-box;
+	border: 1px solid rgba( 0, 0, 0, 0.06 );
+	box-shadow: 0 4px 20px -2px rgba( 0, 0, 0, 0.05 );
+	transition: transform 0.35s cubic-bezier( 0.16, 1, 0.3, 1 ),
+		box-shadow 0.35s cubic-bezier( 0.16, 1, 0.3, 1 ),
+		border-color 0.35s ease;
+	position: relative;
+	overflow: hidden;
 }
 
+/* Card Style: Modern */
+.bpafb-tb-related-posts--style-modern .bpafb-tb-related-post-card {
+	background-color: var( --bpafb-rp-card-bg, #ffffff );
+	border: 1px solid rgba( 15, 23, 42, 0.08 );
+	box-shadow: 0 4px 20px -4px rgba( 15, 23, 42, 0.06 );
+}
+
+/* Card Style: Bordered */
+.bpafb-tb-related-posts--style-bordered .bpafb-tb-related-post-card {
+	background-color: var( --bpafb-rp-card-bg, transparent );
+	border: 1.5px solid rgba( 15, 23, 42, 0.12 );
+	box-shadow: none;
+}
+
+/* Card Style: Flat */
+.bpafb-tb-related-posts--style-flat .bpafb-tb-related-post-card {
+	background-color: var( --bpafb-rp-card-bg, #f8fafc );
+	border: none;
+	box-shadow: none;
+}
+
+/* Card Style: Minimal */
+.bpafb-tb-related-posts--style-minimal .bpafb-tb-related-post-card {
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+/* Hover Elevation */
+.bpafb-tb-related-posts--hover-elevation .bpafb-tb-related-post-card:hover {
+	transform: translateY( -6px );
+	box-shadow: 0 20px 32px -8px rgba( 15, 23, 42, 0.12 ),
+		0 8px 16px -4px rgba( 15, 23, 42, 0.04 );
+	border-color: rgba( 37, 99, 235, 0.3 );
+}
+
+/* ==========================================================================
+   Image Styles
+   ========================================================================== */
 .bpafb-tb-related-post-image {
 	display: block;
-	margin-bottom: 10px;
+	position: relative;
+	overflow: hidden;
+	border-radius: var( --bpafb-rp-image-radius, 12px );
+	margin-bottom: 14px;
+	aspect-ratio: 16 / 9;
+	background-color: #f1f5f9;
+	width: 100%;
 }
 
 .bpafb-tb-related-post-image img {
 	display: block;
 	width: 100%;
-	height: auto;
+	height: 100%;
 	object-fit: cover;
+	transition: transform 0.5s cubic-bezier( 0.16, 1, 0.3, 1 );
+}
+
+.bpafb-tb-related-posts--image-zoom .bpafb-tb-related-post-card:hover .bpafb-tb-related-post-image img {
+	transform: scale( 1.08 );
 }
 
 .bpafb-tb-related-post-image-placeholder {
 	width: 100%;
-	aspect-ratio: 16/9;
-	background-color: #f0f0f0;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient( 135deg, #f8fafc 0%, #e2e8f0 100% );
+	color: #94a3b8;
+}
+
+/* ==========================================================================
+   Card Content & Typography
+   ========================================================================== */
+.bpafb-tb-related-post-content {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	width: 100%;
 }
 
 .bpafb-tb-related-post-date {
-	display: block;
-	font-size: 0.8em;
-	opacity: 0.65;
-	margin-bottom: 4px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var( --bpafb-rp-date-color, #64748b );
+	margin-bottom: 6px;
 }
 
 .bpafb-tb-related-post-title {
-	margin: 0 0 6px;
-	font-size: 1.05em;
+	margin: 0 0 8px;
+	font-family: var( --bpafb-rp-title-font-family, inherit );
+	font-size: var( --bpafb-rp-title-font-size, 1.125rem );
+	font-weight: var( --bpafb-rp-title-font-weight, 700 );
+	line-height: var( --bpafb-rp-title-line-height, 1.4 );
+	letter-spacing: var( --bpafb-rp-title-letter-spacing, normal );
+	text-transform: var( --bpafb-rp-title-text-transform, none );
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
 .bpafb-tb-related-post-title a {
-	color: inherit;
-	text-decoration: none;
+	color: var( --bpafb-rp-title-color, #0f172a ) !important;
+	text-decoration: var( --bpafb-rp-title-text-decoration, none ) !important;
+	transition: color 0.2s ease;
 }
 
 .bpafb-tb-related-post-title a:hover {
-	text-decoration: underline;
+	color: var( --bpafb-rp-title-hover-color, #2563eb );
 }
 
 .bpafb-tb-related-post-excerpt {
-	font-size: 0.9em;
-	opacity: 0.8;
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var( --bpafb-rp-excerpt-color, #475569 );
+	margin-top: 4px;
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
-/* Editor slider preview: a simple horizontal-scroll row of the same cards. */
+.bpafb-tb-related-post-excerpt p {
+	margin: 0 0 8px;
+}
+
+.bpafb-tb-related-post-excerpt p:last-child {
+	margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Editor Preview Styles
+   ========================================================================== */
+.bpafb-tb-related-posts-slider-editor-wrap {
+	width: 100%;
+	position: relative;
+	box-sizing: border-box;
+}
+
 .bpafb-tb-related-posts-slider-preview {
-	display: flex;
-	gap: 20px;
-	overflow-x: auto;
-}
-.bpafb-tb-related-posts-slider-preview .bpafb-tb-related-post-card {
-	flex: 0 0 240px;
+	display: grid;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-/*
- * Minimal hand-rolled Swiper structural CSS (frontend only) - equivalent to
- * the handful of rules this block actually needs from `swiper/css`, kept
- * here instead of importing Swiper's stylesheet from view.js so the block
- * doesn't need its own separately-enqueued view stylesheet (this file is
- * already bundled into the frontend-loaded template-blocks style sheet).
- */
+.bpafb-preview-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	border: 1px solid rgba( 15, 23, 42, 0.12 );
+	color: #0f172a;
+	font-size: 15px;
+	cursor: default;
+	box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.08 );
+}
+
+/* ==========================================================================
+   Swiper Structural & Modern Slider Styles (Frontend)
+   ========================================================================== */
 .bpafb-tb-related-posts-slider.swiper {
 	position: relative;
 	overflow: hidden;
 	width: 100%;
 	list-style: none;
-	padding: 0 0 36px;
+	padding: 10px 4px 48px;
 	margin: 0;
+	box-sizing: border-box;
 }
 
 .bpafb-tb-related-posts-slider .swiper-wrapper {
@@ -101,63 +242,81 @@
 
 .bpafb-tb-related-posts-slider .swiper-slide {
 	flex-shrink: 0;
-	width: 100%;
 	height: auto;
 	position: relative;
+	box-sizing: border-box;
 }
 
+/* Modern Glassmorphic Swiper Navigation Buttons */
 .bpafb-tb-related-posts-slider .swiper-button-prev,
 .bpafb-tb-related-posts-slider .swiper-button-next {
 	position: absolute;
-	top: calc( 50% - 18px );
+	top: calc( 50% - 24px );
 	z-index: 10;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
-	background-color: #fff;
-	color: #333;
-	box-shadow: 0 1px 4px rgba( 0, 0, 0, 0.2 );
+	background-color: rgba( 255, 255, 255, 0.95 );
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	color: #0f172a;
+	border: 1px solid rgba( 15, 23, 42, 0.1 );
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.12 );
 	cursor: pointer;
+	transition: all 0.25s cubic-bezier( 0.16, 1, 0.3, 1 );
+}
+
+.bpafb-tb-related-posts-slider .swiper-button-prev:hover,
+.bpafb-tb-related-posts-slider .swiper-button-next:hover {
+	background-color: #0f172a;
+	box-shadow: 0 6px 20px rgba( 15, 23, 42, 0.25 );
+	color: #ffffff;
+	transform: scale( 1.08 );
 }
 
 .bpafb-tb-related-posts-slider .swiper-button-prev {
-	left: 6px;
+	left: 8px;
 }
 
 .bpafb-tb-related-posts-slider .swiper-button-next {
-	right: 6px;
+	right: 8px;
 }
 
 .bpafb-tb-related-posts-slider .swiper-button-disabled {
-	opacity: 0.35;
+	opacity: 0;
 	cursor: not-allowed;
 	pointer-events: none;
+	transform: scale( 0.9 );
 }
 
+/* Modern Pill Pagination */
 .bpafb-tb-related-posts-slider .swiper-pagination {
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: 8px;
+	bottom: 12px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
+	gap: 8px;
 	z-index: 10;
 }
 
 .bpafb-tb-related-posts-slider .swiper-pagination-bullet {
 	width: 8px;
 	height: 8px;
-	border-radius: 50%;
-	background-color: rgba( 0, 0, 0, 0.25 );
+	border-radius: 999px;
+	background-color: rgba( 15, 23, 42, 0.25 );
 	cursor: pointer;
 	display: inline-block;
+	transition: width 0.3s cubic-bezier( 0.16, 1, 0.3, 1 ),
+		background-color 0.3s ease;
 }
 
 .bpafb-tb-related-posts-slider .swiper-pagination-bullet-active {
-	background-color: rgba( 0, 0, 0, 0.75 );
+	width: 24px;
+	background-color: #0f172a;
 }

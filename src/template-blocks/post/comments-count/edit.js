@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
 import usePreviewContext from '../../shared/use-preview-context';
 
 const SAMPLE_COUNT = 5;
@@ -22,7 +21,7 @@ function formatCommentsLabel( format, count ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { icon, format, isLink } = attributes;
+	const { icon, format, isLink, textHoverColor } = attributes;
 
 	const { isResolving } = usePreviewContext();
 
@@ -56,12 +55,19 @@ export default function Edit( { attributes, setAttributes } ) {
 				}
 				style={
 					<PanelBody title={ __( 'Colors', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
+						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
+							<ColorPalette
+								value={ textHoverColor }
+								onChange={ ( value ) => setAttributes( { textHoverColor: value } ) }
+							/>
+						</BaseControl>
 						<p className="bpafb-help-text">
 							{ __( 'Text and typography options are available in the native Styles panel above.', 'blockive-premium-addon-for-block' ) }
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<span { ...blockProps }>

@@ -6,24 +6,17 @@
 	"title": "Post Content",
 	"category": "blockive-template",
 	"icon": "editor-paragraph",
-	"description": "Displays the current post's full content dynamically, with optional truncation, drop cap and max width. Blockive Template Builder only.",
+	"description": "Displays the current post's full content or excerpt dynamically, with optional drop cap and max width. Blockive Template Builder only.",
 	"usesContext": [
 		"postId",
 		"postType"
 	],
 	"textdomain": "blockive-premium-addon-for-block",
+	"example": {},
 	"attributes": {
-		"wordLimit": {
-			"type": "number",
-			"default": 0
-		},
-		"showReadMore": {
-			"type": "boolean",
-			"default": true
-		},
-		"readMoreText": {
+		"displayMode": {
 			"type": "string",
-			"default": "Read More"
+			"default": "full"
 		},
 		"maxWidth": {
 			"type": "number",
@@ -34,6 +27,10 @@
 			"default": false
 		},
 		"textAlign": {
+			"type": "string",
+			"default": ""
+		},
+		"linkHoverColor": {
 			"type": "string",
 			"default": ""
 		},
@@ -57,6 +54,18 @@
 			"type": "number"
 		},
 		"bpafbContainerWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
 			"type": "string",
 			"default": "px"
 		},
@@ -104,9 +113,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -162,7 +179,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -183,6 +200,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

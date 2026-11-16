@@ -1,11 +1,48 @@
+# Version control
 .git
+.git/*
 .github
-.gitignore
+.github/*
+
+# Configuration & tooling
 .editorconfig
-.FullName
+.gitignore
+.gitattributes
 .distignore
-node_modules
+.FullName
+.claude
+.claude/*
+CLAUDE.md
+claude.md
+README.md
+readme.md
+*.md
+!readme.txt
+docs
+docs/*
+.wordpress-org
+.wordpress-org/*
+
+# Build & source files
 src
+src/*
+node_modules
+node_modules/*
 package.json
 package-lock.json
+webpack.config.js
+
+# Cache & temporary files
+.eslintcache
+.stylelintcache
+.npm
+*.log
 *.zip
+*.tgz
+*.tar.gz
+
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini

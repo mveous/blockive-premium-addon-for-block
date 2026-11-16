@@ -3,11 +3,11 @@ import {
 	useBlockProps,
 	MediaUpload,
 	MediaUploadCheck,
-	RichText,
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	TextControl,
+	TextareaControl,
 	Button,
 	SelectControl,
 	ToggleControl,
@@ -18,7 +18,8 @@ import {
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -100,6 +101,7 @@ export default function Edit({ attributes, setAttributes }) {
 	};
 
 	const removeTestimonial = (index) => {
+		if (testimonials.length <= 1) return;
 		const newTestimonials = testimonials.filter((_, i) => i !== index);
 		setAttributes({ testimonials: newTestimonials });
 		setActiveIndex(0);
@@ -123,6 +125,11 @@ export default function Edit({ attributes, setAttributes }) {
 							value={testimonial.designation}
 							onChange={(val) => updateTestimonial(index, 'designation', val)}
 						/>
+						<TextareaControl
+							label={__('Testimonial Content', 'blockive-premium-addon-for-block')}
+							value={testimonial.content}
+							onChange={(val) => updateTestimonial(index, 'content', val)}
+						/>
 						<div style={{ marginBottom: '10px' }}>
 							<MediaUploadCheck>
 								<MediaUpload
@@ -144,14 +151,14 @@ export default function Edit({ attributes, setAttributes }) {
 								/>
 							</MediaUploadCheck>
 						</div>
-						<RangeControl
+						<StepperControl
 							label={__('Rating', 'blockive-premium-addon-for-block')}
 							value={testimonial.rating}
 							onChange={(val) => updateTestimonial(index, 'rating', val)}
 							min={1}
 							max={5}
 						/>
-						<Button isDestructive onClick={() => removeTestimonial(index)} size="small">
+						<Button isDestructive onClick={() => removeTestimonial(index)} size="small" disabled={testimonials.length <= 1}>
 							{__('Remove', 'blockive-premium-addon-for-block')}
 						</Button>
 					</div>
@@ -182,7 +189,7 @@ export default function Edit({ attributes, setAttributes }) {
 					checked={showArrows}
 					onChange={(val) => setAttributes({ showArrows: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Arrow Icon', 'blockive-premium-addon-for-block')}
 					value={arrowIcon}
 					options={[
@@ -218,7 +225,7 @@ export default function Edit({ attributes, setAttributes }) {
 				style={(
 					<>
 			<PanelBody title={__('Card Styles', 'blockive-premium-addon-for-block')}>
-				<SelectControl
+				<SegmentedControl
 					label={__('Image Position', 'blockive-premium-addon-for-block')}
 					value={imagePosition}
 					options={[
@@ -229,7 +236,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ imagePosition: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Image Style', 'blockive-premium-addon-for-block')}
 					value={imageStyle}
 					options={[
@@ -239,7 +246,7 @@ export default function Edit({ attributes, setAttributes }) {
 					]}
 					onChange={(val) => setAttributes({ imageStyle: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Text Alignment', 'blockive-premium-addon-for-block')}
 					value={textAlign}
 					options={[
@@ -384,7 +391,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

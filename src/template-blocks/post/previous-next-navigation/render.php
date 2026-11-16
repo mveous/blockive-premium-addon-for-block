@@ -24,6 +24,10 @@ $bpafb_prev_icon = isset($attributes['prevIcon']) ? $attributes['prevIcon'] : 'f
 $bpafb_next_icon = isset($attributes['nextIcon']) ? $attributes['nextIcon'] : 'fa-solid fa-arrow-right';
 $bpafb_hover_style = isset($attributes['hoverStyle']) ? $attributes['hoverStyle'] : 'none';
 $bpafb_in_same_term = !empty($attributes['inSameTerm']);
+$bpafb_link_hover_color = Bpafb_Template_Block_Render::sanitize_css_color(
+	isset($attributes['linkHoverColor']) ? $attributes['linkHoverColor'] : ''
+);
+$bpafb_uid = !empty($attributes['bpafbUid']) ? sanitize_html_class($attributes['bpafbUid']) : '';
 
 $bpafb_prev_post = null;
 $bpafb_next_post = null;
@@ -45,9 +49,22 @@ if ($bpafb_post_id) {
 	$post = $bpafb_original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 }
 
+if (!$bpafb_prev_post && !$bpafb_next_post) {
+	return;
+}
+
+$bpafb_classes = ['bpafb-tb-prev-next-nav', 'bpafb-hover-' . sanitize_html_class($bpafb_hover_style)];
+if ($bpafb_uid) {
+	$bpafb_classes[] = 'bpafb-uid-' . $bpafb_uid;
+}
+
 $bpafb_wrapper_attributes = get_block_wrapper_attributes([
-	'class' => 'bpafb-tb-prev-next-nav bpafb-hover-' . sanitize_html_class($bpafb_hover_style),
+	'class' => implode(' ', $bpafb_classes),
 ]);
+
+if ($bpafb_link_hover_color && $bpafb_uid) {
+	echo '<style>.bpafb-uid-' . esc_attr($bpafb_uid) . ' a:hover { color:' . esc_attr($bpafb_link_hover_color) . ' !important; }</style>';
+}
 
 echo '<div ' . $bpafb_wrapper_attributes . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 

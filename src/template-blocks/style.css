@@ -3,3 +3,30 @@
 	color: #757575;
 	margin-top: 4px;
 }
+
+/* Template frontend render - isolate the template's own content from the
+   theme's content-area box styling (width/margin/padding/border/background
+   and any typography the theme set directly on its content wrapper), so
+   only the theme's header, footer, and Global Styles (color/font set on
+   <body>/<html>, which still cascade in normally) carry through. Each
+   Blockive block's own Style/Typography/Color/Border/Background controls
+   remain the source of truth for everything else. Use the template's own
+   "Full width (no sidebar)" setting to also escape the theme's content
+   column width (that's a layout decision the theme's own filters make, not
+   something CSS alone can safely override across every theme). */
+.bpafb-template-render {
+	all: unset;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	/* Some themes (e.g. Astra's "Content Width" customizer option, via
+	   `.entry-content[data-ast-blocks-layout] > *`) constrain a direct
+	   child of the content area by class+attribute selector, which beats
+	   this single class on specificity alone regardless of stylesheet
+	   order. !important is scoped to only the wrapper's own box model, so
+	   it can't affect any Blockive block's own generated styles further
+	   down the tree. */
+	max-width: none !important;
+	margin: 0 !important;
+}
+

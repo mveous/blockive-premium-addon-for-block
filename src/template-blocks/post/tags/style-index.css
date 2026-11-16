@@ -3,12 +3,8 @@
 }
 
 .bpafb-tb-tags a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.bpafb-tb-tags a:hover {
-	text-decoration: underline;
+	color: inherit !important;
+	text-decoration: none !important;
 }
 
 .bpafb-tb-tags .bpafb-tb-tag-sep {
@@ -29,12 +25,12 @@
 	background-color: rgba( 0, 0, 0, 0.06 );
 	font-size: 0.85em;
 	line-height: 1.6;
-	text-decoration: none;
+	text-decoration: none !important;
 }
 
 .bpafb-tb-tags.bpafb-tags-badge .bpafb-tb-tag-badge:hover {
 	background-color: rgba( 0, 0, 0, 0.12 );
-	text-decoration: none;
+	text-decoration: none !important;
 }
 
 .bpafb-tb-tags-placeholder {

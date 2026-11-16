@@ -3,7 +3,8 @@ import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-edi
 import { PanelBody, SelectControl, TextControl, ToggleControl, RangeControl, BaseControl, ColorPalette } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls, { getBorderStyles } from '../components/border-controls';
@@ -36,21 +37,27 @@ export default function Edit( { attributes, setAttributes } ) {
 		iconBorderStyle,
 		titleFontFamily,
 		titleFontSize,
+		titleFontSizeUnit = 'px',
 		titleFontWeight,
 		titleLineHeight,
 		titleLetterSpacing,
+		titleLetterSpacingUnit = 'px',
 		titleTextTransform,
 		titleTextDecoration,
 		descFontFamily,
 		descFontSize,
+		descFontSizeUnit = 'px',
 		descFontWeight,
 		descLineHeight,
 		descLetterSpacing,
+		descLetterSpacingUnit = 'px',
 		descTextTransform,
 		descTextDecoration,
 		borderType,
 		borderWidth,
+		borderWidthUnit = 'px',
 		borderRadius,
+		borderRadiusUnit = 'px',
 		borderColor,
 		boxShadow,
 		shadowColor,
@@ -81,9 +88,9 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-ib-icon-border-style': iconBorderStyle,
 		'--bpafb-ib-shadow': getShadowStyle( { enabled: boxShadow, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
 		'--bpafb-ib-shadow-hover': getShadowStyle( { enabled: hoverBoxShadow, color: hoverShadowColor, blur: hoverShadowBlur, spread: hoverShadowSpread } ),
-		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-ib-title' ),
-		...getTypographyStyles( { fontFamily: descFontFamily, fontSize: descFontSize, fontWeight: descFontWeight, lineHeight: descLineHeight, letterSpacing: descLetterSpacing, textTransform: descTextTransform, textDecoration: descTextDecoration }, '--bpafb-ib-desc' ),
-		...getBorderStyles( { borderType, borderWidth, borderRadius, borderColor }, '--bpafb-ib-box' ),
+		...getTypographyStyles( { fontFamily: titleFontFamily, fontSize: titleFontSize, fontSizeUnit: titleFontSizeUnit, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, letterSpacingUnit: titleLetterSpacingUnit, textTransform: titleTextTransform, textDecoration: titleTextDecoration }, '--bpafb-ib-title' ),
+		...getTypographyStyles( { fontFamily: descFontFamily, fontSize: descFontSize, fontSizeUnit: descFontSizeUnit, fontWeight: descFontWeight, lineHeight: descLineHeight, letterSpacing: descLetterSpacing, letterSpacingUnit: descLetterSpacingUnit, textTransform: descTextTransform, textDecoration: descTextDecoration }, '--bpafb-ib-desc' ),
+		...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-ib-box' ),
 	};
 
 	const blockProps = useBlockProps( {
@@ -130,7 +137,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				/>
 			) }
 
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'Icon Position', 'blockive-premium-addon-for-block' ) }
 				value={ iconPosition }
 				options={ [
@@ -141,7 +148,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				onChange={ ( val ) => setAttributes( { iconPosition: val } ) }
 			/>
 
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'Text Alignment', 'blockive-premium-addon-for-block' ) }
 				value={ boxAlignment }
 				options={ [
@@ -216,6 +223,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily: titleFontFamily, fontSize: titleFontSize, fontWeight: titleFontWeight, lineHeight: titleLineHeight, letterSpacing: titleLetterSpacing, textTransform: titleTextTransform, textDecoration: titleTextDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ `title${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ titleFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { titleFontSizeUnit: val } ) }
+					letterSpacingUnit={ titleLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { titleLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -223,6 +234,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily: descFontFamily, fontSize: descFontSize, fontWeight: descFontWeight, lineHeight: descLineHeight, letterSpacing: descLetterSpacing, textTransform: descTextTransform, textDecoration: descTextDecoration } }
 					onChange={ ( key, val ) => setAttributes( { [ `desc${ key.charAt( 0 ).toUpperCase() }${ key.slice( 1 ) }` ]: val } ) }
+					fontSizeUnit={ descFontSizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { descFontSizeUnit: val } ) }
+					letterSpacingUnit={ descLetterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { descLetterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -241,7 +256,14 @@ export default function Edit( { attributes, setAttributes } ) {
 			</PanelBody>
 
 			<PanelBody title={ __( 'Box Border', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-				<BorderControls values={ { borderType, borderWidth, borderRadius, borderColor } } onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) } />
+				<BorderControls
+					values={ { borderType, borderWidth, borderRadius, borderColor } }
+					onChange={ ( key, val ) => setAttributes( { [ key ]: val } ) }
+					widthUnit={ borderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { borderWidthUnit: val } ) }
+					radiusUnit={ borderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { borderRadiusUnit: val } ) }
+				/>
 			</PanelBody>
 
 			<PanelBody title={ __( 'Box Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
@@ -294,7 +316,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

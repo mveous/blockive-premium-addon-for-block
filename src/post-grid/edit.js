@@ -12,7 +12,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -68,7 +69,7 @@ export default function Edit({ attributes, setAttributes }) {
 				general={(
 					<>
 			<PanelBody title={__('Layout', 'blockive-premium-addon-for-block')} initialOpen={true}>
-				<RangeControl
+				<StepperControl
 					label={__('Columns', 'blockive-premium-addon-for-block')}
 					value={columns}
 					onChange={(val) => setAttributes({ columns: val })}
@@ -76,7 +77,7 @@ export default function Edit({ attributes, setAttributes }) {
 					max={4}
 				/>
 
-				<RangeControl
+				<StepperControl
 					label={__('Posts Per Page', 'blockive-premium-addon-for-block')}
 					value={postsPerPage}
 					onChange={(val) => setAttributes({ postsPerPage: val })}
@@ -92,7 +93,7 @@ export default function Edit({ attributes, setAttributes }) {
 					options={postTypeOptions}
 					onChange={(val) => setAttributes({ postType: val })}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Order By', 'blockive-premium-addon-for-block')}
 					value={orderBy}
 					options={[
@@ -103,7 +104,7 @@ export default function Edit({ attributes, setAttributes }) {
 					onChange={(val) => setAttributes({ orderBy: val })}
 				/>
 
-				<SelectControl
+				<SegmentedControl
 					label={__('Order', 'blockive-premium-addon-for-block')}
 					value={order}
 					options={[
@@ -171,6 +172,7 @@ export default function Edit({ attributes, setAttributes }) {
 					label={__('Border Style', 'blockive-premium-addon-for-block')}
 					value={cardBorderStyle}
 					options={[
+						{ label: 'None', value: 'none' },
 						{ label: 'Solid', value: 'solid' },
 						{ label: 'Dashed', value: 'dashed' },
 						{ label: 'Dotted', value: 'dotted' },
@@ -218,7 +220,8 @@ export default function Edit({ attributes, setAttributes }) {
 			/>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

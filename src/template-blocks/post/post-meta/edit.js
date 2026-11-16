@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl, TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { PanelBody, ToggleControl, TextControl, SelectControl, BaseControl, ColorPalette, Button } from '@wordpress/components';
+import { useState, Fragment } from '@wordpress/element';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import SegmentedControl from '../../../components/segmented-control';
 import usePreviewContext from '../../shared/use-preview-context';
 import { formatPreviewDate } from '../../shared/format';
 
@@ -24,6 +24,18 @@ const SAMPLE_VALUES = {
 	tags: __( 'Sample Tag', 'blockive-premium-addon-for-block' ),
 	comments: __( '3 Comments', 'blockive-premium-addon-for-block' ),
 	readingTime: __( '4 min read', 'blockive-premium-addon-for-block' ),
+};
+
+// Mirrors the icon assigned to each item key in Bpafb_Post_Meta_Items::get_html()
+// (includes/class-bpafb-post-meta-items.php) so the editor preview matches the
+// frontend exactly instead of falling back to a generic icon.
+const ICONS = {
+	date: 'fa-regular fa-calendar',
+	author: 'fa-regular fa-user',
+	categories: 'fa-regular fa-folder',
+	tags: 'fa-solid fa-tags',
+	comments: 'fa-regular fa-comment',
+	readingTime: 'fa-regular fa-clock',
 };
 
 /**
@@ -70,6 +82,20 @@ function ReorderableItemsList( { items, onChange } ) {
 							onChange( next );
 						} }
 					/>
+					<Button
+						icon="arrow-up-alt2"
+						label={ __( 'Move up', 'blockive-premium-addon-for-block' ) }
+						onClick={ () => moveItem( index, index - 1 ) }
+						disabled={ index === 0 }
+						size="small"
+					/>
+					<Button
+						icon="arrow-down-alt2"
+						label={ __( 'Move down', 'blockive-premium-addon-for-block' ) }
+						onClick={ () => moveItem( index, index + 1 ) }
+						disabled={ index === items.length - 1 }
+						size="small"
+					/>
 				</li>
 			) ) }
 		</ul>
@@ -77,7 +103,7 @@ function ReorderableItemsList( { items, onChange } ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { items, separator, showIcons } = attributes;
+	const { items, separator, showIcons, badgeStyle = 'none', badgeBgColor, badgeTextColor, linkHoverColor } = attributes;
 	const { record } = usePreviewContext();
 
 	const blockProps = useBlockProps( { className: 'bpafb-tb-post-meta' } );
@@ -119,19 +145,64 @@ export default function Edit( { attributes, setAttributes } ) {
 							checked={ !! showIcons }
 							onChange={ ( value ) => setAttributes( { showIcons: value } ) }
 						/>
+						<SegmentedControl
+							label={ __( 'Badge Style', 'blockive-premium-addon-for-block' ) }
+							value={ badgeStyle }
+							options={ [
+								{ label: __( 'None', 'blockive-premium-addon-for-block' ), value: 'none' },
+								{ label: __( 'Solid', 'blockive-premium-addon-for-block' ), value: 'solid' },
+								{ label: __( 'Soft', 'blockive-premium-addon-for-block' ), value: 'soft' },
+								{ label: __( 'Outline', 'blockive-premium-addon-for-block' ), value: 'outline' },
+							] }
+							onChange={ ( value ) => setAttributes( { badgeStyle: value } ) }
+						/>
+						{ badgeStyle !== 'none' && (
+							<>
+								<BaseControl label={ __( 'Badge Background Color', 'blockive-premium-addon-for-block' ) }>
+									<ColorPalette
+										value={ badgeBgColor }
+										onChange={ ( value ) => setAttributes( { badgeBgColor: value } ) }
+									/>
+								</BaseControl>
+								<BaseControl label={ __( 'Badge Text Color', 'blockive-premium-addon-for-block' ) }>
+									<ColorPalette
+										value={ badgeTextColor }
+										onChange={ ( value ) => setAttributes( { badgeTextColor: value } ) }
+									/>
+								</BaseControl>
+							</>
+						) }
+						<BaseControl label={ __( 'Link Hover Color', 'blockive-premium-addon-for-block' ) }>
+							<ColorPalette
+								value={ linkHoverColor }
+								onChange={ ( value ) => setAttributes( { linkHoverColor: value } ) }
+							/>
+						</BaseControl>
+						<p className="bpafb-help-text">
+							{ __( 'Applies to any linked items (Categories, Tags) within this block.', 'blockive-premium-addon-for-block' ) }
+						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>
 				{ enabledItems.map( ( item, index ) => (
-					<span className="bpafb-tb-post-meta-item" key={ item.key }>
+					<Fragment key={ item.key }>
 						{ index > 0 && separator && <span className="bpafb-tb-post-meta-sep">{ separator }</span> }
-						{ showIcons && <i className={ `fa-regular fa-${ item.key === 'date' ? 'calendar' : 'circle' }` } /> }
-						{ ' ' }
-						{ previewValue( item.key ) }
-					</span>
+						<span
+							className={ `bpafb-tb-post-meta-item${ badgeStyle !== 'none' ? ` bpafb-tb-post-meta-item--badge-${ badgeStyle }` : '' }` }
+							style={ badgeStyle !== 'none' ? {
+								'--bpafb-meta-badge-bg': badgeBgColor || undefined,
+								'--bpafb-meta-badge-color': badgeTextColor || undefined,
+							} : undefined }
+						>
+							{ showIcons && <i className={ ICONS[ item.key ] || 'fa-regular fa-circle' } /> }
+							{ ' ' }
+							{ previewValue( item.key ) }
+						</span>
+					</Fragment>
 				) ) }
 			</div>
 		</>

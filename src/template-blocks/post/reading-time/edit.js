@@ -3,7 +3,6 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl, RangeControl } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
 import usePreviewContext from '../../shared/use-preview-context';
 
 const SAMPLE_WORD_COUNT = 850;
@@ -67,7 +66,8 @@ export default function Edit( { attributes, setAttributes } ) {
 						</p>
 					</PanelBody>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<span { ...blockProps }>

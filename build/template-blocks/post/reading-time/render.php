@@ -22,7 +22,11 @@ if ($bpafb_post_id) {
 	$bpafb_content = get_post_field('post_content', $bpafb_post_id);
 	$bpafb_words = str_word_count(wp_strip_all_tags(strip_shortcodes($bpafb_content)));
 }
-$bpafb_minutes = max(1, (int) ceil($bpafb_words / $bpafb_wpm));
+// Only floor to a minimum of 1 minute when a post actually resolved -
+// otherwise (e.g. no post context available) this shows "0", matching the
+// Comments Count block's "0 Comments" convention for the same situation,
+// rather than a misleadingly non-zero "1 min read".
+$bpafb_minutes = $bpafb_post_id ? max(1, (int) ceil($bpafb_words / $bpafb_wpm)) : 0;
 
 $bpafb_wrapper_attributes = get_block_wrapper_attributes([
 	'class' => 'bpafb-tb-reading-time',

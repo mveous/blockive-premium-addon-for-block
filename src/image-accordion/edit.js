@@ -20,7 +20,9 @@ import {
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
+import { getSafeUrl } from '../utils/safe-url';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -173,7 +175,7 @@ export default function Edit({ attributes, setAttributes }) {
 					max={1}
 					step={0.1}
 				/>
-				<SelectControl
+				<SegmentedControl
 					label={__('Image Size', 'blockive-premium-addon-for-block')}
 					value={imageSize}
 					options={[
@@ -202,7 +204,8 @@ export default function Edit({ attributes, setAttributes }) {
 			</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>
@@ -222,7 +225,7 @@ export default function Edit({ attributes, setAttributes }) {
 								}
 							}}
 							style={{
-								backgroundImage: item.imageUrl ? `url(${item.imageUrl})` : 'none',
+								backgroundImage: item.imageUrl ? `url(${getSafeUrl(item.imageUrl, { allowAnchor: false })})` : 'none',
 							}}
 						>
 							<div className="bpafb-image-accordion-content">

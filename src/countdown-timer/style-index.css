@@ -60,6 +60,18 @@
     color: var(--bpafb-cd-label-color, inherit);
 }
 
+/* Shown in place of the timer when it ends (view.js). */
+.bpafb-countdown-expired {
+	font-size: 1.25em;
+	font-weight: 600;
+	text-align: center;
+	color: var(--bpafb-cd-number-color, inherit);
+}
+
+.bpafb-countdown-expired[hidden] {
+	display: none;
+}
+
 /* Animations */
 .bpafb-animate-none { animation: none; }
 .bpafb-animate-fadeIn { animation-name: fadeIn; }

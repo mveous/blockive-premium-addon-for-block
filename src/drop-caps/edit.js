@@ -9,7 +9,8 @@ import {
 import { PanelBody, SelectControl, RangeControl } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 import ColorStateControls from '../components/color-state-controls';
 import TypographyControls, { getTypographyStyles } from '../components/typography-controls';
 import BorderControls from '../components/border-controls';
@@ -23,6 +24,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		primaryColor,
 		secondaryColor,
 		size,
+		sizeUnit = 'px',
 		space,
 		borderWidth,
 		borderType,
@@ -33,6 +35,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		fontWeight,
 		lineHeight,
 		letterSpacing,
+		letterSpacingUnit = 'px',
 		textTransform,
 		textDecoration,
 		boxShadow,
@@ -59,7 +62,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		'--bpafb-dc-radius': borderRadius > 0 ? `${ borderRadius }px` : ( shape === 'circle' ? '50%' : ( shape === 'rounded' ? '5px' : '0' ) ),
 		'--bpafb-dc-shadow': getShadowStyle( { enabled: boxShadow, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
 		'--bpafb-dc-shadow-hover': getShadowStyle( { enabled: hoverBoxShadow, color: hoverShadowColor, blur: hoverShadowBlur, spread: hoverShadowSpread } ),
-		...getTypographyStyles( { fontFamily, fontSize: size, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration }, '--bpafb-dc-letter' ),
+		...getTypographyStyles( { fontFamily, fontSize: size, fontSizeUnit: sizeUnit, fontWeight, lineHeight, letterSpacing, letterSpacingUnit, textTransform, textDecoration }, '--bpafb-dc-letter' ),
 	};
 
 	const blockProps = useBlockProps( {
@@ -69,7 +72,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const generalTab = (
 		<PanelBody title={ __( 'Drop Cap Settings', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'View', 'blockive-premium-addon-for-block' ) }
 				value={ view }
 				options={ [
@@ -81,7 +84,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			/>
 
 			{ view !== 'default' && (
-				<SelectControl
+				<SegmentedControl
 					label={ __( 'Shape', 'blockive-premium-addon-for-block' ) }
 					value={ shape }
 					options={ [
@@ -101,6 +104,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				<TypographyControls
 					values={ { fontFamily, fontSize: size, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration } }
 					onChange={ ( key, val ) => setAttributes( key === 'fontSize' ? { size: val } : { [ key ]: val } ) }
+					fontSizeUnit={ sizeUnit }
+					onFontSizeUnitChange={ ( val ) => setAttributes( { sizeUnit: val } ) }
+					letterSpacingUnit={ letterSpacingUnit }
+					onLetterSpacingUnitChange={ ( val ) => setAttributes( { letterSpacingUnit: val } ) }
 				/>
 			</PanelBody>
 
@@ -184,7 +191,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorTabs
 				general={ generalTab }
 				style={ styleTab }
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<RichText

@@ -12,6 +12,7 @@
 		"postType"
 	],
 	"textdomain": "blockive-premium-addon-for-block",
+	"example": {},
 	"attributes": {
 		"numberOfPosts": {
 			"type": "number",
@@ -24,6 +25,38 @@
 		"columns": {
 			"type": "number",
 			"default": 3
+		},
+		"gridGap": {
+			"type": "number",
+			"default": 20
+		},
+		"sliderColumns": {
+			"type": "number",
+			"default": 3
+		},
+		"sliderAutoplay": {
+			"type": "boolean",
+			"default": false
+		},
+		"sliderAutoplaySpeed": {
+			"type": "number",
+			"default": 3000
+		},
+		"sliderLoop": {
+			"type": "boolean",
+			"default": false
+		},
+		"sliderShowArrows": {
+			"type": "boolean",
+			"default": true
+		},
+		"sliderShowDots": {
+			"type": "boolean",
+			"default": true
+		},
+		"sliderSpaceBetween": {
+			"type": "number",
+			"default": 20
 		},
 		"orderBy": {
 			"type": "string",
@@ -47,7 +80,92 @@
 		},
 		"showExcerpt": {
 			"type": "boolean",
-			"default": false
+			"default": true
+		},
+		"contentType": {
+			"type": "string",
+			"default": "limited"
+		},
+		"excerptLength": {
+			"type": "number",
+			"default": 20
+		},
+		"cardStyle": {
+			"type": "string",
+			"default": "modern"
+		},
+		"cardBgColor": {
+			"type": "string",
+			"default": ""
+		},
+		"cardBorderRadius": {
+			"type": "number",
+			"default": 16
+		},
+		"cardPadding": {
+			"type": "number",
+			"default": 18
+		},
+		"cardHoverElevation": {
+			"type": "boolean",
+			"default": true
+		},
+		"imageZoom": {
+			"type": "boolean",
+			"default": true
+		},
+		"imageBorderRadius": {
+			"type": "number",
+			"default": 12
+		},
+		"titleColor": {
+			"type": "string",
+			"default": ""
+		},
+		"titleHoverColor": {
+			"type": "string",
+			"default": ""
+		},
+		"titleFontFamily": {
+			"type": "string",
+			"default": ""
+		},
+		"titleFontSize": {
+			"type": "number"
+		},
+		"titleFontSizeUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"titleFontWeight": {
+			"type": "string",
+			"default": ""
+		},
+		"titleLineHeight": {
+			"type": "number"
+		},
+		"titleLetterSpacing": {
+			"type": "number"
+		},
+		"titleLetterSpacingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"titleTextTransform": {
+			"type": "string",
+			"default": ""
+		},
+		"titleTextDecoration": {
+			"type": "string",
+			"default": ""
+		},
+		"dateColor": {
+			"type": "string",
+			"default": ""
+		},
+		"excerptColor": {
+			"type": "string",
+			"default": ""
 		},
 		"bpafbUid": {
 			"type": "string",
@@ -69,6 +187,18 @@
 			"type": "number"
 		},
 		"bpafbContainerWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
 			"type": "string",
 			"default": "px"
 		},
@@ -116,9 +246,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -174,7 +312,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -195,6 +333,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

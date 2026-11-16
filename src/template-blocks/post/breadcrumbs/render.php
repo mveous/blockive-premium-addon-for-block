@@ -21,7 +21,9 @@ $bpafb_separator = isset($attributes['separator']) ? $attributes['separator'] : 
 $bpafb_show_home_icon = !isset($attributes['showHomeIcon']) || !empty($attributes['showHomeIcon']);
 $bpafb_home_icon = isset($attributes['homeIcon']) ? $attributes['homeIcon'] : 'fa-solid fa-house';
 $bpafb_text_color = isset($attributes['textColor']) ? $attributes['textColor'] : '';
-$bpafb_text_hover_color = isset($attributes['textHoverColor']) ? $attributes['textHoverColor'] : '';
+$bpafb_text_hover_color = Bpafb_Template_Block_Render::sanitize_css_color(
+	isset($attributes['textHoverColor']) ? $attributes['textHoverColor'] : ''
+);
 $bpafb_uid = !empty($attributes['bpafbUid']) ? sanitize_html_class($attributes['bpafbUid']) : '';
 
 // Build the trail: Home > (primary taxonomy term, if any) > current title.

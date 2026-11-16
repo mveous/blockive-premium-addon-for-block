@@ -1,4 +1,4 @@
-const ALLOWED_PROTOCOLS = [ 'http:', 'https:', 'mailto:', 'tel:' ];
+import { getSafeUrl } from '../utils/safe-url';
 
 /**
  * Returns the given URL if it uses a safe protocol (http, https, mailto, tel),
@@ -6,21 +6,5 @@ const ALLOWED_PROTOCOLS = [ 'http:', 'https:', 'mailto:', 'tel:' ];
  * other scheme (e.g. javascript:, data:, vbscript:).
  */
 export function getSafeIconBoxUrl( url ) {
-	if ( ! url ) {
-		return url;
-	}
-
-	const trimmed = url.trim();
-
-	if ( trimmed.startsWith( '#' ) || trimmed.startsWith( '/' ) ) {
-		return url;
-	}
-
-	const schemeMatch = trimmed.match( /^([a-zA-Z][a-zA-Z0-9+.-]*:)/ );
-
-	if ( ! schemeMatch ) {
-		return url;
-	}
-
-	return ALLOWED_PROTOCOLS.includes( schemeMatch[ 1 ].toLowerCase() ) ? url : '';
+	return getSafeUrl( url );
 }

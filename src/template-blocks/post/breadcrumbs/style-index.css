@@ -16,12 +16,8 @@
 }
 
 .bpafb-tb-breadcrumbs a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.bpafb-tb-breadcrumbs a:hover {
-	text-decoration: underline;
+	color: inherit !important;
+	text-decoration: none !important;
 }
 
 .bpafb-tb-breadcrumbs .bpafb-tb-breadcrumb-current {

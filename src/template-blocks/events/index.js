@@ -1,9 +1,0 @@
-import './event-title';
-import './image';
-import './date';
-import './time';
-import './venue';
-import './organizer';
-import './cost';
-import './map';
-import './register-button';

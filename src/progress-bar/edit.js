@@ -15,7 +15,8 @@ import {
 } from '@wordpress/components';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
+import SegmentedControl from '../components/segmented-control';
+import StepperControl from '../components/stepper-control';
 
 const themeColors = [
 	{ name: 'Indigo', color: '#4f46e5' },
@@ -91,7 +92,7 @@ export default function Edit({ attributes, setAttributes }) {
 								checked={displayPercentage}
 								onChange={(val) => setAttributes({ displayPercentage: val })}
 							/>
-							<SelectControl
+							<SegmentedControl
 								label={__('Layout Style', 'blockive-premium-addon-for-block')}
 								value={layoutStyle}
 								options={[
@@ -165,7 +166,8 @@ export default function Edit({ attributes, setAttributes }) {
 						</PanelBody>
 					</>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

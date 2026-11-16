@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "blockive-premium-addon-for-block/contact-form-7",
 	"version": "0.1.0",
-	"title": "Blockive Contact Form 7",
+	"title": "Contact Form 7",
 	"category": "bpafb-widgets",
 	"icon": "email-alt",
 	"description": "Contact Form 7 integration block.",
@@ -14,6 +14,7 @@
 		},
 		"anchor": true
 	},
+	"example": {},
 	"attributes": {
 		"formId": {
 			"type": "string",
@@ -57,6 +58,18 @@
 			"type": "number"
 		},
 		"bpafbContainerWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
 			"type": "string",
 			"default": "px"
 		},
@@ -104,9 +117,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -162,7 +183,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -183,6 +204,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

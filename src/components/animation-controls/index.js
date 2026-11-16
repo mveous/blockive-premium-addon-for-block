@@ -30,7 +30,7 @@ export default function AnimationControls( { values = {}, onChange } ) {
 	const {
 		animationType = 'none',
 		animationDuration = 800,
-		animationDelay = 0,
+		animationDelay = 100,
 		animationEasing = 'ease',
 	} = values;
 

@@ -4,6 +4,16 @@
 	width: 100%;
 	overflow: hidden;
 	background-color: #000;
+	--bpafb-fv-border-radius: 0;
+	--bpafb-fv-border-style: none;
+	--bpafb-fv-border-width: 0;
+	--bpafb-fv-border-color: transparent;
+	--bpafb-fv-shadow: none;
+	border-radius: var( --bpafb-fv-border-radius );
+	border-style: var( --bpafb-fv-border-style );
+	border-width: var( --bpafb-fv-border-width );
+	border-color: var( --bpafb-fv-border-color );
+	box-shadow: var( --bpafb-fv-shadow );
 }
 
 .bpafb-tb-featured-video video {
@@ -38,5 +48,5 @@
 	height: 100%;
 	min-height: 200px;
 	color: #fff;
-	text-decoration: none;
+	text-decoration: none !important;
 }

@@ -1,6 +1,5 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	SelectControl,
@@ -16,6 +15,7 @@ import BorderControls from '../border-controls';
 import ShadowControls from '../shadow-controls';
 import BackgroundControls from '../background-controls';
 import AnimationControls from '../animation-controls';
+import { AdvancedExtraSlot } from '../inspector-tabs/slots';
 
 const DISPLAY_OPTIONS = [
 	{ label: __( 'Default', 'blockive-premium-addon-for-block' ), value: '' },
@@ -73,6 +73,63 @@ function boxValueFromAttrs( attributes, attrNames ) {
 	};
 }
 
+const HEIGHT_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'vh', value: 'vh' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+// Sensible slider ceilings per unit, same idea as SpacingControls' UNIT_MAX.
+const MIN_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
+const MAX_HEIGHT_UNIT_MAX = { '%': 100, vh: 100, em: 50, rem: 50 };
+
+const WIDTH_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'rem', value: 'rem' },
+];
+const WIDTH_UNIT_MAX = { '%': 100, rem: 125 };
+
+const TRANSLATE_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: '%', value: '%' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+const TRANSLATE_UNIT_MAX = { '%': 100, em: 20, rem: 20 };
+
+// Label + its own unit dropdown above a full-width slider, so every size
+// setting carries an independent unit.
+function UnitRange( { label, value, unit, units, unitMax, defaultMax, min, onChange, onUnitChange } ) {
+	return (
+		<div className="bpafb-unit-range">
+			<div className="bpafb-spacing-controls__header">
+				<span className="bpafb-spacing-controls__label">{ label }</span>
+				<select
+					className="bpafb-spacing-controls__unit-select"
+					aria-label={ sprintf( /* translators: %s: setting name */ __( '%s unit', 'blockive-premium-addon-for-block' ), label ) }
+					value={ unit || 'px' }
+					onChange={ ( e ) => onUnitChange( e.target.value ) }
+				>
+					{ units.map( ( u ) => (
+						<option key={ u.value } value={ u.value }>{ u.label }</option>
+					) ) }
+				</select>
+			</div>
+			<RangeControl
+				label={ label }
+				hideLabelFromVision
+				value={ value }
+				onChange={ onChange }
+				min={ min }
+				max={ unitMax[ unit ] || defaultMax }
+				__nextHasNoMarginBottom
+			/>
+		</div>
+	);
+}
+
 function generateUid() {
 	return Math.random().toString( 36 ).slice( 2, 10 );
 }
@@ -84,55 +141,52 @@ function generateUid() {
 const claimedUids = new Set();
 
 /**
- * The single shared "Advanced" control set rendered identically by every
- * Blockive block. Its panels are split across the block's two native
- * inspector tabs (no custom tab navigation of its own): layout/visibility/
- * z-index are functional settings and land in the native Settings tab,
- * while spacing/background/border/shadow/animation/transform/motion are
- * visual and land in the native Styles tab, next to the rest of the
- * block's style controls.
+ * Claims this block instance's `bpafbUid`, assigning a fresh one if it's
+ * missing or already claimed by another mounted instance (e.g. right after
+ * duplicating a block). Called from `InspectorTabs`, which is always
+ * mounted for the lifetime of the block regardless of which inspector tab
+ * is selected -- unlike the panels below, which only mount while their tab
+ * is active.
  */
-export default function AdvancedTab( { attributes, setAttributes } ) {
+export function useClaimBpafbUid( attributes, setAttributes ) {
+	const { bpafbUid } = attributes;
+
+	useEffect( () => {
+		if ( ! bpafbUid || claimedUids.has( bpafbUid ) ) {
+			const newUid = generateUid();
+			claimedUids.add( newUid );
+			setAttributes( { bpafbUid: newUid } );
+		} else {
+			claimedUids.add( bpafbUid );
+		}
+		// Intentionally run only on mount: this is a one-time claim check per
+		// block instance, not a reaction to bpafbUid changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+}
+
+/**
+ * Layout / Visibility / Z-Index / effects / Custom Attributes -- the
+ * functional half of the shared control set, rendered under the Advanced tab.
+ */
+export function AdvancedSettingsSection( { attributes, setAttributes } ) {
 	const {
-		bpafbUid,
 		bpafbDisplay = '',
 		bpafbOverflow = '',
 		bpafbPosition = '',
+		bpafbPositionUnit = 'px',
 		bpafbContainerWidth,
 		bpafbContainerWidthUnit = 'px',
+		bpafbContainerMinWidth,
+		bpafbContainerMinWidthUnit = 'px',
 		bpafbContainerMinHeight,
+		bpafbContainerMinHeightUnit = '',
 		bpafbContainerMaxHeight,
-		bpafbContainerBgType = 'color',
-		bpafbContainerBgColor = '',
-		bpafbContainerBgGradient = '',
-		bpafbContainerBgImageUrl = '',
-		bpafbContainerBgImageSize = 'cover',
-		bpafbContainerOverlayColor = '',
-		bpafbContainerBorderStyle = 'none',
-		bpafbContainerBorderWidth,
-		bpafbContainerBorderRadius,
-		bpafbContainerBorderColor = '',
-		bpafbContainerBoxShadow = false,
-		bpafbContainerShadowColor,
-		bpafbContainerShadowBlur,
-		bpafbContainerShadowSpread,
-		bpafbContainerHoverBoxShadow = false,
-		bpafbContainerHoverShadowColor,
-		bpafbContainerHoverShadowBlur,
-		bpafbContainerHoverShadowSpread,
+		bpafbContainerMaxHeightUnit = '',
+		bpafbContainerHeightUnit = 'px',
 		bpafbHideDesktop = false,
 		bpafbHideTablet = false,
 		bpafbHideMobile = false,
-		bpafbAnimationType = 'none',
-		bpafbAnimationDuration = 800,
-		bpafbAnimationDelay = 0,
-		bpafbAnimationEasing = 'ease',
-		bpafbTransformRotate = 0,
-		bpafbTransformScale = 100,
-		bpafbTransformTranslateX = 0,
-		bpafbTransformTranslateY = 0,
-		bpafbHoverAnimation = 'none',
-		bpafbFloatingEffect = false,
 		bpafbZIndex,
 		bpafbHtmlId = '',
 		bpafbHtmlClasses = '',
@@ -148,298 +202,404 @@ export default function AdvancedTab( { attributes, setAttributes } ) {
 		? !! window.bpafbEditorSettings.canUseCustomCss
 		: false;
 
-	useEffect( () => {
-		if ( ! bpafbUid || claimedUids.has( bpafbUid ) ) {
-			const newUid = generateUid();
-			claimedUids.add( newUid );
-			setAttributes( { bpafbUid: newUid } );
-		} else {
-			claimedUids.add( bpafbUid );
-		}
-		// Intentionally run only on mount: this is a one-time claim check per
-		// block instance, not a reaction to bpafbUid changes.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	return (
+		<>
+			<PanelBody title={ __( 'Layout', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
+				<SelectControl
+					label={ __( 'Display', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbDisplay }
+					options={ DISPLAY_OPTIONS }
+					onChange={ ( val ) => setAttributes( { bpafbDisplay: val } ) }
+				/>
+				<UnitRange
+					label={ __( 'Min Width', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerMinWidth }
+					unit={ bpafbContainerMinWidthUnit }
+					units={ WIDTH_UNITS }
+					unitMax={ WIDTH_UNIT_MAX }
+					defaultMax={ 2000 }
+					min={ 0 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMinWidth: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMinWidthUnit: val } ) }
+				/>
+				<UnitRange
+					label={ __( 'Max Width', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerWidth }
+					unit={ bpafbContainerWidthUnit }
+					units={ WIDTH_UNITS }
+					unitMax={ WIDTH_UNIT_MAX }
+					defaultMax={ 2000 }
+					min={ 10 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerWidth: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerWidthUnit: val } ) }
+				/>
+				<UnitRange
+					label={ __( 'Min Height', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerMinHeight }
+					unit={ bpafbContainerMinHeightUnit || bpafbContainerHeightUnit }
+					units={ HEIGHT_UNITS }
+					unitMax={ MIN_HEIGHT_UNIT_MAX }
+					defaultMax={ 1200 }
+					min={ 0 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMinHeight: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMinHeightUnit: val } ) }
+				/>
+				<UnitRange
+					label={ __( 'Max Height', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbContainerMaxHeight }
+					unit={ bpafbContainerMaxHeightUnit || bpafbContainerHeightUnit }
+					units={ HEIGHT_UNITS }
+					unitMax={ MAX_HEIGHT_UNIT_MAX }
+					defaultMax={ 2000 }
+					min={ 0 }
+					onChange={ ( val ) => setAttributes( { bpafbContainerMaxHeight: val } ) }
+					onUnitChange={ ( val ) => setAttributes( { bpafbContainerMaxHeightUnit: val } ) }
+				/>
+				<SelectControl
+					label={ __( 'Overflow', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbOverflow }
+					options={ OVERFLOW_OPTIONS }
+					onChange={ ( val ) => setAttributes( { bpafbOverflow: val } ) }
+				/>
+				<SelectControl
+					label={ __( 'Position', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbPosition }
+					options={ POSITION_OPTIONS }
+					onChange={ ( val ) => setAttributes( { bpafbPosition: val } ) }
+				/>
+				{ bpafbPosition && bpafbPosition !== 'static' && (
+					<SpacingControls
+						label={ __( 'Offset', 'blockive-premium-addon-for-block' ) }
+						value={ {
+							top: attributes.bpafbPositionTop,
+							right: attributes.bpafbPositionRight,
+							bottom: attributes.bpafbPositionBottom,
+							left: attributes.bpafbPositionLeft,
+						} }
+						onChange={ ( box ) => setAttributes( {
+							bpafbPositionTop: box.top,
+							bpafbPositionRight: box.right,
+							bpafbPositionBottom: box.bottom,
+							bpafbPositionLeft: box.left,
+						} ) }
+						unit={ bpafbPositionUnit }
+						onUnitChange={ ( val ) => setAttributes( { bpafbPositionUnit: val } ) }
+					/>
+				) }
+			</PanelBody>
+
+			<PanelBody title={ __( 'Visibility', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<ToggleControl
+					label={ __( 'Hide On Desktop', 'blockive-premium-addon-for-block' ) }
+					checked={ !! bpafbHideDesktop }
+					onChange={ ( val ) => setAttributes( { bpafbHideDesktop: val } ) }
+				/>
+				<ToggleControl
+					label={ __( 'Hide On Tablet', 'blockive-premium-addon-for-block' ) }
+					checked={ !! bpafbHideTablet }
+					onChange={ ( val ) => setAttributes( { bpafbHideTablet: val } ) }
+				/>
+				<ToggleControl
+					label={ __( 'Hide On Mobile', 'blockive-premium-addon-for-block' ) }
+					checked={ !! bpafbHideMobile }
+					onChange={ ( val ) => setAttributes( { bpafbHideMobile: val } ) }
+				/>
+			</PanelBody>
+
+			<PanelBody title={ __( 'Z-Index', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<RangeControl
+					label={ __( 'Z-Index', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbZIndex }
+					onChange={ ( val ) => setAttributes( { bpafbZIndex: val } ) }
+					min={ -10 }
+					max={ 999 }
+				/>
+			</PanelBody>
+
+			{ AdvancedEffectsSection( { attributes, setAttributes } ) }
+
+			<AdvancedExtraSlot />
+
+			<PanelBody title={ __( 'Custom Attributes', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<TextControl
+					label={ __( 'HTML ID', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbHtmlId }
+					onChange={ ( val ) => setAttributes( { bpafbHtmlId: val } ) }
+					help={ __( 'Sets a custom id on this block’s wrapper element. Ignored if the block already has an id (e.g. from the native HTML Anchor field below).', 'blockive-premium-addon-for-block' ) }
+				/>
+				<TextControl
+					label={ __( 'HTML Classes', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbHtmlClasses }
+					onChange={ ( val ) => setAttributes( { bpafbHtmlClasses: val } ) }
+					help={ __( 'Space-separated custom classes added to this block’s wrapper element, alongside any native Additional CSS Class(es).', 'blockive-premium-addon-for-block' ) }
+				/>
+				{ canUseCustomCss ? (
+					<TextareaControl
+						label={ __( 'Custom CSS (Blockive)', 'blockive-premium-addon-for-block' ) }
+						value={ bpafbCustomCss }
+						onChange={ ( val ) => setAttributes( { bpafbCustomCss: val } ) }
+						help={ __( 'Scoped to this block instance only -- use the word "selector" to target its wrapper, e.g. "selector { color: red; }". This is separate from the native Gutenberg Additional CSS field: that one applies as inline styles on this block only and isn’t scoped the same way.', 'blockive-premium-addon-for-block' ) }
+					/>
+				) : (
+					<p className="bpafb-custom-css-restricted">
+						{ __( 'Custom CSS requires the "unfiltered_html" capability on your account. Ask an administrator if you need this enabled.', 'blockive-premium-addon-for-block' ) }
+					</p>
+				) }
+			</PanelBody>
+		</>
+	);
+}
+
+/**
+ * Spacing / Background / Border / Shadow -- the visual half of the shared
+ * control set, rendered
+ * under the Style tab, alongside each block's own style controls.
+ */
+export function AdvancedStyleSection( { attributes, setAttributes } ) {
+	const {
+		bpafbContainerPaddingUnit = 'px',
+		bpafbContainerMarginUnit = 'px',
+		bpafbContainerBgType = 'color',
+		bpafbContainerBgColor = '',
+		bpafbContainerBgGradient = '',
+		bpafbContainerBgImageUrl = '',
+		bpafbContainerBgImageId = 0,
+		bpafbContainerBgImageSize = 'cover',
+		bpafbContainerOverlayColor = '',
+		bpafbContainerBorderStyle = 'none',
+		bpafbContainerBorderWidth,
+		bpafbContainerBorderWidthUnit = 'px',
+		bpafbContainerBorderRadius,
+		bpafbContainerBorderRadiusUnit = 'px',
+		bpafbContainerBorderColor = '#000000',
+		bpafbContainerBoxShadow = false,
+		bpafbContainerShadowColor,
+		bpafbContainerShadowBlur,
+		bpafbContainerShadowSpread,
+		bpafbContainerHoverBoxShadow = false,
+		bpafbContainerHoverShadowColor,
+		bpafbContainerHoverShadowBlur,
+		bpafbContainerHoverShadowSpread,
+		bpafbAnimationType = 'none',
+		bpafbAnimationDuration = 800,
+		bpafbAnimationDelay = 100,
+		bpafbAnimationEasing = 'ease',
+		bpafbTransformRotate = 0,
+		bpafbTransformScale = 100,
+		bpafbTransformTranslateX = 0,
+		bpafbTransformTranslateY = 0,
+		bpafbHoverAnimation = 'none',
+		bpafbFloatingEffect = false,
+	} = attributes;
 
 	return (
 		<>
-			<InspectorControls group="settings">
-				<PanelBody title={ __( 'Layout', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-					<SelectControl
-						label={ __( 'Display', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbDisplay }
-						options={ DISPLAY_OPTIONS }
-						onChange={ ( val ) => setAttributes( { bpafbDisplay: val } ) }
-					/>
-					<div style={ { display: 'flex', gap: '10px', alignItems: 'flex-end' } }>
-						<div style={ { flexGrow: 1 } }>
-							<RangeControl
-								label={ __( 'Max Width', 'blockive-premium-addon-for-block' ) }
-								value={ bpafbContainerWidth }
-								onChange={ ( val ) => setAttributes( { bpafbContainerWidth: val } ) }
-								min={ 10 }
-								max={ 2000 }
+			<PanelBody title={ __( 'Spacing', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<ResponsiveControls>
+					{ ( device ) => (
+						<>
+							<SpacingControls
+								label={ __( 'Padding', 'blockive-premium-addon-for-block' ) }
+								value={ boxValueFromAttrs( attributes, PADDING_ATTR[ device ] ) }
+								onChange={ ( box ) => {
+									const [ top, right, bottom, left ] = PADDING_ATTR[ device ];
+									setAttributes( {
+										[ top ]: box.top,
+										[ right ]: box.right,
+										[ bottom ]: box.bottom,
+										[ left ]: box.left,
+									} );
+								} }
+								min={ 0 }
+								unit={ bpafbContainerPaddingUnit }
+								onUnitChange={ ( val ) => setAttributes( { bpafbContainerPaddingUnit: val } ) }
 							/>
-						</div>
-						<div style={ { width: '80px', marginBottom: '16px' } }>
-							<SelectControl
-								label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
-								value={ bpafbContainerWidthUnit }
-								options={ [
-									{ label: 'px', value: 'px' },
-									{ label: '%', value: '%' },
-									{ label: 'rem', value: 'rem' },
-								] }
-								onChange={ ( val ) => setAttributes( { bpafbContainerWidthUnit: val } ) }
+							<SpacingControls
+								label={ __( 'Margin', 'blockive-premium-addon-for-block' ) }
+								value={ boxValueFromAttrs( attributes, MARGIN_ATTR[ device ] ) }
+								onChange={ ( box ) => {
+									const [ top, right, bottom, left ] = MARGIN_ATTR[ device ];
+									setAttributes( {
+										[ top ]: box.top,
+										[ right ]: box.right,
+										[ bottom ]: box.bottom,
+										[ left ]: box.left,
+									} );
+								} }
+								unit={ bpafbContainerMarginUnit }
+								onUnitChange={ ( val ) => setAttributes( { bpafbContainerMarginUnit: val } ) }
 							/>
-						</div>
-					</div>
-					<RangeControl
-						label={ __( 'Min Height (px)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbContainerMinHeight }
-						onChange={ ( val ) => setAttributes( { bpafbContainerMinHeight: val } ) }
-						min={ 0 }
-						max={ 1200 }
-					/>
-					<RangeControl
-						label={ __( 'Max Height (px)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbContainerMaxHeight }
-						onChange={ ( val ) => setAttributes( { bpafbContainerMaxHeight: val } ) }
-						min={ 0 }
-						max={ 2000 }
-					/>
-					<SelectControl
-						label={ __( 'Overflow', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbOverflow }
-						options={ OVERFLOW_OPTIONS }
-						onChange={ ( val ) => setAttributes( { bpafbOverflow: val } ) }
-					/>
-					<SelectControl
-						label={ __( 'Position', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbPosition }
-						options={ POSITION_OPTIONS }
-						onChange={ ( val ) => setAttributes( { bpafbPosition: val } ) }
-					/>
-				</PanelBody>
-
-				<PanelBody title={ __( 'Visibility', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<ToggleControl
-						label={ __( 'Hide On Desktop', 'blockive-premium-addon-for-block' ) }
-						checked={ !! bpafbHideDesktop }
-						onChange={ ( val ) => setAttributes( { bpafbHideDesktop: val } ) }
-					/>
-					<ToggleControl
-						label={ __( 'Hide On Tablet', 'blockive-premium-addon-for-block' ) }
-						checked={ !! bpafbHideTablet }
-						onChange={ ( val ) => setAttributes( { bpafbHideTablet: val } ) }
-					/>
-					<ToggleControl
-						label={ __( 'Hide On Mobile', 'blockive-premium-addon-for-block' ) }
-						checked={ !! bpafbHideMobile }
-						onChange={ ( val ) => setAttributes( { bpafbHideMobile: val } ) }
-					/>
-				</PanelBody>
-
-				<PanelBody title={ __( 'Z-Index', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<RangeControl
-						label={ __( 'Z-Index', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbZIndex }
-						onChange={ ( val ) => setAttributes( { bpafbZIndex: val } ) }
-						min={ -10 }
-						max={ 999 }
-					/>
-				</PanelBody>
-
-				<PanelBody title={ __( 'Custom Attributes', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<TextControl
-						label={ __( 'HTML ID', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbHtmlId }
-						onChange={ ( val ) => setAttributes( { bpafbHtmlId: val } ) }
-						help={ __( 'Sets a custom id on this block’s wrapper element. Ignored if the block already has an id (e.g. from the native HTML Anchor field below).', 'blockive-premium-addon-for-block' ) }
-					/>
-					<TextControl
-						label={ __( 'HTML Classes', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbHtmlClasses }
-						onChange={ ( val ) => setAttributes( { bpafbHtmlClasses: val } ) }
-						help={ __( 'Space-separated custom classes added to this block’s wrapper element, alongside any native Additional CSS Class(es).', 'blockive-premium-addon-for-block' ) }
-					/>
-					{ canUseCustomCss ? (
-						<TextareaControl
-							label={ __( 'Custom CSS (Blockive)', 'blockive-premium-addon-for-block' ) }
-							value={ bpafbCustomCss }
-							onChange={ ( val ) => setAttributes( { bpafbCustomCss: val } ) }
-							help={ __( 'Scoped to this block instance only -- use the word "selector" to target its wrapper, e.g. "selector { color: red; }". This is separate from the native Gutenberg Additional CSS field: that one applies as inline styles on this block only and isn’t scoped the same way.', 'blockive-premium-addon-for-block' ) }
-						/>
-					) : (
-						<p className="bpafb-custom-css-restricted">
-							{ __( 'Custom CSS requires the "unfiltered_html" capability on your account. Ask an administrator if you need this enabled.', 'blockive-premium-addon-for-block' ) }
-						</p>
+						</>
 					) }
-				</PanelBody>
-			</InspectorControls>
+				</ResponsiveControls>
+			</PanelBody>
 
-			<InspectorControls group="styles">
-				<PanelBody title={ __( 'Spacing', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<ResponsiveControls>
-						{ ( device ) => (
-							<>
-								<SpacingControls
-									label={ __( 'Padding (px)', 'blockive-premium-addon-for-block' ) }
-									value={ boxValueFromAttrs( attributes, PADDING_ATTR[ device ] ) }
-									onChange={ ( box ) => {
-										const [ top, right, bottom, left ] = PADDING_ATTR[ device ];
-										setAttributes( {
-											[ top ]: box.top,
-											[ right ]: box.right,
-											[ bottom ]: box.bottom,
-											[ left ]: box.left,
-										} );
-									} }
-									min={ 0 }
-								/>
-								<SpacingControls
-									label={ __( 'Margin (px)', 'blockive-premium-addon-for-block' ) }
-									value={ boxValueFromAttrs( attributes, MARGIN_ATTR[ device ] ) }
-									onChange={ ( box ) => {
-										const [ top, right, bottom, left ] = MARGIN_ATTR[ device ];
-										setAttributes( {
-											[ top ]: box.top,
-											[ right ]: box.right,
-											[ bottom ]: box.bottom,
-											[ left ]: box.left,
-										} );
-									} }
-								/>
-							</>
-						) }
-					</ResponsiveControls>
-				</PanelBody>
+			<PanelBody title={ __( 'Background', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<BackgroundControls
+					values={ {
+						bgType: bpafbContainerBgType,
+						bgColor: bpafbContainerBgColor,
+						bgGradient: bpafbContainerBgGradient,
+						bgImageUrl: bpafbContainerBgImageUrl,
+						bgImageId: bpafbContainerBgImageId,
+						bgImageSize: bpafbContainerBgImageSize,
+						overlayColor: bpafbContainerOverlayColor,
+					} }
+					onChange={ ( key, val ) => {
+						const map = {
+							bgType: 'bpafbContainerBgType',
+							bgColor: 'bpafbContainerBgColor',
+							bgGradient: 'bpafbContainerBgGradient',
+							bgImageUrl: 'bpafbContainerBgImageUrl',
+							bgImageId: 'bpafbContainerBgImageId',
+							bgImageSize: 'bpafbContainerBgImageSize',
+							overlayColor: 'bpafbContainerOverlayColor',
+						};
+						setAttributes( { [ map[ key ] ]: val } );
+					} }
+				/>
+			</PanelBody>
 
-				<PanelBody title={ __( 'Background', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<BackgroundControls
-						values={ {
-							bgType: bpafbContainerBgType,
-							bgColor: bpafbContainerBgColor,
-							bgGradient: bpafbContainerBgGradient,
-							bgImageUrl: bpafbContainerBgImageUrl,
-							bgImageSize: bpafbContainerBgImageSize,
-							overlayColor: bpafbContainerOverlayColor,
-						} }
-						onChange={ ( key, val ) => {
-							const map = {
-								bgType: 'bpafbContainerBgType',
-								bgColor: 'bpafbContainerBgColor',
-								bgGradient: 'bpafbContainerBgGradient',
-								bgImageUrl: 'bpafbContainerBgImageUrl',
-								bgImageId: 'bpafbContainerBgImageId',
-								bgImageSize: 'bpafbContainerBgImageSize',
-								overlayColor: 'bpafbContainerOverlayColor',
-							};
-							setAttributes( { [ map[ key ] ]: val } );
-						} }
-					/>
-				</PanelBody>
+			<PanelBody title={ __( 'Border', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<BorderControls
+					values={ {
+						borderType: bpafbContainerBorderStyle,
+						borderWidth: bpafbContainerBorderWidth,
+						borderRadius: bpafbContainerBorderRadius,
+						borderColor: bpafbContainerBorderColor,
+					} }
+					onChange={ ( key, val ) => {
+						const map = {
+							borderType: 'bpafbContainerBorderStyle',
+							borderWidth: 'bpafbContainerBorderWidth',
+							borderRadius: 'bpafbContainerBorderRadius',
+							borderColor: 'bpafbContainerBorderColor',
+						};
+						setAttributes( { [ map[ key ] ]: val } );
+					} }
+					widthUnit={ bpafbContainerBorderWidthUnit }
+					onWidthUnitChange={ ( val ) => setAttributes( { bpafbContainerBorderWidthUnit: val } ) }
+					radiusUnit={ bpafbContainerBorderRadiusUnit }
+					onRadiusUnitChange={ ( val ) => setAttributes( { bpafbContainerBorderRadiusUnit: val } ) }
+				/>
+			</PanelBody>
 
-				<PanelBody title={ __( 'Border', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<BorderControls
-						values={ {
-							borderType: bpafbContainerBorderStyle,
-							borderWidth: bpafbContainerBorderWidth,
-							borderRadius: bpafbContainerBorderRadius,
-							borderColor: bpafbContainerBorderColor,
-						} }
-						onChange={ ( key, val ) => {
-							const map = {
-								borderType: 'bpafbContainerBorderStyle',
-								borderWidth: 'bpafbContainerBorderWidth',
-								borderRadius: 'bpafbContainerBorderRadius',
-								borderColor: 'bpafbContainerBorderColor',
-							};
-							setAttributes( { [ map[ key ] ]: val } );
-						} }
-					/>
-				</PanelBody>
+			<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<ShadowControls
+					normalValues={ {
+						enabled: bpafbContainerBoxShadow,
+						color: bpafbContainerShadowColor,
+						blur: bpafbContainerShadowBlur,
+						spread: bpafbContainerShadowSpread,
+					} }
+					onNormalChange={ ( key, val ) => {
+						const map = { enabled: 'bpafbContainerBoxShadow', color: 'bpafbContainerShadowColor', blur: 'bpafbContainerShadowBlur', spread: 'bpafbContainerShadowSpread' };
+						setAttributes( { [ map[ key ] ]: val } );
+					} }
+					hoverValues={ {
+						enabled: bpafbContainerHoverBoxShadow,
+						color: bpafbContainerHoverShadowColor,
+						blur: bpafbContainerHoverShadowBlur,
+						spread: bpafbContainerHoverShadowSpread,
+					} }
+					onHoverChange={ ( key, val ) => {
+						const map = { enabled: 'bpafbContainerHoverBoxShadow', color: 'bpafbContainerHoverShadowColor', blur: 'bpafbContainerHoverShadowBlur', spread: 'bpafbContainerHoverShadowSpread' };
+						setAttributes( { [ map[ key ] ]: val } );
+					} }
+				/>
+			</PanelBody>
+		</>
+	);
+}
 
-				<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<ShadowControls
-						normalValues={ {
-							enabled: bpafbContainerBoxShadow,
-							color: bpafbContainerShadowColor,
-							blur: bpafbContainerShadowBlur,
-							spread: bpafbContainerShadowSpread,
-						} }
-						onNormalChange={ ( key, val ) => {
-							const map = { enabled: 'bpafbContainerBoxShadow', color: 'bpafbContainerShadowColor', blur: 'bpafbContainerShadowBlur', spread: 'bpafbContainerShadowSpread' };
-							setAttributes( { [ map[ key ] ]: val } );
-						} }
-						hoverValues={ {
-							enabled: bpafbContainerHoverBoxShadow,
-							color: bpafbContainerHoverShadowColor,
-							blur: bpafbContainerHoverShadowBlur,
-							spread: bpafbContainerHoverShadowSpread,
-						} }
-						onHoverChange={ ( key, val ) => {
-							const map = { enabled: 'bpafbContainerHoverBoxShadow', color: 'bpafbContainerHoverShadowColor', blur: 'bpafbContainerHoverShadowBlur', spread: 'bpafbContainerHoverShadowSpread' };
-							setAttributes( { [ map[ key ] ]: val } );
-						} }
-					/>
-				</PanelBody>
+/**
+ * Animation / Transform / Motion Effects -- how the block moves, rendered
+ * under the Advanced tab so the Style tab only holds how it looks.
+ */
+export function AdvancedEffectsSection( { attributes, setAttributes } ) {
+	const {
+		bpafbAnimationType = 'none',
+		bpafbAnimationDuration = 800,
+		bpafbAnimationDelay = 100,
+		bpafbAnimationEasing = 'ease',
+		bpafbTransformRotate = 0,
+		bpafbTransformScale = 100,
+		bpafbTransformTranslateX = 0,
+		bpafbTransformTranslateY = 0,
+		bpafbTransformTranslateUnit = 'px',
+		bpafbHoverAnimation = 'none',
+		bpafbFloatingEffect = false,
+	} = attributes;
 
-				<PanelBody title={ __( 'Animation', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<AnimationControls
-						values={ { animationType: bpafbAnimationType, animationDuration: bpafbAnimationDuration, animationDelay: bpafbAnimationDelay, animationEasing: bpafbAnimationEasing } }
-						onChange={ ( key, val ) => {
-							const map = { animationType: 'bpafbAnimationType', animationDuration: 'bpafbAnimationDuration', animationDelay: 'bpafbAnimationDelay', animationEasing: 'bpafbAnimationEasing' };
-							setAttributes( { [ map[ key ] ]: val } );
-						} }
-					/>
-				</PanelBody>
+	return (
+		<>
+			<PanelBody title={ __( 'Animation', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<AnimationControls
+					values={ { animationType: bpafbAnimationType, animationDuration: bpafbAnimationDuration, animationDelay: bpafbAnimationDelay, animationEasing: bpafbAnimationEasing } }
+					onChange={ ( key, val ) => {
+						const map = { animationType: 'bpafbAnimationType', animationDuration: 'bpafbAnimationDuration', animationDelay: 'bpafbAnimationDelay', animationEasing: 'bpafbAnimationEasing' };
+						setAttributes( { [ map[ key ] ]: val } );
+					} }
+				/>
+			</PanelBody>
 
-				<PanelBody title={ __( 'Transform', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<RangeControl
-						label={ __( 'Rotate (deg)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbTransformRotate }
-						onChange={ ( val ) => setAttributes( { bpafbTransformRotate: val } ) }
-						min={ -360 }
-						max={ 360 }
-					/>
-					<RangeControl
-						label={ __( 'Scale (%)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbTransformScale }
-						onChange={ ( val ) => setAttributes( { bpafbTransformScale: val } ) }
-						min={ 10 }
-						max={ 300 }
-					/>
-					<RangeControl
-						label={ __( 'Translate X (px)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbTransformTranslateX }
-						onChange={ ( val ) => setAttributes( { bpafbTransformTranslateX: val } ) }
-						min={ -300 }
-						max={ 300 }
-					/>
-					<RangeControl
-						label={ __( 'Translate Y (px)', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbTransformTranslateY }
-						onChange={ ( val ) => setAttributes( { bpafbTransformTranslateY: val } ) }
-						min={ -300 }
-						max={ 300 }
-					/>
-				</PanelBody>
+			<PanelBody title={ __( 'Transform', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<RangeControl
+					label={ __( 'Rotate (deg)', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbTransformRotate }
+					onChange={ ( val ) => setAttributes( { bpafbTransformRotate: val } ) }
+					min={ -360 }
+					max={ 360 }
+				/>
+				<RangeControl
+					label={ __( 'Scale (%)', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbTransformScale }
+					onChange={ ( val ) => setAttributes( { bpafbTransformScale: val } ) }
+					min={ 10 }
+					max={ 300 }
+				/>
+				<div className="bpafb-spacing-controls__header bpafb-spacing-controls__header--inline">
+					<span className="bpafb-spacing-controls__label">{ __( 'Translate', 'blockive-premium-addon-for-block' ) }</span>
+					<select
+						className="bpafb-spacing-controls__unit-select"
+						aria-label={ __( 'Translate unit', 'blockive-premium-addon-for-block' ) }
+						value={ bpafbTransformTranslateUnit || 'px' }
+						onChange={ ( e ) => setAttributes( { bpafbTransformTranslateUnit: e.target.value } ) }
+					>
+						{ TRANSLATE_UNITS.map( ( u ) => (
+							<option key={ u.value } value={ u.value }>{ u.label }</option>
+						) ) }
+					</select>
+				</div>
+				<RangeControl
+					label={ __( 'Translate X', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbTransformTranslateX }
+					onChange={ ( val ) => setAttributes( { bpafbTransformTranslateX: val } ) }
+					min={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] ? -TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] : -300 }
+					max={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] || 300 }
+				/>
+				<RangeControl
+					label={ __( 'Translate Y', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbTransformTranslateY }
+					onChange={ ( val ) => setAttributes( { bpafbTransformTranslateY: val } ) }
+					min={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] ? -TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] : -300 }
+					max={ TRANSLATE_UNIT_MAX[ bpafbTransformTranslateUnit ] || 300 }
+				/>
+			</PanelBody>
 
-				<PanelBody title={ __( 'Motion Effects', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
-					<SelectControl
-						label={ __( 'Hover Animation', 'blockive-premium-addon-for-block' ) }
-						value={ bpafbHoverAnimation }
-						options={ HOVER_ANIMATION_OPTIONS }
-						onChange={ ( val ) => setAttributes( { bpafbHoverAnimation: val } ) }
-					/>
-					<ToggleControl
-						label={ __( 'Floating Effect', 'blockive-premium-addon-for-block' ) }
-						checked={ !! bpafbFloatingEffect }
-						onChange={ ( val ) => setAttributes( { bpafbFloatingEffect: val } ) }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<PanelBody title={ __( 'Motion Effects', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+				<SelectControl
+					label={ __( 'Hover Animation', 'blockive-premium-addon-for-block' ) }
+					value={ bpafbHoverAnimation }
+					options={ HOVER_ANIMATION_OPTIONS }
+					onChange={ ( val ) => setAttributes( { bpafbHoverAnimation: val } ) }
+				/>
+				<ToggleControl
+					label={ __( 'Floating Effect', 'blockive-premium-addon-for-block' ) }
+					checked={ !! bpafbFloatingEffect }
+					onChange={ ( val ) => setAttributes( { bpafbFloatingEffect: val } ) }
+				/>
+			</PanelBody>
 		</>
 	);
 }

@@ -1,0 +1,747 @@
+<?php
+/**
+ * Site Tools (Blockive Templates → Site Tools): Element Manager. Blockive
+ * blocks (including Template Builder blocks) turned off here are hidden from the inserter (blocks already on
+ * pages keep working).
+ *
+ * @package Blockive
+ */
+
+if (!defined('ABSPATH')) {
+	exit; // Exit if accessed directly.
+}
+
+class Bpafb_Site_Tools
+{
+	const PAGE = 'bpafb-site-tools';
+	const OPTION_DISABLED = 'bpafb_disabled_blocks';
+	const NAMESPACE_PREFIX = 'blockive-premium-addon-for-block/';
+	const PRO_URL = 'https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing';
+	const TAB_COMPARE = 'free-vs-pro';
+
+	/**
+	 * @var Bpafb_Site_Tools|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * @return Bpafb_Site_Tools
+	 */
+	public static function get_instance()
+	{
+		if (null === self::$instance) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	private function __construct()
+	{
+		add_action('admin_menu', [$this, 'add_page']);
+		// Late, so every submenu item under the Blockive Templates menu
+		// (including WordPress's own "All Templates" / "Add New") has
+		// already been added by the time this moves ours to the top.
+		add_action('admin_menu', [$this, 'move_page_to_top'], 999);
+		// WordPress's own "Add New" submenu row, removed since every
+		// brand-new template already asks which kind to create (see
+		// src/template-builder/template-kind-picker-modal.js) from the
+		// "Add New Template" button already on the Blockive Templates list
+		// screen itself - this row was just a second way to the same place.
+		add_action('admin_menu', [$this, 'remove_add_new_submenu'], 999);
+		add_action('admin_init', [$this, 'register_settings']);
+		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
+		add_filter('register_block_type_args', [$this, 'hide_disabled_blocks'], 20, 2);
+		add_action('enqueue_block_editor_assets', [$this, 'enqueue_hidden_blocks_script']);
+	}
+
+	public function enqueue_admin_assets($hook)
+	{
+		if (false === strpos((string) $hook, self::PAGE)) {
+			return;
+		}
+		wp_enqueue_style(
+			'bpafb-admin-site-tools',
+			plugins_url('assets/css/admin-site-tools.css', dirname(__FILE__)),
+			[],
+			BPAFB_VERSION
+		);
+	}
+
+	private function __clone()
+	{
+	}
+
+	public function __wakeup()
+	{
+		throw new \Exception('Cannot unserialize a singleton.');
+	}
+
+	// -- Settings ------------------------------------------------------------
+
+	public function add_page()
+	{
+		add_submenu_page(
+			'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE,
+			__('Site Tools', 'blockive-premium-addon-for-block'),
+			__('Site Tools', 'blockive-premium-addon-for-block'),
+			'manage_options',
+			self::PAGE,
+			[$this, 'render_page']
+		);
+	}
+
+	/**
+	 * Moves "Site Tools" to the very top of the Blockive Templates
+	 * submenu, above WordPress's own "All Templates" / "Add New" items.
+	 * There is no `add_submenu_page()` position argument for this - only
+	 * reordering the `$submenu` global directly, after every item is
+	 * already on it, works.
+	 *
+	 * Note: WordPress points the top-level "Blockive Templates" menu link
+	 * at whichever submenu item sits in this first slot, so with Site
+	 * Tools here, that top-level link and "Site Tools" now open the same
+	 * page - a deliberate trade-off for having Site Tools literally first.
+	 */
+	public function move_page_to_top()
+	{
+		global $submenu;
+
+		$parent = 'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE;
+		if (empty($submenu[$parent])) {
+			return;
+		}
+
+		foreach ($submenu[$parent] as $key => $item) {
+			if (isset($item[2]) && self::PAGE === $item[2]) {
+				$entry = $item;
+				unset($submenu[$parent][$key]);
+				array_unshift($submenu[$parent], $entry);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Removes the "Add New" row WordPress adds automatically for any
+	 * public post type (see `_add_post_type_submenus()` in
+	 * wp-admin/menu.php, which runs before `admin_menu` fires at all, so
+	 * this row already exists by the time any `admin_menu` callback - at
+	 * any priority - runs).
+	 */
+	public function remove_add_new_submenu()
+	{
+		remove_submenu_page(
+			'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE,
+			'post-new.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE
+		);
+	}
+
+	public function register_settings()
+	{
+		register_setting(self::PAGE, self::OPTION_DISABLED, [
+			'type'              => 'array',
+			'sanitize_callback' => [$this, 'sanitize_disabled'],
+			'default'           => [],
+		]);
+	}
+
+	/**
+	 * @param mixed $value Submitted enabled block names.
+	 * @return string[] Array of disabled block names to store.
+	 */
+	public function sanitize_disabled($value)
+	{
+		// When this option's current value equals its registered 'default'
+		// ([], i.e. nothing disabled - the common state right after Enable
+		// All, or on a fresh install), WordPress's update_option() detects
+		// that and delegates to add_option() instead of writing directly
+		// (see update_option()'s `default_option_{$option}` check in
+		// wp-includes/option.php). add_option() then re-runs this same
+		// sanitize_option_{$option} filter on the value update_option()
+		// already sanitized. Since this function's transform is a
+		// complement (disabled = all_names - enabled) and complements are
+		// involutive, that unwanted second pass turns the correct disabled
+		// list back into the raw enabled list - which then gets saved
+		// under the "disabled" option, disabling almost every block.
+		// Skipping every call after the first within a request sidesteps
+		// that WP-core double-sanitize without changing the stored format.
+		static $already_sanitized = false;
+		if ($already_sanitized) {
+			return (array) $value;
+		}
+		$already_sanitized = true;
+
+		$all_names = wp_list_pluck(self::manageable_blocks(), 'name');
+		$enabled = [];
+		foreach ((array) $value as $name) {
+			$name = (string) $name;
+			if (0 === strpos($name, self::NAMESPACE_PREFIX) && preg_match('#^[a-z0-9-]+/[a-z0-9-]+$#', $name)) {
+				$enabled[] = $name;
+			}
+		}
+		return array_values(array_diff($all_names, $enabled));
+	}
+
+	// -- Element Manager -----------------------------------------------------
+
+	/**
+	 * @param array  $args       Block type arguments.
+	 * @param string $block_name Block name.
+	 * @return array
+	 */
+	public function hide_disabled_blocks($args, $block_name)
+	{
+		static $disabled = null;
+		if (0 !== strpos($block_name, self::NAMESPACE_PREFIX)) {
+			return $args;
+		}
+		if (null === $disabled) {
+			$disabled = array_flip((array) get_option(self::OPTION_DISABLED, []));
+		}
+		if (isset($disabled[$block_name])) {
+			$args['supports'] = array_merge(isset($args['supports']) ? $args['supports'] : [], ['inserter' => false]);
+		}
+		return $args;
+	}
+
+	/**
+	 * Blocks to leave out of the inserter: turned off here in Element
+	 * Manager.
+	 *
+	 * @return string[]
+	 */
+	public static function hidden_blocks()
+	{
+		$hidden = (array) get_option(self::OPTION_DISABLED, []);
+		return array_values(array_unique($hidden));
+	}
+
+	/**
+	 * The editor registers blocks from their own block.json, so the
+	 * server's "inserter: false" does not reach it. This attaches a tiny
+	 * filter directly to the 'wp-blocks' script, as inline code that runs
+	 * right after it, instead of enqueuing a separate sibling script.
+	 *
+	 * A separate script can't be relied on to run before every block's own
+	 * registerBlockType() call: WordPress enqueues each block's editor
+	 * script on this same `enqueue_block_editor_assets` hook (core's
+	 * wp_enqueue_registered_block_scripts_and_styles(), added before any
+	 * plugin runs), so a same-priority sibling here prints after them, too
+	 * late to affect their registration. Every block script depends on
+	 * 'wp-blocks' (directly or through further dependencies) to call
+	 * registerBlockType() at all, so code attached to 'wp-blocks' itself
+	 * is always guaranteed to run first, regardless of enqueue order.
+	 */
+	public function enqueue_hidden_blocks_script()
+	{
+		$hidden = self::hidden_blocks();
+		if (!$hidden) {
+			return;
+		}
+
+		$code = sprintf(
+			'(function(){var hidden=new Set(%s);wp.hooks.addFilter("blocks.registerBlockType","blockive/hidden-blocks",function(settings,name){return hidden.has(name)?Object.assign({},settings,{supports:Object.assign({},settings.supports,{inserter:false})}):settings;});})();',
+			wp_json_encode(array_values($hidden))
+		);
+
+		wp_add_inline_script('wp-blocks', $code, 'after');
+	}
+
+	/**
+	 * Every Blockive block registered on this site, except child blocks
+	 * (they only exist inside a parent), grouped by category and then sorted
+	 * by title. Built from the block registry, so a block added to the plugin
+	 * shows up here with no extra step.
+	 *
+	 * @return WP_Block_Type[]
+	 */
+	private static function manageable_blocks()
+	{
+		$blocks = [];
+		foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type) {
+			if (0 !== strpos($name, self::NAMESPACE_PREFIX) || !empty($type->parent)) {
+				continue;
+			}
+			$blocks[] = $type;
+		}
+		$order = array_keys(self::category_labels());
+		usort($blocks, function ($a, $b) use ($order) {
+			$cat_a = array_search(self::get_block_category($a->name), $order, true);
+			$cat_b = array_search(self::get_block_category($b->name), $order, true);
+			if ($cat_a !== $cat_b) {
+				return $cat_a <=> $cat_b;
+			}
+			return strcasecmp((string) $a->title, (string) $b->title);
+		});
+		return $blocks;
+	}
+
+	/**
+	 * Category slug => label, in display order.
+	 *
+	 * @return string[]
+	 */
+	private static function category_labels()
+	{
+		return [
+			'content'     => __('Content', 'blockive-premium-addon-for-block'),
+			'interactive' => __('Interactive', 'blockive-premium-addon-for-block'),
+			'marketing'   => __('Marketing', 'blockive-premium-addon-for-block'),
+			'forms'       => __('Forms', 'blockive-premium-addon-for-block'),
+			'loops'       => __('Loops & Query', 'blockive-premium-addon-for-block'),
+			'navigation'  => __('Navigation', 'blockive-premium-addon-for-block'),
+			'woocommerce' => __('WooCommerce', 'blockive-premium-addon-for-block'),
+			'template'    => __('Template Builder', 'blockive-premium-addon-for-block'),
+		];
+	}
+
+	/**
+	 * Categorizes a block name for Element Manager filtering. Known blocks
+	 * come from the map below; a block not in it yet (a newly added one) is
+	 * placed by keyword, falling back to "content", so it still appears.
+	 *
+	 * @param string $name Block name slug.
+	 * @return string Category slug.
+	 */
+	private static function get_block_category($name)
+	{
+		$slug = str_replace(self::NAMESPACE_PREFIX, '', $name);
+
+		// Template Builder pieces (tb-author, tb-post-title, ...).
+		if (0 === strpos($slug, 'tb-')) {
+			return 'template';
+		}
+
+		$map = [
+			'heading'          => 'content',
+			'drop-caps'        => 'content',
+			'button'           => 'content',
+			'icon-box'         => 'content',
+			'image-box'        => 'content',
+			'video'            => 'content',
+			'lottie'           => 'content',
+			'team'             => 'content',
+			'business-hours'   => 'content',
+			'accordion'        => 'interactive',
+			'faq'              => 'interactive',
+			'tabs'             => 'interactive',
+			'image-accordion'  => 'interactive',
+			'image-comparison' => 'interactive',
+			'countdown-timer'  => 'marketing',
+			'funfact'          => 'marketing',
+			'pie-chart'        => 'marketing',
+			'pricing-table'    => 'marketing',
+			'progress-bar'     => 'marketing',
+			'social-icons'     => 'marketing',
+			'testimonial'      => 'marketing',
+			'contact-form-7'   => 'forms',
+			'mailchimp'        => 'forms',
+			'post-grid'        => 'loops',
+			'category-list'    => 'loops',
+		];
+		if (isset($map[$slug])) {
+			return $map[$slug];
+		}
+
+		$keywords = [
+			'woocommerce' => ['product', 'woo', 'cart'],
+			'loops'       => ['loop', 'grid', 'portfolio', 'archive', 'query'],
+			'navigation'  => ['menu', 'search', 'sitemap', 'breadcrumb', 'toc', 'table-of-contents'],
+			'forms'       => ['form', 'mailchimp', 'newsletter'],
+			'interactive' => ['carousel', 'slider', 'slides', 'accordion', 'tabs', 'flip-box', 'hotspot', 'off-canvas', 'toggle', 'comparison'],
+			'marketing'   => ['price', 'pricing', 'fun', 'progress', 'chart', 'testimonial', 'review', 'social', 'countdown', 'floating-button', 'link-in-bio', 'call-to-action'],
+		];
+		foreach ($keywords as $category => $needles) {
+			foreach ($needles as $needle) {
+				if (false !== strpos($slug, $needle)) {
+					return $category;
+				}
+			}
+		}
+		return 'content';
+	}
+
+	// -- Free vs Pro -----------------------------------------------------------
+
+	/**
+	 * Rows for the Free vs Pro tab, grouped by section. A cell is `true`
+	 * (included), `false` (not included) or a string shown as-is (a count).
+	 * Keep in step with the "Free vs Pro" section of readme.txt.
+	 *
+	 * @return array<string, array<int, array{0: string, 1: bool|string, 2: bool|string}>>
+	 */
+	private static function comparison_rows()
+	{
+		return [
+			__('General', 'blockive-premium-addon-for-block') => [
+				[__('Total Gutenberg blocks', 'blockive-premium-addon-for-block'), '25', '60'],
+				[__('Element Manager (disable unused blocks)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Advanced styling (margins, padding, borders & animations)', 'blockive-premium-addon-for-block'), true, true],
+			],
+			__('Template Builder', 'blockive-premium-addon-for-block') => [
+				[__('Single Post & Page templates', 'blockive-premium-addon-for-block'), true, true],
+				[__('Display Conditions (include / exclude rules)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Header & Footer templates with Sticky Header', 'blockive-premium-addon-for-block'), false, true],
+				[__('Archive, Search & 404 templates', 'blockive-premium-addon-for-block'), false, true],
+				[__('Popup Builder (exit intent, scroll & delay triggers)', 'blockive-premium-addon-for-block'), false, true],
+			],
+			__('Advanced Features', 'blockive-premium-addon-for-block') => [
+				[__('Native Form Builder (submissions, email & webhooks)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Loop Builder (Loop Grid, Carousel & Filters)', 'blockive-premium-addon-for-block'), false, true],
+				[__('WooCommerce & Events template blocks', 'blockive-premium-addon-for-block'), false, __('31 Blocks', 'blockive-premium-addon-for-block')],
+				[__('Mega Menu & Navigation Menu blocks', 'blockive-premium-addon-for-block'), false, true],
+				[__('Dynamic Tags in any text or URL field', 'blockive-premium-addon-for-block'), false, true],
+				[__('Custom Fonts & Custom Code Snippets', 'blockive-premium-addon-for-block'), false, true],
+			],
+			__('Support', 'blockive-premium-addon-for-block') => [
+				[__('Premium support & continuous updates', 'blockive-premium-addon-for-block'), false, true],
+			],
+		];
+	}
+
+	/**
+	 * @param bool|string $value
+	 */
+	private static function render_comparison_cell($value)
+	{
+		if (true === $value) {
+			echo '<span class="bpafb-compare-icon is-yes dashicons dashicons-yes-alt" aria-hidden="true"></span><span class="screen-reader-text">' . esc_html__('Included', 'blockive-premium-addon-for-block') . '</span>';
+		} elseif (false === $value) {
+			echo '<span class="bpafb-compare-icon is-no dashicons dashicons-minus" aria-hidden="true"></span><span class="screen-reader-text">' . esc_html__('Not included', 'blockive-premium-addon-for-block') . '</span>';
+		} else {
+			echo '<span class="bpafb-compare-value">' . esc_html($value) . '</span>';
+		}
+	}
+
+	private function render_comparison()
+	{
+		?>
+		<div class="bpafb-dashboard-body">
+			<div class="bpafb-card">
+				<div class="bpafb-card-header">
+					<div class="bpafb-card-header-left">
+						<h2><?php esc_html_e('Blockive Free vs Pro', 'blockive-premium-addon-for-block'); ?></h2>
+						<p><?php esc_html_e('Compare features between Free and Pro. Upgrading to Pro unlocks full-site editing, popups, and advanced blocks while keeping all your existing work intact.', 'blockive-premium-addon-for-block'); ?></p>
+					</div>
+					<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e('View Pro Pricing', 'blockive-premium-addon-for-block'); ?>
+						<span class="screen-reader-text"><?php esc_html_e('(opens in a new tab)', 'blockive-premium-addon-for-block'); ?></span>
+					</a>
+				</div>
+				<div class="bpafb-card-body">
+					<div class="bpafb-compare-wrap">
+						<table class="bpafb-compare-table">
+							<thead>
+								<tr>
+									<th scope="col"><?php esc_html_e('Feature', 'blockive-premium-addon-for-block'); ?></th>
+									<th scope="col" class="bpafb-compare-col"><?php esc_html_e('Free', 'blockive-premium-addon-for-block'); ?></th>
+									<th scope="col" class="bpafb-compare-col is-pro"><?php esc_html_e('Pro', 'blockive-premium-addon-for-block'); ?></th>
+								</tr>
+							</thead>
+							<?php foreach (self::comparison_rows() as $group => $rows) : ?>
+								<tbody>
+									<tr class="bpafb-compare-group">
+										<th scope="colgroup" colspan="3"><?php echo esc_html($group); ?></th>
+									</tr>
+									<?php foreach ($rows as $row) : ?>
+										<tr>
+											<th scope="row"><?php echo esc_html($row[0]); ?></th>
+											<td class="bpafb-compare-col"><?php self::render_comparison_cell($row[1]); ?></td>
+											<td class="bpafb-compare-col is-pro"><?php self::render_comparison_cell($row[2]); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							<?php endforeach; ?>
+						</table>
+					</div>
+
+					<div class="bpafb-compare-cta">
+						<div>
+							<h3><?php esc_html_e('Unlock the full power of Blockive Pro', 'blockive-premium-addon-for-block'); ?></h3>
+							<p><?php esc_html_e('Get 35+ extra blocks, Header & Footer builder, Popup builder, WooCommerce blocks, and priority support.', 'blockive-premium-addon-for-block'); ?></p>
+						</div>
+						<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+							<span class="dashicons dashicons-star-filled" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;" aria-hidden="true"></span>
+							<?php esc_html_e('Upgrade to Pro', 'blockive-premium-addon-for-block'); ?>
+							<span class="screen-reader-text"><?php esc_html_e('(opens in a new tab)', 'blockive-premium-addon-for-block'); ?></span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	// -- Page ------------------------------------------------------------------
+
+	public function render_page()
+	{
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switch.
+		$current_tab = (isset($_GET['tab']) && self::TAB_COMPARE === sanitize_key(wp_unslash($_GET['tab']))) ? self::TAB_COMPARE : 'elements';
+		$page_url = admin_url('edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE . '&page=' . self::PAGE);
+		$disabled = array_flip((array) get_option(self::OPTION_DISABLED, []));
+		$blocks = self::manageable_blocks();
+		$total_blocks = count($blocks);
+		$disabled_count = count(array_intersect_key($disabled, array_flip(wp_list_pluck($blocks, 'name'))));
+		$active_count = max(0, $total_blocks - $disabled_count);
+		$category_labels = self::category_labels();
+		$category_counts = [];
+		foreach ($blocks as $type) {
+			$slug = self::get_block_category($type->name);
+			$category_counts[$slug] = isset($category_counts[$slug]) ? $category_counts[$slug] + 1 : 1;
+		}
+		?>
+		<div class="wrap bpafb-dashboard-wrap">
+			<!-- Header Banner -->
+			<div class="bpafb-dashboard-header">
+				<div class="bpafb-dashboard-brand">
+					<div class="bpafb-dashboard-logo-icon">B</div>
+					<div>
+						<h1>
+							<?php esc_html_e('Blockive', 'blockive-premium-addon-for-block'); ?>
+							<span class="bpafb-badge-pro"><?php esc_html_e('Site Tools', 'blockive-premium-addon-for-block'); ?></span>
+						</h1>
+						<p><?php esc_html_e('Manage the active blocks in your inserter.', 'blockive-premium-addon-for-block'); ?></p>
+					</div>
+				</div>
+				<div class="bpafb-dashboard-header-actions">
+					<a href="<?php echo esc_url(admin_url('edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE)); ?>" class="bpafb-btn-secondary">
+						<span class="dashicons dashicons-layout" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+						<?php esc_html_e('All Templates', 'blockive-premium-addon-for-block'); ?>
+					</a>
+					<?php if (self::TAB_COMPARE === $current_tab) : ?>
+						<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+							<span class="dashicons dashicons-star-filled" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+							<?php esc_html_e('Get Blockive Pro', 'blockive-premium-addon-for-block'); ?>
+						</a>
+					<?php else : ?>
+						<button type="button" class="bpafb-btn-primary bpafb-header-save-btn">
+							<span class="dashicons dashicons-saved" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+							<?php esc_html_e('Save Changes', 'blockive-premium-addon-for-block'); ?>
+						</button>
+					<?php endif; ?>
+				</div>
+			</div>
+
+			<?php
+			// WordPress's admin JS relocates `.notice` elements (like the
+			// "Settings saved." box from settings_errors() below) to sit
+			// right after the page's first <h1> when it finds no
+			// `.wp-header-end` marker - which, on this page, is the one
+			// inside the dark gradient header banner above. This marker
+			// tells it to anchor notices here instead, after the banner.
+			?>
+			<hr class="wp-header-end">
+
+			<?php settings_errors(); ?>
+
+			<nav class="bpafb-top-tabs" aria-label="<?php esc_attr_e('Site Tools sections', 'blockive-premium-addon-for-block'); ?>">
+				<a href="<?php echo esc_url($page_url); ?>" class="bpafb-top-tab <?php echo 'elements' === $current_tab ? 'is-active' : ''; ?>" <?php echo 'elements' === $current_tab ? 'aria-current="page"' : ''; ?>>
+					<span class="dashicons dashicons-screenoptions" aria-hidden="true"></span>
+					<?php esc_html_e('Element Manager', 'blockive-premium-addon-for-block'); ?>
+				</a>
+				<a href="<?php echo esc_url(add_query_arg('tab', self::TAB_COMPARE, $page_url)); ?>" class="bpafb-top-tab <?php echo self::TAB_COMPARE === $current_tab ? 'is-active' : ''; ?>" <?php echo self::TAB_COMPARE === $current_tab ? 'aria-current="page"' : ''; ?>>
+					<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+					<?php esc_html_e('Free vs Pro', 'blockive-premium-addon-for-block'); ?>
+				</a>
+			</nav>
+
+			<?php if (self::TAB_COMPARE === $current_tab) : ?>
+				<?php $this->render_comparison(); ?>
+		</div>
+				<?php
+				return;
+			endif;
+			?>
+
+			<form method="post" action="options.php" id="bpafb-site-tools-form">
+				<?php settings_fields(self::PAGE); ?>
+
+				<div class="bpafb-dashboard-body">
+					<div class="bpafb-card">
+						<div class="bpafb-card-header">
+							<div class="bpafb-card-header-left">
+								<h2>
+									<?php esc_html_e('Block Element Manager', 'blockive-premium-addon-for-block'); ?>
+									<span style="font-size: 12px; font-weight: normal; color: var(--bpafb-slate-500); margin-left: 8px;" id="bpafb-active-count-text">
+										(<?php printf(esc_html__('%d active of %d total', 'blockive-premium-addon-for-block'), $active_count, $total_blocks); ?>)
+									</span>
+								</h2>
+								<p><?php esc_html_e('Deactivate blocks you don\'t use to keep the block inserter clean and fast. Existing blocks on published pages remain working.', 'blockive-premium-addon-for-block'); ?></p>
+							</div>
+							<div class="bpafb-header-actions" style="display: flex; gap: 8px;">
+								<button type="button" class="bpafb-btn-secondary-sm" id="bpafb-enable-all-btn"><?php esc_html_e('Enable All', 'blockive-premium-addon-for-block'); ?></button>
+								<button type="button" class="bpafb-btn-secondary-sm" id="bpafb-disable-all-btn"><?php esc_html_e('Disable All', 'blockive-premium-addon-for-block'); ?></button>
+							</div>
+						</div>
+						<div class="bpafb-card-body">
+							<div class="bpafb-elements-toolbar">
+								<div class="bpafb-search-box">
+									<span class="dashicons dashicons-search bpafb-search-icon"></span>
+									<input type="text" class="bpafb-search-input" id="bpafb-block-search" placeholder="<?php esc_attr_e('Search blocks...', 'blockive-premium-addon-for-block'); ?>">
+								</div>
+								<div class="bpafb-filter-chips">
+										<button type="button" class="bpafb-chip-btn is-active" data-filter="all"><?php esc_html_e('All', 'blockive-premium-addon-for-block'); ?> (<?php echo (int) $total_blocks; ?>)</button>
+										<?php foreach ($category_labels as $slug => $label) : ?>
+											<?php if (!empty($category_counts[$slug])) : ?>
+												<button type="button" class="bpafb-chip-btn" data-filter="<?php echo esc_attr($slug); ?>"><?php echo esc_html($label); ?> (<?php echo (int) $category_counts[$slug]; ?>)</button>
+											<?php endif; ?>
+										<?php endforeach; ?>
+									</div>
+							</div>
+
+							<fieldset>
+								<legend class="screen-reader-text"><?php esc_html_e('Blocks List', 'blockive-premium-addon-for-block'); ?></legend>
+								<input type="hidden" name="<?php echo esc_attr(self::OPTION_DISABLED); ?>" value="">
+								<div id="bpafb-blocks-grid">
+									<?php
+									$current_group = null;
+									foreach ($blocks as $type) :
+										$is_disabled = isset($disabled[$type->name]);
+										$category = self::get_block_category($type->name);
+										$title = $type->title ? $type->title : $type->name;
+										if ($category !== $current_group) :
+											if (null !== $current_group) :
+												echo '</div></div>';
+											endif;
+											$current_group = $category;
+											?>
+											<div class="bpafb-block-group" data-group="<?php echo esc_attr($category); ?>">
+												<h3 class="bpafb-block-group-title">
+													<?php echo esc_html(isset($category_labels[$category]) ? $category_labels[$category] : $category); ?>
+													<span>(<?php echo (int) $category_counts[$category]; ?>)</span>
+												</h3>
+												<div class="bpafb-blocks-grid">
+										<?php endif; ?>
+										<div class="bpafb-block-card <?php echo $is_disabled ? 'is-disabled' : ''; ?>" data-name="<?php echo esc_attr(strtolower($title . ' ' . $type->name)); ?>" data-category="<?php echo esc_attr($category); ?>">
+											<div class="bpafb-block-info">
+												<span class="bpafb-block-title" title="<?php echo esc_attr($title); ?>"><?php echo esc_html($title); ?></span>
+											</div>
+											<label class="bpafb-switch" title="<?php printf(esc_attr__('Toggle %s block', 'blockive-premium-addon-for-block'), esc_attr($title)); ?>">
+												<input type="checkbox" class="bpafb-block-checkbox" name="<?php echo esc_attr(self::OPTION_DISABLED); ?>[]" value="<?php echo esc_attr($type->name); ?>" <?php checked(!$is_disabled); ?>>
+												<span class="bpafb-slider"></span>
+											</label>
+										</div>
+									<?php endforeach; ?>
+									<?php if (null !== $current_group) : ?>
+										</div></div>
+									<?php endif; ?>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+
+				<div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+					<button type="submit" class="bpafb-btn-primary" style="padding: 12px 28px; font-size: 14px;">
+						<span class="dashicons dashicons-saved" style="font-size: 18px; width: 18px; height: 18px; line-height: 18px;"></span>
+						<?php esc_html_e('Save Changes', 'blockive-premium-addon-for-block'); ?>
+					</button>
+				</div>
+			</form>
+		</div>
+
+		<script>
+		( function () {
+			// Header Save Button
+			var headerSaveBtn = document.querySelector( '.bpafb-header-save-btn' );
+			var form = document.getElementById( 'bpafb-site-tools-form' );
+			if ( headerSaveBtn && form ) {
+				headerSaveBtn.addEventListener( 'click', function () {
+					if ( form.requestSubmit ) {
+						form.requestSubmit();
+					} else {
+						form.submit();
+					}
+				} );
+			}
+
+			// Element Manager Search & Filter
+			var searchInput = document.getElementById( 'bpafb-block-search' );
+			var filterChips = document.querySelectorAll( '.bpafb-chip-btn' );
+			var blockCards = document.querySelectorAll( '.bpafb-block-card' );
+			var currentFilter = 'all';
+			var currentQuery = '';
+
+			function filterBlocks() {
+				blockCards.forEach( function ( card ) {
+					var matchesCategory = ( currentFilter === 'all' || card.getAttribute( 'data-category' ) === currentFilter );
+					var matchesQuery = ( currentQuery === '' || card.getAttribute( 'data-name' ).indexOf( currentQuery ) !== -1 );
+					card.style.display = ( matchesCategory && matchesQuery ) ? 'flex' : 'none';
+				} );
+				document.querySelectorAll( '.bpafb-block-group' ).forEach( function ( group ) {
+					var hasVisible = Array.prototype.some.call( group.querySelectorAll( '.bpafb-block-card' ), function ( c ) { return c.style.display !== 'none'; } );
+					group.style.display = hasVisible ? '' : 'none';
+				} );
+			}
+
+			if ( searchInput ) {
+				searchInput.addEventListener( 'input', function () {
+					currentQuery = this.value.toLowerCase().trim();
+					filterBlocks();
+				} );
+			}
+
+			filterChips.forEach( function ( chip ) {
+				chip.addEventListener( 'click', function () {
+					filterChips.forEach( function ( c ) { c.classList.remove( 'is-active' ); } );
+					this.classList.add( 'is-active' );
+					currentFilter = this.getAttribute( 'data-filter' );
+					filterBlocks();
+				} );
+			} );
+
+			// Element Card Toggle Active Style & Dynamic Counter
+			var blockCheckboxes = document.querySelectorAll( '.bpafb-block-checkbox' );
+			var countText = document.getElementById( 'bpafb-active-count-text' );
+
+			function updateActiveCounter() {
+				if ( ! countText || ! blockCheckboxes.length ) return;
+				var activeCount = 0;
+				blockCheckboxes.forEach( function ( cb ) {
+					if ( cb.checked ) activeCount++;
+				} );
+				countText.textContent = '(' + activeCount + ' active of ' + blockCheckboxes.length + ' total)';
+			}
+
+			blockCheckboxes.forEach( function ( cb ) {
+				cb.addEventListener( 'change', function () {
+					var card = this.closest( '.bpafb-block-card' );
+					if ( card ) {
+						card.classList.toggle( 'is-disabled', ! this.checked );
+					}
+					updateActiveCounter();
+				} );
+			} );
+
+			// Bulk Enable / Disable
+			var enableAllBtn = document.getElementById( 'bpafb-enable-all-btn' );
+			var disableAllBtn = document.getElementById( 'bpafb-disable-all-btn' );
+			if ( enableAllBtn ) {
+				enableAllBtn.addEventListener( 'click', function () {
+					blockCheckboxes.forEach( function ( cb ) {
+						cb.checked = true;
+						var card = cb.closest( '.bpafb-block-card' );
+						if ( card ) card.classList.remove( 'is-disabled' );
+					} );
+					updateActiveCounter();
+				} );
+			}
+			if ( disableAllBtn ) {
+				disableAllBtn.addEventListener( 'click', function () {
+					blockCheckboxes.forEach( function ( cb ) {
+						cb.checked = false;
+						var card = cb.closest( '.bpafb-block-card' );
+						if ( card ) card.classList.add( 'is-disabled' );
+					} );
+					updateActiveCounter();
+				} );
+			}
+		} )();
+		</script>
+		<?php
+	}
+}

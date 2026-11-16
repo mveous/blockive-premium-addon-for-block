@@ -1,5 +1,70 @@
 import { __ } from '@wordpress/i18n';
+import { useEffect } from '@wordpress/element';
 import { SelectControl, RangeControl, TextControl } from '@wordpress/components';
+
+export const POPULAR_GOOGLE_FONTS = [
+	'Inter',
+	'Roboto',
+	'Poppins',
+	'Montserrat',
+	'Outfit',
+	'Plus Jakarta Sans',
+	'Open Sans',
+	'Lato',
+	'Playfair Display',
+	'Space Grotesk',
+	'DM Sans',
+	'Rubik',
+	'Nunito',
+	'Raleway',
+	'Ubuntu',
+	'Merriweather',
+	'Lora',
+	'Oswald',
+	'Cinzel',
+	'Work Sans',
+	'Manrope',
+	'Figtree',
+	'Urbanist',
+	'Bebas Neue',
+];
+
+/**
+ * Injects a Google Font stylesheet dynamically into the parent document and
+ * the Gutenberg canvas iframe so selected fonts render immediately in the editor.
+ *
+ * @param {string} fontName The Google Font family name.
+ */
+export function loadEditorGoogleFont( fontName ) {
+	if ( ! fontName || typeof document === 'undefined' ) {
+		return;
+	}
+	const safeId = 'bpafb-gfont-' + fontName.toLowerCase().replace( /[^a-z0-9]/g, '-' );
+	const href = `https://fonts.googleapis.com/css2?family=${ encodeURIComponent( fontName ).replace( /%20/g, '+' ) }:wght@300;400;500;600;700;800&display=swap`;
+
+	const targets = [ document ];
+	const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+	if ( iframe?.contentDocument ) {
+		targets.push( iframe.contentDocument );
+	}
+
+	targets.forEach( ( doc ) => {
+		if ( ! doc?.head || doc.getElementById( safeId ) ) {
+			return;
+		}
+		const link = doc.createElement( 'link' );
+		link.id = safeId;
+		link.rel = 'stylesheet';
+		link.href = href;
+		doc.head.appendChild( link );
+	} );
+}
+
+const FONT_OPTIONS = [
+	{ label: __( 'Default (Theme Font)', 'blockive-premium-addon-for-block' ), value: '' },
+	...POPULAR_GOOGLE_FONTS.map( ( font ) => ( { label: font, value: font } ) ),
+	{ label: __( 'Custom (type name below)...', 'blockive-premium-addon-for-block' ), value: '__custom__' },
+];
 
 const WEIGHT_OPTIONS = [
 	{ label: __( 'Default', 'blockive-premium-addon-for-block' ), value: '' },
@@ -30,11 +95,32 @@ const DECORATION_OPTIONS = [
 	{ label: __( 'Overline', 'blockive-premium-addon-for-block' ), value: 'overline' },
 ];
 
+const FONT_SIZE_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+	{ label: '%', value: '%' },
+];
+const FONT_SIZE_UNIT_MAX = { em: 8, rem: 8, '%': 400 };
+
+const LETTER_SPACING_UNITS = [
+	{ label: 'px', value: 'px' },
+	{ label: 'em', value: 'em' },
+	{ label: 'rem', value: 'rem' },
+];
+const LETTER_SPACING_UNIT_MAX = { em: 1, rem: 1 };
+const LETTER_SPACING_UNIT_MIN = { em: -0.5, rem: -0.5 };
+
 /**
  * values: { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, textTransform, textDecoration }
  * onChange( key, value )
+ *
+ * Pass `fontSizeUnit`/`onFontSizeUnitChange` and/or `letterSpacingUnit`/
+ * `onLetterSpacingUnitChange` to also show a unit picker next to that field,
+ * same optional-prop idea as BorderControls' widthUnit/radiusUnit. Callers
+ * that omit them keep today's plain, px-only control.
  */
-export default function TypographyControls( { values = {}, onChange } ) {
+export default function TypographyControls( { values = {}, onChange, fontSizeUnit, onFontSizeUnitChange, letterSpacingUnit, onLetterSpacingUnitChange } ) {
 	const {
 		fontFamily = '',
 		fontSize,
@@ -45,21 +131,72 @@ export default function TypographyControls( { values = {}, onChange } ) {
 		textDecoration = '',
 	} = values;
 
+	const fontSizeMax = fontSizeUnit && FONT_SIZE_UNIT_MAX[ fontSizeUnit ] ? FONT_SIZE_UNIT_MAX[ fontSizeUnit ] : 120;
+	const letterSpacingMax = letterSpacingUnit && LETTER_SPACING_UNIT_MAX[ letterSpacingUnit ] ? LETTER_SPACING_UNIT_MAX[ letterSpacingUnit ] : 20;
+	const letterSpacingMin = letterSpacingUnit && LETTER_SPACING_UNIT_MIN[ letterSpacingUnit ] !== undefined ? LETTER_SPACING_UNIT_MIN[ letterSpacingUnit ] : -5;
+
+	useEffect( () => {
+		if ( fontFamily && POPULAR_GOOGLE_FONTS.includes( fontFamily ) ) {
+			loadEditorGoogleFont( fontFamily );
+		}
+	}, [ fontFamily ] );
+
+	const isKnownFont = FONT_OPTIONS.some( ( opt ) => opt.value === fontFamily );
+	const selectValue = isKnownFont ? fontFamily : ( fontFamily ? '__custom__' : '' );
+
 	return (
 		<>
-			<TextControl
+			<SelectControl
 				label={ __( 'Font Family', 'blockive-premium-addon-for-block' ) }
-				value={ fontFamily }
-				onChange={ ( val ) => onChange( 'fontFamily', val ) }
-				help={ __( "e.g. 'Poppins', sans-serif", 'blockive-premium-addon-for-block' ) }
+				value={ selectValue }
+				options={ FONT_OPTIONS }
+				onChange={ ( val ) => {
+					if ( val === '__custom__' ) {
+						if ( isKnownFont ) {
+							onChange( 'fontFamily', '' );
+						}
+					} else {
+						onChange( 'fontFamily', val );
+					}
+				} }
 			/>
-			<RangeControl
-				label={ __( 'Font Size (px)', 'blockive-premium-addon-for-block' ) }
-				value={ fontSize }
-				onChange={ ( val ) => onChange( 'fontSize', val ) }
-				min={ 8 }
-				max={ 120 }
-			/>
+			{ ( selectValue === '__custom__' || ( ! isKnownFont && fontFamily !== '' ) ) && (
+				<TextControl
+					label={ __( 'Custom Font Family', 'blockive-premium-addon-for-block' ) }
+					value={ fontFamily }
+					onChange={ ( val ) => onChange( 'fontFamily', val ) }
+					placeholder={ __( "e.g. 'Poppins', sans-serif", 'blockive-premium-addon-for-block' ) }
+				/>
+			) }
+			{ onFontSizeUnitChange ? (
+				<div style={ { display: 'flex', gap: '10px', alignItems: 'flex-end' } }>
+					<div style={ { flexGrow: 1 } }>
+						<RangeControl
+							label={ __( 'Font Size', 'blockive-premium-addon-for-block' ) }
+							value={ fontSize }
+							onChange={ ( val ) => onChange( 'fontSize', val ) }
+							min={ 8 }
+							max={ fontSizeMax }
+						/>
+					</div>
+					<div style={ { width: '80px', marginBottom: '16px' } }>
+						<SelectControl
+							label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+							value={ fontSizeUnit || 'px' }
+							options={ FONT_SIZE_UNITS }
+							onChange={ onFontSizeUnitChange }
+						/>
+					</div>
+				</div>
+			) : (
+				<RangeControl
+					label={ __( 'Font Size (px)', 'blockive-premium-addon-for-block' ) }
+					value={ fontSize }
+					onChange={ ( val ) => onChange( 'fontSize', val ) }
+					min={ 8 }
+					max={ 120 }
+				/>
+			) }
 			<SelectControl
 				label={ __( 'Font Weight', 'blockive-premium-addon-for-block' ) }
 				value={ fontWeight }
@@ -74,14 +211,37 @@ export default function TypographyControls( { values = {}, onChange } ) {
 				max={ 3 }
 				step={ 0.1 }
 			/>
-			<RangeControl
-				label={ __( 'Letter Spacing (px)', 'blockive-premium-addon-for-block' ) }
-				value={ letterSpacing }
-				onChange={ ( val ) => onChange( 'letterSpacing', val ) }
-				min={ -5 }
-				max={ 20 }
-				step={ 0.5 }
-			/>
+			{ onLetterSpacingUnitChange ? (
+				<div style={ { display: 'flex', gap: '10px', alignItems: 'flex-end' } }>
+					<div style={ { flexGrow: 1 } }>
+						<RangeControl
+							label={ __( 'Letter Spacing', 'blockive-premium-addon-for-block' ) }
+							value={ letterSpacing }
+							onChange={ ( val ) => onChange( 'letterSpacing', val ) }
+							min={ letterSpacingMin }
+							max={ letterSpacingMax }
+							step={ letterSpacingUnit === 'em' || letterSpacingUnit === 'rem' ? 0.01 : 0.5 }
+						/>
+					</div>
+					<div style={ { width: '80px', marginBottom: '16px' } }>
+						<SelectControl
+							label={ __( 'Unit', 'blockive-premium-addon-for-block' ) }
+							value={ letterSpacingUnit || 'px' }
+							options={ LETTER_SPACING_UNITS }
+							onChange={ onLetterSpacingUnitChange }
+						/>
+					</div>
+				</div>
+			) : (
+				<RangeControl
+					label={ __( 'Letter Spacing (px)', 'blockive-premium-addon-for-block' ) }
+					value={ letterSpacing }
+					onChange={ ( val ) => onChange( 'letterSpacing', val ) }
+					min={ -5 }
+					max={ 20 }
+					step={ 0.5 }
+				/>
+			) }
 			<SelectControl
 				label={ __( 'Text Transform', 'blockive-premium-addon-for-block' ) }
 				value={ textTransform }
@@ -106,19 +266,21 @@ export function getTypographyStyles( values = {}, prefix ) {
 	const {
 		fontFamily,
 		fontSize,
+		fontSizeUnit = 'px',
 		fontWeight,
 		lineHeight,
 		letterSpacing,
+		letterSpacingUnit = 'px',
 		textTransform,
 		textDecoration,
 	} = values;
 
 	const styles = {};
 	if ( fontFamily ) styles[ `${ prefix }-font-family` ] = fontFamily;
-	if ( fontSize !== undefined && fontSize !== null ) styles[ `${ prefix }-font-size` ] = `${ fontSize }px`;
+	if ( fontSize !== undefined && fontSize !== null ) styles[ `${ prefix }-font-size` ] = `${ fontSize }${ fontSizeUnit }`;
 	if ( fontWeight ) styles[ `${ prefix }-font-weight` ] = fontWeight;
 	if ( lineHeight !== undefined && lineHeight !== null ) styles[ `${ prefix }-line-height` ] = lineHeight;
-	if ( letterSpacing !== undefined && letterSpacing !== null ) styles[ `${ prefix }-letter-spacing` ] = `${ letterSpacing }px`;
+	if ( letterSpacing !== undefined && letterSpacing !== null ) styles[ `${ prefix }-letter-spacing` ] = `${ letterSpacing }${ letterSpacingUnit }`;
 	if ( textTransform ) styles[ `${ prefix }-text-transform` ] = textTransform;
 	if ( textDecoration ) styles[ `${ prefix }-text-decoration` ] = textDecoration;
 	return styles;

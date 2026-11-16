@@ -3,10 +3,11 @@
 	"apiVersion": 3,
 	"name": "blockive-premium-addon-for-block/faq",
 	"version": "0.1.0",
-	"title": "Blockive FAQ",
+	"title": "FAQ",
 	"category": "bpafb-widgets",
 	"icon": "editor-help",
 	"description": "FAQ block with rich schema.org markup for SEO, based on accordion behavior.",
+	"example": {},
 	"attributes": {
 		"items": {
 			"type": "array",
@@ -59,6 +60,10 @@
 			"type": "number",
 			"default": 0
 		},
+		"borderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"borderType": {
 			"type": "string",
 			"default": "none"
@@ -66,6 +71,10 @@
 		"borderRadius": {
 			"type": "number",
 			"default": 0
+		},
+		"borderRadiusUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"titleColorHover": {
 			"type": "string",
@@ -83,6 +92,10 @@
 			"type": "number",
 			"default": null
 		},
+		"questionFontSizeUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"questionFontWeight": {
 			"type": "string",
 			"default": ""
@@ -94,6 +107,10 @@
 		"questionLetterSpacing": {
 			"type": "number",
 			"default": null
+		},
+		"questionLetterSpacingUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"questionTextTransform": {
 			"type": "string",
@@ -190,6 +207,18 @@
 			"type": "string",
 			"default": "px"
 		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerMinHeight": {
 			"type": "number"
 		},
@@ -234,9 +263,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -292,7 +329,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -313,6 +350,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

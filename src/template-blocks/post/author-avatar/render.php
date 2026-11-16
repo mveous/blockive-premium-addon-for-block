@@ -15,16 +15,22 @@ if (!defined('ABSPATH')) {
  */
 
 $bpafb_post_id = Bpafb_Template_Block_Render::get_post_id($block);
+$bpafb_author_id = $bpafb_post_id ? (int) get_post_field('post_author', $bpafb_post_id) : 0;
+
+if (!$bpafb_author_id) {
+	return;
+}
 
 $bpafb_size = isset($attributes['size']) ? (int) $attributes['size'] : 96;
 $bpafb_radius = isset($attributes['borderRadius']) ? (int) $attributes['borderRadius'] : 9999;
-$bpafb_border_type = isset($attributes['borderType']) ? $attributes['borderType'] : 'none';
-$bpafb_border_width = isset($attributes['borderWidth']) ? (int) $attributes['borderWidth'] : 0;
-$bpafb_border_color = isset($attributes['borderColor']) ? $attributes['borderColor'] : '';
+$bpafb_border_type = isset($attributes['borderType']) && in_array($attributes['borderType'], ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'], true) ? $attributes['borderType'] : 'none';
+$bpafb_border_width = isset($attributes['borderWidth']) ? (float) $attributes['borderWidth'] : 0;
+$bpafb_allowed_border_width_units = ['px', 'em', 'rem'];
+$bpafb_border_width_unit = isset($attributes['borderWidthUnit']) && in_array($attributes['borderWidthUnit'], $bpafb_allowed_border_width_units, true) ? $attributes['borderWidthUnit'] : 'px';
+$bpafb_border_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['borderColor']) ? $attributes['borderColor'] : '');
 $bpafb_shadow_enabled = !empty($attributes['shadowEnabled']);
-$bpafb_shadow_color = isset($attributes['shadowColor']) && $attributes['shadowColor'] !== ''
-	? $attributes['shadowColor']
-	: 'rgba(0,0,0,0.15)';
+$bpafb_shadow_color = Bpafb_Template_Block_Render::sanitize_css_color(isset($attributes['shadowColor']) ? $attributes['shadowColor'] : '');
+$bpafb_shadow_color = $bpafb_shadow_color !== '' ? $bpafb_shadow_color : 'rgba(0,0,0,0.15)';
 $bpafb_shadow_blur = isset($attributes['shadowBlur']) ? (int) $attributes['shadowBlur'] : 15;
 $bpafb_shadow_spread = isset($attributes['shadowSpread']) ? (int) $attributes['shadowSpread'] : 0;
 
@@ -34,7 +40,7 @@ $bpafb_style_vars[] = '--bpafb-aa-radius:' . $bpafb_radius . 'px';
 
 if ($bpafb_border_type && $bpafb_border_type !== 'none') {
 	$bpafb_style_vars[] = '--bpafb-aa-border-style:' . esc_attr($bpafb_border_type);
-	$bpafb_style_vars[] = '--bpafb-aa-border-width:' . $bpafb_border_width . 'px';
+	$bpafb_style_vars[] = '--bpafb-aa-border-width:' . $bpafb_border_width . esc_attr($bpafb_border_width_unit);
 	if ($bpafb_border_color) {
 		$bpafb_style_vars[] = '--bpafb-aa-border-color:' . esc_attr($bpafb_border_color);
 	}
@@ -51,14 +57,8 @@ $bpafb_wrapper_attributes = get_block_wrapper_attributes([
 	'style' => implode(';', $bpafb_style_vars) . ';',
 ]);
 
-$bpafb_author_id = $bpafb_post_id ? (int) get_post_field('post_author', $bpafb_post_id) : 0;
-
 printf('<div %s>', $bpafb_wrapper_attributes); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-if ($bpafb_author_id) {
-	echo get_avatar($bpafb_author_id, $bpafb_size, '', '', ['class' => 'bpafb-tb-author-avatar-img']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-} else {
-	echo '<div class="bpafb-tb-author-avatar-placeholder" aria-hidden="true"></div>';
-}
+echo get_avatar($bpafb_author_id, $bpafb_size, '', '', ['class' => 'bpafb-tb-author-avatar-img']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 echo '</div>';

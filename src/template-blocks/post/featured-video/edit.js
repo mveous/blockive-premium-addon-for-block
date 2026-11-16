@@ -3,7 +3,8 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl, ToggleControl, SelectControl } from '@wordpress/components';
 
 import InspectorTabs from '../../../components/inspector-tabs';
-import AdvancedTab from '../../../components/advanced-tab';
+import BorderControls, { getBorderStyles } from '../../../components/border-controls';
+import ShadowControls, { getShadowStyle } from '../../../components/shadow-controls';
 import usePreviewContext from '../../shared/use-preview-context';
 
 const ASPECT_OPTIONS = [
@@ -14,13 +15,32 @@ const ASPECT_OPTIONS = [
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { videoUrl, metaKey, autoDetect, aspectRatio } = attributes;
+	const {
+		videoUrl,
+		metaKey,
+		autoDetect,
+		aspectRatio,
+		borderRadius,
+		borderRadiusUnit = 'px',
+		borderType,
+		borderWidth,
+		borderWidthUnit = 'px',
+		borderColor,
+		shadowEnabled,
+		shadowColor,
+		shadowBlur,
+		shadowSpread,
+	} = attributes;
 
 	const { isResolving } = usePreviewContext();
 
 	const blockProps = useBlockProps( {
 		className: 'bpafb-tb-featured-video',
-		style: { aspectRatio: aspectRatio || undefined },
+		style: {
+			aspectRatio: aspectRatio || undefined,
+			'--bpafb-fv-shadow': getShadowStyle( { enabled: shadowEnabled, color: shadowColor, blur: shadowBlur, spread: shadowSpread } ),
+			...getBorderStyles( { borderType, borderWidth, borderWidthUnit, borderRadius, borderRadiusUnit, borderColor }, '--bpafb-fv' ),
+		},
 	} );
 
 	return (
@@ -49,16 +69,39 @@ export default function Edit( { attributes, setAttributes } ) {
 					</PanelBody>
 				}
 				style={
-					<PanelBody title={ __( 'Style', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
-						<SelectControl
-							label={ __( 'Aspect Ratio', 'blockive-premium-addon-for-block' ) }
-							value={ aspectRatio }
-							options={ ASPECT_OPTIONS }
-							onChange={ ( value ) => setAttributes( { aspectRatio: value } ) }
-						/>
-					</PanelBody>
+					<>
+						<PanelBody title={ __( 'Style', 'blockive-premium-addon-for-block' ) } initialOpen={ true }>
+							<SelectControl
+								label={ __( 'Aspect Ratio', 'blockive-premium-addon-for-block' ) }
+								value={ aspectRatio }
+								options={ ASPECT_OPTIONS }
+								onChange={ ( value ) => setAttributes( { aspectRatio: value } ) }
+							/>
+						</PanelBody>
+						<PanelBody title={ __( 'Border', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+							<BorderControls
+								values={ { borderType, borderWidth, borderRadius, borderColor } }
+								onChange={ ( key, value ) => setAttributes( { [ key ]: value } ) }
+								widthUnit={ borderWidthUnit }
+								onWidthUnitChange={ ( value ) => setAttributes( { borderWidthUnit: value } ) }
+								radiusUnit={ borderRadiusUnit }
+								onRadiusUnitChange={ ( value ) => setAttributes( { borderRadiusUnit: value } ) }
+							/>
+						</PanelBody>
+						<PanelBody title={ __( 'Shadow', 'blockive-premium-addon-for-block' ) } initialOpen={ false }>
+							<ShadowControls
+								hasHover={ false }
+								normalValues={ { enabled: shadowEnabled, color: shadowColor, blur: shadowBlur, spread: shadowSpread } }
+								onNormalChange={ ( key, value ) => {
+									const map = { enabled: 'shadowEnabled', color: 'shadowColor', blur: 'shadowBlur', spread: 'shadowSpread' };
+									setAttributes( { [ map[ key ] ]: value } );
+								} }
+							/>
+						</PanelBody>
+					</>
 				}
-				advanced={ <AdvancedTab attributes={ attributes } setAttributes={ setAttributes } /> }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps }>

@@ -3,12 +3,8 @@
 }
 
 .bpafb-tb-comments-count a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.bpafb-tb-comments-count a:hover {
-	text-decoration: underline;
+	color: inherit !important;
+	text-decoration: none !important;
 }
 
 .bpafb-tb-comments-count a.bpafb-tb-comments-count-nolink {

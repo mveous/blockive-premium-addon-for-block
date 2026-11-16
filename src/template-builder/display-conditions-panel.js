@@ -1,37 +1,25 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
-import {
-	PanelRow,
-	SelectControl,
-	FormTokenField,
-	TextControl,
-	Notice,
-} from '@wordpress/components';
+import { PanelRow, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
-import { useMemo, useState } from '@wordpress/element';
 
 const TEMPLATE_POST_TYPE = window.bpafbTemplateBuilder?.postType || 'blockive_template';
 
-/**
- * Encodes a record as a FormTokenField token so its id survives the
- * string-only token list, then is decoded back out in onChangeIds().
- */
-const tokenForRecord = ( record ) => `${ record.title?.rendered || record.title || '(no title)' } (#${ record.id })`;
-
-const idFromToken = ( token ) => {
-	const match = /\(#(\d+)\)\s*$/.exec( token );
-	return match ? parseInt( match[ 1 ], 10 ) : null;
-};
+// Mirrors Bpafb_Template_Display_Conditions::is_specific_scope_enabled() -
+// the PHP side stays the single source of truth, this is only its
+// localized copy.
+const SPECIFIC_SCOPE_ENABLED = !! window.bpafbTemplateBuilder?.specificScopeEnabled;
 
 const DisplayConditionsPanel = () => {
 	const [ meta, setMeta ] = useEntityProp( 'postType', TEMPLATE_POST_TYPE, 'meta' );
-	const [ search, setSearch ] = useState( '' );
+
+	const kind = meta?._bpafb_template_kind || 'single';
+	const isSingle = 'single' === kind;
 
 	const targetPostType = meta?._bpafb_template_type || 'post';
-	const scope = meta?._bpafb_display_condition_scope || 'specific';
-	const ids = Array.isArray( meta?._bpafb_display_condition_ids ) ? meta._bpafb_display_condition_ids : [];
+	const scope = meta?._bpafb_display_condition_scope || 'all';
 	const priority = Number.isFinite( meta?._bpafb_template_priority ) ? meta._bpafb_template_priority : 10;
 
 	const targetPostTypeLabel = useSelect(
@@ -39,48 +27,42 @@ const DisplayConditionsPanel = () => {
 		[ targetPostType ]
 	);
 
-	const selectedRecords = useSelect(
-		( select ) => {
-			if ( ! ids.length ) {
-				return [];
-			}
-			return select( 'core' ).getEntityRecords( 'postType', targetPostType, {
-				include: ids,
-				per_page: ids.length,
-				context: 'view',
-			} ) || [];
-		},
-		[ targetPostType, ids.join( ',' ) ]
-	);
-
-	const searchResults = useSelect(
-		( select ) => {
-			if ( scope !== 'specific' || ! search ) {
-				return [];
-			}
-			return select( 'core' ).getEntityRecords( 'postType', targetPostType, {
-				search,
-				per_page: 20,
-				context: 'view',
-			} ) || [];
-		},
-		[ targetPostType, search, scope ]
-	);
-
-	const currentTokens = useMemo(
-		() => ids.map( ( id ) => {
-			const record = selectedRecords.find( ( item ) => item.id === id );
-			return record ? tokenForRecord( record ) : `#${ id }`;
-		} ),
-		[ ids, selectedRecords ]
-	);
-
-	const suggestions = useMemo(
-		() => searchResults.map( tokenForRecord ),
-		[ searchResults ]
-	);
-
-	const setIds = ( nextIds ) => setMeta( { ...meta, _bpafb_display_condition_ids: nextIds } );
+	// Header and Footer always apply site-wide in the free version (no
+	// per-page conditions to pick), so this panel only shows them a plain
+	// notice plus the same Priority tiebreaker the single-post override
+	// already uses, in case more than one Header or Footer gets published
+	// at once. Pro's own Display Conditions panel (with a full rule list -
+	// Archive/Search/404/User Role/etc.) replaces this panel entirely for
+	// every kind; see template-kind-panel.js in the Pro plugin.
+	if ( ! isSingle ) {
+		return (
+			<PluginDocumentSettingPanel
+				name="bpafb-display-conditions"
+				title={ __( 'Display Conditions', 'blockive-premium-addon-for-block' ) }
+				className="bpafb-display-conditions-panel"
+			>
+				<PanelRow>
+					<p>
+						{ 'header' === kind
+							? __( 'This Header shows on every page of the site once published.', 'blockive-premium-addon-for-block' )
+							: __( 'This Footer shows on every page of the site once published.', 'blockive-premium-addon-for-block' ) }
+					</p>
+				</PanelRow>
+				<PanelRow>
+					<TextControl
+						type="number"
+						label={ __( 'Priority', 'blockive-premium-addon-for-block' ) }
+						help={ __( 'If more than one is published, the lower priority number wins.', 'blockive-premium-addon-for-block' ) }
+						value={ priority }
+						onChange={ ( value ) => {
+							const parsed = parseInt( value, 10 );
+							setMeta( { ...meta, _bpafb_template_priority: Number.isNaN( parsed ) ? 10 : parsed } );
+						} }
+					/>
+				</PanelRow>
+			</PluginDocumentSettingPanel>
+		);
+	}
 
 	return (
 		<PluginDocumentSettingPanel
@@ -101,54 +83,71 @@ const DisplayConditionsPanel = () => {
 							),
 							value: 'all',
 						},
-						{ label: __( 'Specific posts', 'blockive-premium-addon-for-block' ), value: 'specific' },
+						...( SPECIFIC_SCOPE_ENABLED
+							? [ { label: __( 'Specific posts', 'blockive-premium-addon-for-block' ), value: 'specific' } ]
+							: [] ),
 					] }
-					onChange={ ( value ) => setMeta( { ...meta, _bpafb_display_condition_scope: value } ) }
+					onChange={ ( value ) => {
+						// "specific" isn't offered as an option at all when
+						// disabled, but guard anyway so the meta can never be
+						// set to it from here.
+						if ( 'specific' === value && ! SPECIFIC_SCOPE_ENABLED ) {
+							return;
+						}
+						setMeta( { ...meta, _bpafb_display_condition_scope: value } );
+					} }
 				/>
 			</PanelRow>
-
-			{ scope === 'specific' && (
-				<PanelRow>
-					<FormTokenField
-						label={ __( 'Posts', 'blockive-premium-addon-for-block' ) }
-						value={ currentTokens }
-						suggestions={ suggestions }
-						onInputChange={ setSearch }
-						onChange={ ( tokens ) => {
-							const nextIds = tokens
-								.map( idFromToken )
-								.filter( ( id ) => id !== null );
-							setIds( nextIds );
-						} }
-						__experimentalExpandOnFocus
-						__next40pxDefaultSize
-						help={ __(
-							'Start typing a title, then choose it from the suggestions list.',
-							'blockive-premium-addon-for-block'
-						) }
-					/>
-				</PanelRow>
-			) }
-
-			{ scope === 'specific' && ids.length === 0 && (
-				<Notice status="warning" isDismissible={ false }>
-					{ __(
-						'No posts selected yet - this template will not appear on the frontend until you add one.',
-						'blockive-premium-addon-for-block'
-					) }
-				</Notice>
-			) }
 
 			<PanelRow>
 				<TextControl
 					type="number"
 					label={ __( 'Priority', 'blockive-premium-addon-for-block' ) }
-					help={ __(
-						'When more than one template matches the same post, the lowest number wins.',
-						'blockive-premium-addon-for-block'
-					) }
 					value={ priority }
-					onChange={ ( value ) => setMeta( { ...meta, _bpafb_template_priority: parseInt( value, 10 ) || 10 } ) }
+					onChange={ ( value ) => {
+						const parsed = parseInt( value, 10 );
+						setMeta( { ...meta, _bpafb_template_priority: Number.isNaN( parsed ) ? 10 : parsed } );
+					} }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( 'Full width (no sidebar)', 'blockive-premium-addon-for-block' ) }
+					checked={ !! meta?._bpafb_full_width }
+					onChange={ ( value ) => setMeta( { ...meta, _bpafb_full_width: value } ) }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( "Hide theme's post title", 'blockive-premium-addon-for-block' ) }
+					checked={ meta?._bpafb_hide_title !== false }
+					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_title: value } ) }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( "Hide theme's featured image", 'blockive-premium-addon-for-block' ) }
+					checked={ meta?._bpafb_hide_featured_image !== false }
+					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_featured_image: value } ) }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( 'Hide comments', 'blockive-premium-addon-for-block' ) }
+					checked={ !! meta?._bpafb_hide_comments }
+					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_comments: value } ) }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( 'Hide post navigation (previous/next)', 'blockive-premium-addon-for-block' ) }
+					checked={ !! meta?._bpafb_hide_post_nav }
+					onChange={ ( value ) => setMeta( { ...meta, _bpafb_hide_post_nav: value } ) }
 				/>
 			</PanelRow>
 		</PluginDocumentSettingPanel>

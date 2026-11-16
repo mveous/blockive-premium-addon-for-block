@@ -1,5 +1,7 @@
 import { useBlockProps } from '@wordpress/block-editor';
 
+import { getSafeUrl } from '../utils/safe-url';
+
 export default function Save({ attributes }) {
 	const { items, titleColor, contentColor, overlayOpacity, animationDuration, height, imageSize, imagePosition, showTitle, showContent } = attributes;
 
@@ -29,7 +31,7 @@ export default function Save({ attributes }) {
 						tabIndex="0"
 						aria-current={index === 0 ? 'true' : 'false'}
 						style={{
-							backgroundImage: item.imageUrl ? `url(${item.imageUrl})` : 'none',
+							backgroundImage: item.imageUrl ? `url(${getSafeUrl(item.imageUrl, { allowAnchor: false })})` : 'none',
 						}}
 					>
 						<div className="bpafb-image-accordion-content">

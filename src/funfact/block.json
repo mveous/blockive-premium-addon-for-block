@@ -3,10 +3,11 @@
 	"apiVersion": 3,
 	"name": "blockive-premium-addon-for-block/funfact",
 	"version": "0.1.0",
-	"title": "Blockive Fun Fact",
+	"title": "Fun Fact",
 	"category": "bpafb-widgets",
 	"icon": "chart-bar",
 	"description": "Animated statistics/counter block.",
+	"example": {},
 	"attributes": {
 		"items": {
 			"type": "array",
@@ -77,6 +78,18 @@
 			"type": "string",
 			"default": "px"
 		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerMinHeight": {
 			"type": "number"
 		},
@@ -121,9 +134,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -179,7 +200,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -200,6 +221,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

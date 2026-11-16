@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
-import { SelectControl, BaseControl, ColorPalette, GradientPicker, Button } from '@wordpress/components';
+import { BaseControl, ColorPalette, GradientPicker, Button } from '@wordpress/components';
+
+import SegmentedControl from '../segmented-control';
 
 const TYPE_OPTIONS = [
 	{ label: __( 'Solid Color', 'blockive-premium-addon-for-block' ), value: 'color' },
@@ -30,7 +32,7 @@ export default function BackgroundControls( { values = {}, onChange } ) {
 
 	return (
 		<>
-			<SelectControl
+			<SegmentedControl
 				label={ __( 'Background Type', 'blockive-premium-addon-for-block' ) }
 				value={ bgType }
 				options={ TYPE_OPTIONS }
@@ -82,7 +84,7 @@ export default function BackgroundControls( { values = {}, onChange } ) {
 							</Button>
 						) }
 					</BaseControl>
-					<SelectControl
+					<SegmentedControl
 						label={ __( 'Image Fit', 'blockive-premium-addon-for-block' ) }
 						value={ bgImageSize }
 						options={ SIZE_OPTIONS }

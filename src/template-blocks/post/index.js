@@ -2,7 +2,6 @@ import './post-title';
 import './featured-image';
 import './post-meta';
 import './post-content';
-import './post-excerpt';
 import './author';
 import './author-avatar';
 import './publish-date';

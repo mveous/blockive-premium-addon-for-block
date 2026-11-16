@@ -18,7 +18,6 @@ import { useEffect, useRef } from '@wordpress/element';
 import Chart from 'chart.js/auto';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -193,7 +192,8 @@ export default function Edit({ attributes, setAttributes }) {
 						/>
 					</PanelBody>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

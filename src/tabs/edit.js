@@ -14,7 +14,6 @@ import {
 import { useState } from '@wordpress/element';
 
 import InspectorTabs from '../components/inspector-tabs';
-import AdvancedTab from '../components/advanced-tab';
 
 export default function Edit({ attributes, setAttributes }) {
 	const {
@@ -124,7 +123,8 @@ export default function Edit({ attributes, setAttributes }) {
 				</BaseControl>
 			</PanelBody>
 				)}
-				advanced={<AdvancedTab attributes={attributes} setAttributes={setAttributes} />}
+				attributes={attributes}
+				setAttributes={setAttributes}
 			/>
 
 			<div {...blockProps}>

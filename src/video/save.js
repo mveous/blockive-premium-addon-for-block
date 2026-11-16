@@ -16,16 +16,18 @@ export default function Save({ attributes }) {
 
 	return (
 		<div {...blockProps}>
-			<video
-				controls={controls ? true : undefined}
-				autoPlay={autoplay ? true : undefined}
-				loop={loop ? true : undefined}
-				muted={autoplay ? true : undefined}
-				style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-			>
-				<source src={getSafeVideoUrl(videoUrl)} />
-				Your browser does not support the video tag.
-			</video>
+			{videoUrl && (
+				<video
+					controls={controls ? true : undefined}
+					autoPlay={autoplay ? true : undefined}
+					loop={loop ? true : undefined}
+					muted={autoplay ? true : undefined}
+					style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+				>
+					<source src={getSafeVideoUrl(videoUrl)} />
+					Your browser does not support the video tag.
+				</video>
+			)}
 		</div>
 	);
 }

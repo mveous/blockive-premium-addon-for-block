@@ -12,6 +12,7 @@
 		"postType"
 	],
 	"textdomain": "blockive-premium-addon-for-block",
+	"example": {},
 	"attributes": {
 		"icon": {
 			"type": "string",
@@ -20,6 +21,10 @@
 		"format": {
 			"type": "string",
 			"default": "{count} Comments"
+		},
+		"textHoverColor": {
+			"type": "string",
+			"default": ""
 		},
 		"isLink": {
 			"type": "boolean",
@@ -45,6 +50,18 @@
 			"type": "number"
 		},
 		"bpafbContainerWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerHeightUnit": {
 			"type": "string",
 			"default": "px"
 		},
@@ -92,9 +109,17 @@
 		"bpafbContainerBorderRadius": {
 			"type": "number"
 		},
+		"bpafbContainerBorderWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"bpafbContainerBorderRadiusUnit": {
+			"type": "string",
+			"default": "px"
+		},
 		"bpafbContainerBorderColor": {
 			"type": "string",
-			"default": ""
+			"default": "#000000"
 		},
 		"bpafbContainerBoxShadow": {
 			"type": "boolean",
@@ -150,7 +175,7 @@
 		},
 		"bpafbAnimationDelay": {
 			"type": "number",
-			"default": 0
+			"default": 100
 		},
 		"bpafbAnimationEasing": {
 			"type": "string",
@@ -171,6 +196,10 @@
 		"bpafbTransformTranslateY": {
 			"type": "number",
 			"default": 0
+		},
+		"bpafbTransformTranslateUnit": {
+			"type": "string",
+			"default": "px"
 		},
 		"bpafbHoverAnimation": {
 			"type": "string",

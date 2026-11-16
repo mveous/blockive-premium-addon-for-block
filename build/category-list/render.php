@@ -58,12 +58,16 @@ if ($bpafb_layoutType === 'horizontal' && $bpafb_columns) {
 
 $bpafb_exclude_ids = !empty($bpafb_excludeTerms) ? array_map('intval', array_filter(array_map('trim', explode(',', $bpafb_excludeTerms)))) : array();
 
+// Allowlisted against exactly what the block's own Order By/Order
+// Direction SelectControls offer - defense in depth alongside
+// get_terms()'s own orderby/order validation, so an unexpected value
+// here can't reach the term query args at all.
 $bpafb_args = array(
 	'taxonomy' => $bpafb_taxonomy,
 	'hide_empty' => $bpafb_hideEmpty,
 	'number' => 0, // Fetch all to filter in PHP
-	'orderby' => $bpafb_orderBy === 'id' ? 'id' : ($bpafb_orderBy === 'count' ? 'count' : 'name'),
-	'order' => strtoupper($bpafb_order),
+	'orderby' => in_array($bpafb_orderBy, ['id', 'count'], true) ? $bpafb_orderBy : 'name',
+	'order' => strtoupper($bpafb_order) === 'DESC' ? 'DESC' : 'ASC',
 );
 
 $bpafb_raw_categories = get_terms($bpafb_args);
