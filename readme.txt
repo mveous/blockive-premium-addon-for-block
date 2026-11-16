@@ -99,89 +99,49 @@ Blockive Pro is a standalone plugin. It includes everything in the free version,
 #### Free Version
 
 ✅ **Blocks**: 25 blocks
-
 ✅ **Single Post / Page Templates**: Available
-
 ✅ **Display Conditions**: Available
-
 ✅ **Single Post Template Blocks**: 16 blocks
-
 ✅ **Responsive, Typography, Spacing, Border, Background & Shadow Controls**: Available
-
 ✅ **Entrance & Hover Animations**: Available
-
 ✅ **Element Manager**: Available
-
 ❌ **Native Form Block (submissions, email notifications, webhooks)**: Pro Only
-
 ❌ **Mega Menu, Menu & Table of Contents**: Pro Only
-
 ❌ **Loop Grid, Loop Carousel, Loop Filter & Nested Carousel**: Pro Only
-
 ❌ **Slides, Media Carousel, Gallery, Portfolio & Video Playlist**: Pro Only
-
 ❌ **Header & Footer Templates with Sticky Header**: Pro Only
-
 ❌ **Archive, Search Results & 404 Templates**: Pro Only
-
 ❌ **Popup Builder**: Pro Only
-
 ❌ **Loop Item, Mega Menu Item & Section Templates**: Pro Only
-
 ❌ **WooCommerce Template Blocks (22)**: Pro Only
-
 ❌ **Events Template Blocks (9)**: Pro Only
-
 ❌ **Dynamic Tags**: Pro Only
-
 ❌ **Custom Code, Custom Fonts, Page Transitions, Scroll Snap & Role Manager**: Pro Only
-
 ❌ **Admin Bar Quick Access**: Pro Only
-
 ❌ **Premium Support**: Pro Only
 
 #### Pro Version
 
 ✅ **Blocks**: 60 blocks (35 more than free)
-
 ✅ **Single Post / Page Templates**: Available
-
 ✅ **Display Conditions**: Available
-
 ✅ **Single Post Template Blocks**: 19 blocks (adds Author Box, Post Comments & Post Excerpt)
-
 ✅ **Responsive, Typography, Spacing, Border, Background & Shadow Controls**: Available
-
 ✅ **Entrance & Hover Animations**: Available
-
 ✅ **Element Manager**: Available
-
 ✅ **Native Form Block (submissions, email notifications, webhooks)**: Available
-
 ✅ **Mega Menu, Menu & Table of Contents**: Available
-
 ✅ **Loop Grid, Loop Carousel, Loop Filter & Nested Carousel**: Available
-
 ✅ **Slides, Media Carousel, Gallery, Portfolio & Video Playlist**: Available
-
 ✅ **Header & Footer Templates with Sticky Header**: Available
-
 ✅ **Archive, Search Results & 404 Templates**: Available
-
 ✅ **Popup Builder**: Available
-
 ✅ **Loop Item, Mega Menu Item & Section Templates**: Available
-
 ✅ **WooCommerce Template Blocks (22)**: Available
-
 ✅ **Events Template Blocks (9)**: Available
-
 ✅ **Dynamic Tags**: Available
-
 ✅ **Custom Code, Custom Fonts, Page Transitions, Scroll Snap & Role Manager**: Available
-
 ✅ **Admin Bar Quick Access**: Available
-
 ✅ **Premium Support**: Available
 
 **[Upgrade to Pro!](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing)**
