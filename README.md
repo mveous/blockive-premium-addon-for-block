@@ -71,7 +71,7 @@ The plugin includes **16 dynamic template blocks** specifically designed for sin
 
 ## Blockive Pro
  
- [Blockive Pro](https://mveous.com) is a standalone, full-featured site builder plugin (the free plugin is not required alongside it) that unlocks:
+ [Blockive Pro](https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing) is a standalone, full-featured site builder plugin (the free plugin is not required alongside it) that unlocks:
  
  - **60 Total Blocks (35 additional Pro blocks)**:
    - **Interactive & Media**: Form (native contact/lead form with 12 field types, email notifications, DB submissions storage, webhooks & spam protection), Media Carousel (with lightbox), Video Playlist, Slides (Ken Burns, touch/swipe), Hotspot (image pins with tooltips), Gallery (with category filters & lightbox), Portfolio, Facebook Embed, Animated Headline, Code Highlight (Prism.js with 19 languages), Off-Canvas panel.

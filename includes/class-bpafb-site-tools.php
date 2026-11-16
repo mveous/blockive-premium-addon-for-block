@@ -16,6 +16,8 @@ class Bpafb_Site_Tools
 	const PAGE = 'bpafb-site-tools';
 	const OPTION_DISABLED = 'bpafb_disabled_blocks';
 	const NAMESPACE_PREFIX = 'blockive-premium-addon-for-block/';
+	const PRO_URL = 'https://mveous.com/products/blockive-premium-addon-for-block-pro/#pricing';
+	const TAB_COMPARE = 'free-vs-pro';
 
 	/**
 	 * @var Bpafb_Site_Tools|null
@@ -359,6 +361,138 @@ class Bpafb_Site_Tools
 		return 'content';
 	}
 
+	// -- Free vs Pro -----------------------------------------------------------
+
+	/**
+	 * Rows for the Free vs Pro tab, grouped by section. A cell is `true`
+	 * (included), `false` (not included) or a string shown as-is (a count).
+	 * Keep in step with the "Free vs Pro" section of readme.txt.
+	 *
+	 * @return array<string, array<int, array{0: string, 1: bool|string, 2: bool|string}>>
+	 */
+	private static function comparison_rows()
+	{
+		return [
+			__('Blocks', 'blockive-premium-addon-for-block') => [
+				[__('Total blocks', 'blockive-premium-addon-for-block'), '25', '60'],
+				[__('Accordion, Tabs, FAQ, Button, Heading, Icon Box, Image Box, Team, Testimonial, Video', 'blockive-premium-addon-for-block'), true, true],
+				[__('Pricing Table, Countdown Timer, Fun Fact, Progress Bar, Pie Chart, Business Hours', 'blockive-premium-addon-for-block'), true, true],
+				[__('Post Grid, Category List, Contact Form 7, Mailchimp, Lottie, Image Comparison', 'blockive-premium-addon-for-block'), true, true],
+				[__('Native Form block (12 field types, submissions, email notifications, webhooks)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Mega Menu, Menu & Table of Contents', 'blockive-premium-addon-for-block'), false, true],
+				[__('Loop Grid, Loop Carousel, Loop Filter & Nested Carousel', 'blockive-premium-addon-for-block'), false, true],
+				[__('Slides, Media Carousel, Gallery, Portfolio & Video Playlist', 'blockive-premium-addon-for-block'), false, true],
+				[__('Hotspot, Flip Box, Animated Headline, Code Highlight & Off-Canvas', 'blockive-premium-addon-for-block'), false, true],
+				[__('Call to Action, Price List, Reviews, Testimonial Carousel & Blockquote', 'blockive-premium-addon-for-block'), false, true],
+				[__('Floating Buttons, Link in Bio, Share Buttons, Google Maps & Progress Tracker', 'blockive-premium-addon-for-block'), false, true],
+				[__('WooCommerce blocks (Products, Product Categories, Add to Cart)', 'blockive-premium-addon-for-block'), false, true],
+			],
+			__('Template Builder', 'blockive-premium-addon-for-block') => [
+				[__('Single Post / Page templates', 'blockive-premium-addon-for-block'), true, true],
+				[__('Display Conditions (include / exclude rules)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Single post template blocks', 'blockive-premium-addon-for-block'), '16', '19'],
+				[__('Header & Footer templates with Sticky Header', 'blockive-premium-addon-for-block'), false, true],
+				[__('Archive, Search Results & 404 templates', 'blockive-premium-addon-for-block'), false, true],
+				[__('Popup Builder (exit intent, scroll, click & delay triggers)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Loop Item, Mega Menu Item & Section templates', 'blockive-premium-addon-for-block'), false, true],
+				[__('Header & Footer blocks (Site Logo, Live Search, Menu Cart, Login and more)', 'blockive-premium-addon-for-block'), false, '9'],
+				[__('WooCommerce template blocks', 'blockive-premium-addon-for-block'), false, '22'],
+				[__('Events template blocks', 'blockive-premium-addon-for-block'), false, '9'],
+			],
+			__('Design & Dynamic Content', 'blockive-premium-addon-for-block') => [
+				[__('Responsive controls (desktop, tablet, mobile)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Typography, spacing, borders, backgrounds & shadows', 'blockive-premium-addon-for-block'), true, true],
+				[__('Entrance & hover animations', 'blockive-premium-addon-for-block'), true, true],
+				[__('Dynamic Tags in any text or URL field', 'blockive-premium-addon-for-block'), false, true],
+			],
+			__('Site Tools', 'blockive-premium-addon-for-block') => [
+				[__('Element Manager (turn off unused blocks)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Custom Code snippets (head / body)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Custom Fonts manager (WOFF2 / TTF / OTF)', 'blockive-premium-addon-for-block'), false, true],
+				[__('Page Transitions & Scroll Snap', 'blockive-premium-addon-for-block'), false, true],
+				[__('Template Role Manager', 'blockive-premium-addon-for-block'), false, true],
+				[__('Admin Bar "Edit Template" quick access', 'blockive-premium-addon-for-block'), false, true],
+			],
+			__('Support', 'blockive-premium-addon-for-block') => [
+				[__('Community support (WordPress.org forum)', 'blockive-premium-addon-for-block'), true, true],
+				[__('Premium support & continuous updates', 'blockive-premium-addon-for-block'), false, true],
+			],
+		];
+	}
+
+	/**
+	 * @param bool|string $value
+	 */
+	private static function render_comparison_cell($value)
+	{
+		if (true === $value) {
+			echo '<span class="bpafb-compare-icon is-yes dashicons dashicons-yes-alt" aria-hidden="true"></span><span class="screen-reader-text">' . esc_html__('Included', 'blockive-premium-addon-for-block') . '</span>';
+		} elseif (false === $value) {
+			echo '<span class="bpafb-compare-icon is-no dashicons dashicons-minus" aria-hidden="true"></span><span class="screen-reader-text">' . esc_html__('Not included', 'blockive-premium-addon-for-block') . '</span>';
+		} else {
+			echo '<span class="bpafb-compare-value">' . esc_html($value) . '</span>';
+		}
+	}
+
+	private function render_comparison()
+	{
+		?>
+		<div class="bpafb-dashboard-body">
+			<div class="bpafb-card">
+				<div class="bpafb-card-header">
+					<div class="bpafb-card-header-left">
+						<h2><?php esc_html_e('Blockive Free vs Pro', 'blockive-premium-addon-for-block'); ?></h2>
+						<p><?php esc_html_e('Blockive Pro is a standalone plugin that includes every free block and setting, so your existing content keeps working after you upgrade.', 'blockive-premium-addon-for-block'); ?></p>
+					</div>
+					<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e('View Pro Pricing', 'blockive-premium-addon-for-block'); ?>
+						<span class="screen-reader-text"><?php esc_html_e('(opens in a new tab)', 'blockive-premium-addon-for-block'); ?></span>
+					</a>
+				</div>
+				<div class="bpafb-card-body">
+					<div class="bpafb-compare-wrap">
+						<table class="bpafb-compare-table">
+							<thead>
+								<tr>
+									<th scope="col"><?php esc_html_e('Feature', 'blockive-premium-addon-for-block'); ?></th>
+									<th scope="col" class="bpafb-compare-col"><?php esc_html_e('Free', 'blockive-premium-addon-for-block'); ?></th>
+									<th scope="col" class="bpafb-compare-col is-pro"><?php esc_html_e('Pro', 'blockive-premium-addon-for-block'); ?></th>
+								</tr>
+							</thead>
+							<?php foreach (self::comparison_rows() as $group => $rows) : ?>
+								<tbody>
+									<tr class="bpafb-compare-group">
+										<th scope="colgroup" colspan="3"><?php echo esc_html($group); ?></th>
+									</tr>
+									<?php foreach ($rows as $row) : ?>
+										<tr>
+											<th scope="row"><?php echo esc_html($row[0]); ?></th>
+											<td class="bpafb-compare-col"><?php self::render_comparison_cell($row[1]); ?></td>
+											<td class="bpafb-compare-col is-pro"><?php self::render_comparison_cell($row[2]); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							<?php endforeach; ?>
+						</table>
+					</div>
+
+					<div class="bpafb-compare-cta">
+						<div>
+							<h3><?php esc_html_e('Build your whole site with Blockive Pro', 'blockive-premium-addon-for-block'); ?></h3>
+							<p><?php esc_html_e('Get 35 more blocks, the full Template Builder, the Popup Builder, Dynamic Tags and premium support.', 'blockive-premium-addon-for-block'); ?></p>
+						</div>
+						<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+							<span class="dashicons dashicons-star-filled" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;" aria-hidden="true"></span>
+							<?php esc_html_e('Upgrade to Pro', 'blockive-premium-addon-for-block'); ?>
+							<span class="screen-reader-text"><?php esc_html_e('(opens in a new tab)', 'blockive-premium-addon-for-block'); ?></span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	// -- Page ------------------------------------------------------------------
 
 	public function render_page()
@@ -366,6 +500,9 @@ class Bpafb_Site_Tools
 		if (!current_user_can('manage_options')) {
 			return;
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switch.
+		$current_tab = (isset($_GET['tab']) && self::TAB_COMPARE === sanitize_key(wp_unslash($_GET['tab']))) ? self::TAB_COMPARE : 'elements';
+		$page_url = admin_url('edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE . '&page=' . self::PAGE);
 		$disabled = array_flip((array) get_option(self::OPTION_DISABLED, []));
 		$blocks = self::manageable_blocks();
 		$total_blocks = count($blocks);
@@ -396,10 +533,17 @@ class Bpafb_Site_Tools
 						<span class="dashicons dashicons-layout" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
 						<?php esc_html_e('All Templates', 'blockive-premium-addon-for-block'); ?>
 					</a>
-					<button type="button" class="bpafb-btn-primary bpafb-header-save-btn">
-						<span class="dashicons dashicons-saved" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
-						<?php esc_html_e('Save Changes', 'blockive-premium-addon-for-block'); ?>
-					</button>
+					<?php if (self::TAB_COMPARE === $current_tab) : ?>
+						<a href="<?php echo esc_url(self::PRO_URL); ?>" class="bpafb-btn-primary" target="_blank" rel="noopener noreferrer">
+							<span class="dashicons dashicons-star-filled" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+							<?php esc_html_e('Get Blockive Pro', 'blockive-premium-addon-for-block'); ?>
+						</a>
+					<?php else : ?>
+						<button type="button" class="bpafb-btn-primary bpafb-header-save-btn">
+							<span class="dashicons dashicons-saved" style="font-size: 16px; width: 16px; height: 16px; line-height: 16px;"></span>
+							<?php esc_html_e('Save Changes', 'blockive-premium-addon-for-block'); ?>
+						</button>
+					<?php endif; ?>
 				</div>
 			</div>
 
@@ -414,6 +558,25 @@ class Bpafb_Site_Tools
 			<hr class="wp-header-end">
 
 			<?php settings_errors(); ?>
+
+			<nav class="bpafb-top-tabs" aria-label="<?php esc_attr_e('Site Tools sections', 'blockive-premium-addon-for-block'); ?>">
+				<a href="<?php echo esc_url($page_url); ?>" class="bpafb-top-tab <?php echo 'elements' === $current_tab ? 'is-active' : ''; ?>" <?php echo 'elements' === $current_tab ? 'aria-current="page"' : ''; ?>>
+					<span class="dashicons dashicons-screenoptions" aria-hidden="true"></span>
+					<?php esc_html_e('Element Manager', 'blockive-premium-addon-for-block'); ?>
+				</a>
+				<a href="<?php echo esc_url(add_query_arg('tab', self::TAB_COMPARE, $page_url)); ?>" class="bpafb-top-tab <?php echo self::TAB_COMPARE === $current_tab ? 'is-active' : ''; ?>" <?php echo self::TAB_COMPARE === $current_tab ? 'aria-current="page"' : ''; ?>>
+					<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+					<?php esc_html_e('Free vs Pro', 'blockive-premium-addon-for-block'); ?>
+				</a>
+			</nav>
+
+			<?php if (self::TAB_COMPARE === $current_tab) : ?>
+				<?php $this->render_comparison(); ?>
+		</div>
+				<?php
+				return;
+			endif;
+			?>
 
 			<form method="post" action="options.php" id="bpafb-site-tools-form">
 				<?php settings_fields(self::PAGE); ?>
