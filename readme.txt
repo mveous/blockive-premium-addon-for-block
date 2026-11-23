@@ -4,7 +4,7 @@ Tags:              block, blocks, gutenberg, blockive, block template builder
 Requires at least: 6.8
 Requires PHP:      7.4
 Tested up to:      7.1
-Stable tag:        1.1.0
+Stable tag:        1.1.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,9 @@ Blockive Pro adds 35 additional blocks (including native Form builder, Mega Menu
 3. Blockive Accordion block in action with customized styles.
 
 == Changelog ==
+
+= 1.1.1 =
+* Textual changes.
 
 = 1.1.0 =
 * Added Site Tools dashboard with an Element Manager to easily turn unused blocks on or off.

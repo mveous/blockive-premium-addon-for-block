@@ -38,6 +38,7 @@ class Bpafb_Site_Tools
 	private function __construct()
 	{
 		add_action('admin_menu', [$this, 'add_page']);
+		add_action('admin_menu', [$this, 'add_buy_pro_page']);
 		// Late, so every submenu item under the Blockive Templates menu
 		// (including WordPress's own "All Templates" / "Add New") has
 		// already been added by the time this moves ours to the top.
@@ -88,6 +89,38 @@ class Bpafb_Site_Tools
 			self::PAGE,
 			[$this, 'render_page']
 		);
+	}
+
+	/**
+	 * Adds a submenu shortcut that redirects to the Blockive Pro product page.
+	 */
+	public function add_buy_pro_page()
+	{
+		$hook = add_submenu_page(
+			'edit.php?post_type=' . Bpafb_Template_Post_Type::POST_TYPE,
+			__('Buy Pro', 'blockive-premium-addon-for-block'),
+			__('Buy Pro', 'blockive-premium-addon-for-block'),
+			'manage_options',
+			'bpafb-buy-pro',
+			[$this, 'redirect_to_pro']
+		);
+
+		if ($hook) {
+			add_action('load-' . $hook, [$this, 'redirect_to_pro']);
+		}
+	}
+
+	/**
+	 * Redirects the Buy Pro submenu to the product page.
+	 */
+	public function redirect_to_pro()
+	{
+		if (!current_user_can('manage_options')) {
+			wp_die(esc_html__('You do not have permission to access this page.', 'blockive-premium-addon-for-block'));
+		}
+
+		wp_redirect('https://mveous.com/products/blockive-premium-addon-for-block-pro/');
+		exit;
 	}
 
 	/**

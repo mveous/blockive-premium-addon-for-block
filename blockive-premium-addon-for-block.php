@@ -3,7 +3,7 @@
  * Plugin Name:       Blockive - Premium Addon For Block
  * Description: A powerful Blockive addon plugin that offers a wide range of Blocks
  * Plugin URI: https://mveous.com
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.8
  * Requires PHP:      7.4
  * Author:            Mveous
@@ -60,6 +60,24 @@ final class Blockive_Premium_Addon_For_Block_Loader
 	private function __construct()
 	{
 		add_action('plugins_loaded', [$this, 'bootstrap']);
+		add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'add_buy_pro_action_link']);
+	}
+
+	/**
+	 * Adds a direct upgrade link to this plugin's row on the Plugins screen.
+	 *
+	 * @param string[] $links Existing plugin action links.
+	 * @return string[]
+	 */
+	public function add_buy_pro_action_link($links)
+	{
+		array_unshift(
+			$links,
+			'<a href="' . esc_url('https://mveous.com/products/blockive-premium-addon-for-block-pro/') . '" target="_blank" rel="noopener noreferrer">' .
+				esc_html__('Buy Pro', 'blockive-premium-addon-for-block') .
+				'</a>'
+		);
+		return $links;
 	}
 
 	/**
@@ -89,7 +107,7 @@ final class Blockive_Premium_Addon_For_Block_Loader
 
 		define('BPAFB_PATH', plugin_dir_path(__FILE__));
 		define('BPAFB_URL', plugin_dir_url(__FILE__));
-		define('BPAFB_VERSION', '1.1.0');
+		define('BPAFB_VERSION', '1.1.1');
 
 		require_once BPAFB_PATH . 'includes/class-bpafb-core.php';
 		require_once BPAFB_PATH . 'includes/class-bpafb-template-post-type.php';
