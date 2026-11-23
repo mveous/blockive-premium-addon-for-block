@@ -39,6 +39,7 @@ class Bpafb_Site_Tools
 	{
 		add_action('admin_menu', [$this, 'add_page']);
 		add_action('admin_menu', [$this, 'add_buy_pro_page']);
+		add_action('admin_head', [$this, 'print_buy_pro_menu_styles']);
 		// Late, so every submenu item under the Blockive Templates menu
 		// (including WordPress's own "All Templates" / "Add New") has
 		// already been added by the time this moves ours to the top.
@@ -108,6 +109,39 @@ class Bpafb_Site_Tools
 		if ($hook) {
 			add_action('load-' . $hook, [$this, 'redirect_to_pro']);
 		}
+	}
+
+	/**
+	 * Styles the "Buy Pro" submenu item as a gradient button.
+	 */
+	public function print_buy_pro_menu_styles()
+	{
+		?>
+		<style>
+			#adminmenu .wp-submenu a[href$="page=bpafb-buy-pro"] {
+				display: block;
+				margin: 6px 10px 4px 0;
+				padding: 7px 12px;
+				background: linear-gradient(39deg, #2563EB 0%, #22C55E 100%);
+				color: #fff;
+				font-weight: 600;
+				text-align: center;
+				border-radius: 4px;
+				transition: opacity 0.2s ease, transform 0.2s ease;
+			}
+
+			#adminmenu .wp-submenu a[href$="page=bpafb-buy-pro"]:hover,
+			#adminmenu .wp-submenu a[href$="page=bpafb-buy-pro"]:focus {
+				color: #fff;
+				opacity: 0.9;
+				transform: translateY(-1px);
+			}
+
+			#adminmenu .wp-submenu li.current a[href$="page=bpafb-buy-pro"] {
+				color: #fff;
+			}
+		</style>
+		<?php
 	}
 
 	/**
