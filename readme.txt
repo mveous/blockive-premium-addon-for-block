@@ -154,9 +154,8 @@ Blockive Pro adds 35 additional blocks (including native Form builder, Mega Menu
 == Screenshots ==
 
 1. Blockive block collection inside the Gutenberg editor.
-2. Template Builder editor with display conditions and dynamic blocks.
+2. Free vs Pro
 3. Blockive Accordion block in action with customized styles.
-4. Blockive Post Grid with pagination and responsive layout.
 
 == Changelog ==
 
